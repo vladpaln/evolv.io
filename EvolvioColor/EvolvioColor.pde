@@ -26,10 +26,12 @@ float prevMouseX;
 float prevMouseY;
 boolean draggedFar = false;
 final String INITIAL_FILE_NAME = "PIC";
+void settings() {
+    size(WINDOW_WIDTH, WINDOW_HEIGHT);
+}
 void setup() {
     colorMode(HSB, 1.0);
     font = loadFont("Jygquip1-48.vlw");
-    size(WINDOW_WIDTH, WINDOW_HEIGHT);
     evoBoard = new Board(BOARD_WIDTH, BOARD_HEIGHT, NOISE_STEP_SIZE, MIN_TEMPERATURE, MAX_TEMPERATURE,
     ROCKS_TO_ADD, CREATURE_MINIMUM, SEED, INITIAL_FILE_NAME, TIME_STEP);
     resetZoom();
