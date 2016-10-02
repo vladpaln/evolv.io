@@ -26,15 +26,11 @@ float prevMouseX;
 float prevMouseY;
 boolean draggedFar = false;
 final String INITIAL_FILE_NAME = "PIC";
-
-void settings() {
-  size(WINDOW_WIDTH, WINDOW_HEIGHT);
-}
-
 void setup() {
-  colorMode(HSB,1.0);
+  colorMode(HSB, 1.0);
   font = loadFont("Jygquip1-48.vlw");
-  evoBoard = new Board(BOARD_WIDTH, BOARD_HEIGHT, NOISE_STEP_SIZE, MIN_TEMPERATURE, MAX_TEMPERATURE, 
+  size(WINDOW_WIDTH, WINDOW_HEIGHT);
+  evoBoard = new Board(BOARD_WIDTH, BOARD_HEIGHT, NOISE_STEP_SIZE, MIN_TEMPERATURE, MAX_TEMPERATURE,
   ROCKS_TO_ADD, CREATURE_MINIMUM, SEED, INITIAL_FILE_NAME, TIME_STEP);
   resetZoom();
 }
@@ -61,7 +57,7 @@ void draw() {
     cameraX = (float)evoBoard.selectedCreature.px;
     cameraY = (float)evoBoard.selectedCreature.py;
     cameraR = -PI/2.0-(float)evoBoard.selectedCreature.rotation;
-  }else{
+  } else {
     cameraR = 0;
   }
   pushMatrix();
@@ -141,17 +137,17 @@ void mousePressed() {
           if (evoBoard.textSaveInterval >= 0.7) {
             evoBoard.textSaveInterval = Math.round(evoBoard.textSaveInterval);
           }
-        }else if(buttonNum == 6){
+        }else if (buttonNum == 6) {
           if (clickedOnLeft) {
-            if(evoBoard.playSpeed >= 2){
+            if (evoBoard.playSpeed >= 2) {
               evoBoard.playSpeed /= 2;
-            }else{
+            } else {
               evoBoard.playSpeed = 0;
             }
           } else {
-            if(evoBoard.playSpeed == 0){
+            if (evoBoard.playSpeed == 0) {
               evoBoard.playSpeed = 1;
-            }else{
+            } else {
               evoBoard.playSpeed *= 2;
             }
           }
