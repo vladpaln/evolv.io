@@ -191,7 +191,7 @@ class Creature extends SoftBody {
             if (neurons[end][5] > 0 && board.year-birthTime >= MATURE_AGE && energy > SAFE_SIZE) {
                 reproduce(SAFE_SIZE, timeStep);
             }
-            mouthHue = Math.min(Math.max(neurons[end][10], 0), 1);
+            mouthHue = Math.abs(neurons[end][10]) % 1.0;
             for(int i = 0; i < MEMORY_COUNT; i++) {
                 memories[i] = neurons[end][11+i];
             }
