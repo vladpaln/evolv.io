@@ -187,7 +187,7 @@ class Creature extends SoftBody {
             accelerate(neurons[end][1], timeStep);
             turn(neurons[end][2], timeStep);
             eat(neurons[end][3], timeStep);
-            fight(neurons[end][4], timeStep);
+            fight(neurons[end][4], timeStep * 100);
             if (neurons[end][5] > 0 && board.year-birthTime >= MATURE_AGE && energy > SAFE_SIZE) {
                 reproduce(SAFE_SIZE, timeStep);
             }
