@@ -60,10 +60,7 @@ class Creature extends SoftBody {
             for(int x = 0; x < BRAIN_WIDTH-1; x++) {
                 for(int y = 0; y < BRAIN_HEIGHT; y++) {
                     for(int z = 0; z < BRAIN_HEIGHT-1; z++) {
-                        double startingWeight = 0;
-                        if (y == BRAIN_HEIGHT-1) {
-                            startingWeight = (Math.random()*2-1)*STARTING_AXON_VARIABILITY;
-                        }
+                        double startingWeight = (Math.random()*2-1)*STARTING_AXON_VARIABILITY;
                         axons[x][y][z] = new Axon(startingWeight, AXON_START_MUTABILITY);
                     }
                 }
@@ -183,7 +180,7 @@ class Creature extends SoftBody {
         }
         if (useOutput) {
             int end = BRAIN_WIDTH-1;
-            hue = Math.min(Math.max(neurons[end][0], 0), 1);
+            hue = Math.abs(neurons[end][0]) % 1.0;
             accelerate(neurons[end][1], timeStep);
             turn(neurons[end][2], timeStep);
             eat(neurons[end][3], timeStep);
