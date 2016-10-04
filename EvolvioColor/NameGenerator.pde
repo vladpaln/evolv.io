@@ -5,7 +5,7 @@ class NameGenerator {
     public String newName(Board board) {
         String nameSoFar = "";
         int chosenLength = (int)(random(MIN_NAME_LENGTH, MAX_NAME_LENGTH));
-        for(int i = 0; i < chosenLength; i++) {
+        for (int i = 0; i < chosenLength; i++) {
             nameSoFar += getRandomChar(board);
         }
         return sanitizeName(nameSoFar, board);
@@ -32,7 +32,7 @@ class NameGenerator {
     public char getRandomChar(Board board) {
         float letterFactor = random(0, 100);
         int letterChoice = 0;
-        while(letterFactor > 0) {
+        while (letterFactor > 0) {
             letterFactor -= board.letterFrequencies[letterChoice];
             letterChoice++;
         }
@@ -43,12 +43,12 @@ class NameGenerator {
         String output = "";
         int vowelsSoFar = 0;
         int consonantsSoFar = 0;
-        for(int i = 0; i < input.length(); i++) {
+        for (int i = 0; i < input.length(); i++) {
             char ch = input.charAt(i);
             if (isVowel(ch)) {
                 consonantsSoFar = 0;
                 vowelsSoFar++;
-            }else {
+            } else {
                 vowelsSoFar = 0;
                 consonantsSoFar++;
             }
@@ -74,7 +74,6 @@ class NameGenerator {
                         consonantsSoFar = 1;
                         vowelsSoFar = 0;
                     }
-                } else { // do nothing
                 }
             }
         }

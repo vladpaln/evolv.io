@@ -69,12 +69,12 @@ class Creature extends SoftBody {
                 for(int y = 0; y < BRAIN_HEIGHT; y++) {
                     if (y == BRAIN_HEIGHT-1) {
                         neurons[x][y] = 1;
-                    }else {
+                    } else {
                         neurons[x][y] = 0;
                     }
                 }
             }
-        }else {
+        } else {
             axons = tbrain;
             neurons = tneurons;
         }
@@ -85,11 +85,11 @@ class Creature extends SoftBody {
         if (tname.length() >= 1) {
             if (mutateName) {
                 name = nameGenerator.mutateName(tname, board);
-            }else {
+            } else {
                 name = tname;
             }
             name = nameGenerator.sanitizeName(name, board);
-        }else {
+        } else {
             name = nameGenerator.newName(board);
         }
         parents = tparents;
@@ -172,7 +172,7 @@ class Creature extends SoftBody {
                 }
                 if (x == BRAIN_WIDTH-1) {
                     neurons[x][y] = total;
-                }else {
+                } else {
                     neurons[x][y] = sigmoid(total);
                 }
             }
@@ -199,14 +199,14 @@ class Creature extends SoftBody {
     public color neuronFillColor(double d) {
         if (d >= 0) {
             return color(0, 0, 1, (float)(d));
-        }else {
+        } else {
             return color(0, 0, 0, (float)(-d));
         }
     }
       public color neuronTextColor(double d) {
         if (d >= 0) {
             return color(0, 0, 0);
-        }else {
+        } else {
             return color(0, 0, 1);
         }
     }
@@ -293,7 +293,7 @@ class Creature extends SoftBody {
         vy += Math.sin(rotation)*multiplied;
         if (amount >= 0) {
             loseEnergy(amount*ACCELERATION_ENERGY*timeStep);
-        }else {
+        } else {
             loseEnergy(Math.abs(amount*ACCELERATION_BACK_ENERGY*timeStep));
         }
     }
@@ -318,7 +318,7 @@ class Creature extends SoftBody {
         if (amount < 0) {
             dropEnergy(-amount*timeStep);
             loseEnergy(-attemptedAmount*EAT_ENERGY*timeStep);
-        }else {
+        } else {
             Tile coveredTile = getRandomCoveredTile();
             double foodToEat = coveredTile.foodLevel*(1-Math.pow((1-EAT_SPEED), amount*timeStep));
             if (foodToEat > coveredTile.foodLevel) {
@@ -329,7 +329,7 @@ class Creature extends SoftBody {
             double multiplier = 1.0-foodDistance/FOOD_SENSITIVITY;
             if (multiplier >= 0) {
                 addEnergy(foodToEat*multiplier);
-            }else {
+            } else {
                 loseEnergy(-foodToEat*multiplier);
             }
             loseEnergy(attemptedAmount*EAT_ENERGY*timeStep);
@@ -349,7 +349,7 @@ class Creature extends SoftBody {
                     }
                 }
             }
-        }else {
+        } else {
             fightLevel = 0;
         }
     }
@@ -429,7 +429,7 @@ class Creature extends SoftBody {
     public color getColorAt(double x, double y) {
         if (x >= 0 && x < board.boardWidth && y >= 0 && y < board.boardHeight) {
             return board.tiles[(int)(x)][(int)(y)].getColor();
-        }else {
+        } else {
             return board.BACKGROUND_COLOR;
         }
     }
