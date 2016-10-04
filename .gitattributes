@@ -1,0 +1,3 @@
+* text eol=auto
+*.pde text eol=lf
+*.vlw binary
