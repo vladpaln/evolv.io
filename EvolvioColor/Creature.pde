@@ -27,8 +27,6 @@ class Creature extends SoftBody {
     final int BRAIN_WIDTH = 3;
     final int BRAIN_HEIGHT = 13;
     final double AXON_START_MUTABILITY = 0.0005;
-    final int MIN_NAME_LENGTH = 3;
-    final int MAX_NAME_LENGTH = 10;
     final float BRIGHTNESS_THRESHOLD = 0.7;
     Axon[][][] axons;
     double[][] neurons;
@@ -48,6 +46,7 @@ class Creature extends SoftBody {
 
     double mouthHue;
     CreatureThread thread;
+    NameGenerator nameGenerator = new NameGenerator();
 
     public Creature(double tpx, double tpy, double tvx, double tvy, double tenergy,
     double tdensity, double thue, double tsaturation, double tbrightness, Board tb, double bt,
@@ -88,13 +87,13 @@ class Creature extends SoftBody {
         id = board.creatureIDUpTo+1;
         if (tname.length() >= 1) {
             if (mutateName) {
-                name = mutateName(tname);
+                name = nameGenerator.mutateName(tname, board);
             }else {
                 name = tname;
             }
-            name = sanitizeName(name);
+            name = nameGenerator.sanitizeName(name, board);
         }else {
-            name = createNewName();
+            name = nameGenerator.newName(board);
         }
         parents = tparents;
         board.creatureIDUpTo++;
@@ -558,90 +557,14 @@ class Creature extends SoftBody {
         }
         return result;
     }
-    public String createNewName() {
-        String nameSoFar = "";
-        int chosenLength = (int)(random(MIN_NAME_LENGTH, MAX_NAME_LENGTH));
-        for(int i = 0; i < chosenLength; i++) {
-            nameSoFar += getRandomChar();
-        }
-        return sanitizeName(nameSoFar);
-    }
-    public char getRandomChar() {
-        float letterFactor = random(0, 100);
-        int letterChoice = 0;
-        while(letterFactor > 0) {
-            letterFactor -= board.letterFrequencies[letterChoice];
-            letterChoice++;
-        }
-        return (char)(letterChoice+96);
-    }
-    public String sanitizeName(String input) {
-        String output = "";
-        int vowelsSoFar = 0;
-        int consonantsSoFar = 0;
-        for(int i = 0; i < input.length(); i++) {
-            char ch = input.charAt(i);
-            if (isVowel(ch)) {
-                consonantsSoFar = 0;
-                vowelsSoFar++;
-            }else {
-                vowelsSoFar = 0;
-                consonantsSoFar++;
-            }
-            if (vowelsSoFar <= 2 && consonantsSoFar <= 2) {
-                output = output+ch;
-            }else {
-                double chanceOfAddingChar = 0.5;
-                if (input.length() <= MIN_NAME_LENGTH) {
-                    chanceOfAddingChar = 1.0;
-                }else if (input.length() >= MAX_NAME_LENGTH) {
-                    chanceOfAddingChar = 0.0;
-                }
-                if (random(0, 1) < chanceOfAddingChar) {
-                    char extraChar = ' ';
-                    while(extraChar == ' ' || (isVowel(ch) == isVowel(extraChar))) {
-                        extraChar = getRandomChar();
-                    }
-                    output = output+extraChar+ch;
-                    if (isVowel(ch)) {
-                        consonantsSoFar = 0;
-                        vowelsSoFar = 1;
-                    }else {
-                        consonantsSoFar = 1;
-                        vowelsSoFar = 0;
-                    }
-                }else { // do nothing
-                }
-            }
-        }
-        return output;
-    }
+    
     public String getCreatureName() {
         return capitalize(name);
     }
     public String capitalize(String n) {
         return n.substring(0, 1).toUpperCase()+n.substring(1, n.length());
     }
-    public boolean isVowel(char a) {
-        return (a == 'a' || a == 'e' || a == 'i' || a == 'o' || a == 'u' || a == 'y');
-    }
-    public String mutateName(String input) {
-        if (input.length() >= 3) {
-            if (random(0, 1) < 0.2) {
-                int removeIndex = (int)random(0, input.length());
-                input = input.substring(0, removeIndex)+input.substring(removeIndex+1, input.length());
-            }
-        }
-        if (input.length() <= 9) {
-            if (random(0, 1) < 0.2) {
-                int insertIndex = (int)random(0, input.length()+1);
-                input = input.substring(0, insertIndex)+getRandomChar()+input.substring(insertIndex, input.length());
-            }
-        }
-        int changeIndex = (int)random(0, input.length());
-        input = input.substring(0, changeIndex)+getRandomChar()+input.substring(changeIndex+1, input.length());
-        return input;
-    }
+    
     public void applyMotions(double timeStep) {
         if (getRandomCoveredTile().fertility > 1) {
             loseEnergy(SWIM_ENERGY*energy);
