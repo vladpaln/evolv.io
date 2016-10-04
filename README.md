@@ -1,10 +1,8 @@
-This is the source code to the evolv.io evolution simulator by carykh.
+This is the source code to [the evolv.io evolution simulator](https://www.youtube.com/watch?v=OLnv8QaEDL0) by [carykh](https://www.youtube.com/user/carykh).
 
-https://www.youtube.com/watch?v=OLnv8QaEDL0
+# Executing
 
-To run the program:
-
-1. Download Processing (now supports version 3)
-2. Download the EvolvioColor folder
-3. Open EvolvioColor.pde inside Processing.
-4. Click the Play button in the top left of Processing.
+1. Download the EvolvioColor folder (Click the green `Clone or download` button and select `Download ZIP`, then extract using e.g. WinRAR)
+2. Download Processing (version 2 or 3)
+3. Click `File > Open` and open `EvolvioColor/EvolvioColor.pde`.
+4. Click `Sketch > Run`
