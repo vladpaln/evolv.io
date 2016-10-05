@@ -4,10 +4,11 @@ final float NOISE_STEP_SIZE = 0.1;
 final int BOARD_WIDTH = 100;
 final int BOARD_HEIGHT = 100;
 
-final int WINDOW_WIDTH = 1920;
-final int WINDOW_HEIGHT = 1080;
+int WINDOW_WIDTH;
+int WINDOW_HEIGHT;
+float GROSS_OVERALL_SCALE_FACTOR;
+
 final float SCALE_TO_FIX_BUG = 100;
-final float GROSS_OVERALL_SCALE_FACTOR = ((float)WINDOW_HEIGHT)/BOARD_HEIGHT/SCALE_TO_FIX_BUG;
 
 final double TIME_STEP = 0.001;
 final float MIN_TEMPERATURE = -0.5;
@@ -27,9 +28,18 @@ float prevMouseY;
 boolean draggedFar = false;
 final String INITIAL_FILE_NAME = "PIC";
 void settings() {
-    size(WINDOW_WIDTH, WINDOW_HEIGHT);
+    // get users window size
+    WINDOW_WIDTH = displayWidth;
+    WINDOW_HEIGHT = displayHeight;
+
+    // set scaling to be custom to current users screen size
+    GROSS_OVERALL_SCALE_FACTOR = ((float)WINDOW_HEIGHT)/BOARD_HEIGHT/SCALE_TO_FIX_BUG;
+
+    //Alow window to be docked and resized the UI still needs to be changed to make UI look good after resize
+    size(WINDOW_WIDTH,WINDOW_HEIGHT);
 }
 void setup() {
+    surface.setResizable(true);
     colorMode(HSB, 1.0);
     font = loadFont("Jygquip1-48.vlw");
     evoBoard = new Board(BOARD_WIDTH, BOARD_HEIGHT, NOISE_STEP_SIZE, MIN_TEMPERATURE, MAX_TEMPERATURE,
