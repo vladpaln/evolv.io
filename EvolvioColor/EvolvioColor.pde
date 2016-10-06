@@ -4,8 +4,6 @@ final float NOISE_STEP_SIZE = 0.1;
 final int BOARD_WIDTH = 100;
 final int BOARD_HEIGHT = 100;
 
-int WINDOW_WIDTH;
-int WINDOW_HEIGHT;
 float GROSS_OVERALL_SCALE_FACTOR;
 
 final float SCALE_TO_FIX_BUG = 100;
@@ -17,6 +15,8 @@ final float MAX_TEMPERATURE = 1.0;
 final int ROCKS_TO_ADD = 0;
 final int CREATURE_MINIMUM = 60;
 
+int windowWidth;
+int windowHeight;
 float cameraX = BOARD_WIDTH*0.5;
 float cameraY = BOARD_HEIGHT*0.5;
 float cameraR = 0;
@@ -29,20 +29,20 @@ boolean draggedFar = false;
 final String INITIAL_FILE_NAME = "PIC";
 void settings() {
   // get users window size
-  WINDOW_WIDTH = displayWidth;
-  WINDOW_HEIGHT = displayHeight;
+  windowWidth = displayWidth;
+  windowHeight = displayHeight;
 
   // set scaling to be custom to current users screen size
-  GROSS_OVERALL_SCALE_FACTOR = ((float)WINDOW_HEIGHT)/BOARD_HEIGHT/SCALE_TO_FIX_BUG;
+  GROSS_OVERALL_SCALE_FACTOR = ((float)windowHeight)/BOARD_HEIGHT/SCALE_TO_FIX_BUG;
 
   //Alow window to be docked and resized the UI still needs to be changed to make UI look good after resize
-  size(WINDOW_WIDTH, WINDOW_HEIGHT);
+  size(windowWidth, windowHeight);
 }
 void setup() {
   surface.setResizable(true);
   colorMode(HSB, 1.0);
   font = loadFont("Jygquip1-48.vlw");
-  evoBoard = new Board(BOARD_WIDTH, BOARD_HEIGHT, NOISE_STEP_SIZE, MIN_TEMPERATURE, MAX_TEMPERATURE, 
+  evoBoard = new Board(BOARD_WIDTH, BOARD_HEIGHT, NOISE_STEP_SIZE, MIN_TEMPERATURE, MAX_TEMPERATURE,
     ROCKS_TO_ADD, CREATURE_MINIMUM, SEED, INITIAL_FILE_NAME, TIME_STEP);
   resetZoom();
 }
@@ -83,7 +83,7 @@ void draw() {
   translate(-cameraX*SCALE_TO_FIX_BUG, -cameraY*SCALE_TO_FIX_BUG);
   evoBoard.drawBoard(SCALE_TO_FIX_BUG, zoom, (int)toWorldXCoordinate(mouseX, mouseY), (int)toWorldYCoordinate(mouseX, mouseY));
   popMatrix();
-  evoBoard.drawUI(SCALE_TO_FIX_BUG, TIME_STEP, WINDOW_HEIGHT, 0, WINDOW_WIDTH, WINDOW_HEIGHT, font);
+  evoBoard.drawUI(SCALE_TO_FIX_BUG, TIME_STEP, windowHeight, 0, windowWidth, windowHeight, font);
 
   evoBoard.fileSave();
   prevMouseX = mouseX;
@@ -98,21 +98,21 @@ void mouseWheel(MouseEvent event) {
   }
 }
 void mousePressed() {
-  if (mouseX < WINDOW_HEIGHT) {
+  if (mouseX < windowHeight) {
     dragging = 1;
   } else {
-    if (abs(mouseX-(WINDOW_HEIGHT+65)) <= 60 && abs(mouseY-147) <= 60 && evoBoard.selectedCreature != null) {
+    if (abs(mouseX-(windowHeight+65)) <= 60 && abs(mouseY-147) <= 60 && evoBoard.selectedCreature != null) {
       cameraX = (float)evoBoard.selectedCreature.px;
       cameraY = (float)evoBoard.selectedCreature.py;
       zoom = 16;
     } else if (mouseY >= 95 && mouseY < 135 && evoBoard.selectedCreature == null) {
-      if (mouseX >= WINDOW_HEIGHT+10 && mouseX < WINDOW_HEIGHT+230) {
+      if (mouseX >= windowHeight+10 && mouseX < windowHeight+230) {
         resetZoom();
-      } else if (mouseX >= WINDOW_HEIGHT+240 && mouseX < WINDOW_HEIGHT+460) {
+      } else if (mouseX >= windowHeight+240 && mouseX < windowHeight+460) {
         evoBoard.creatureRankMetric = (evoBoard.creatureRankMetric+1)%8;
       }
     } else if (mouseY >= 570) {
-      float x = (mouseX-(WINDOW_HEIGHT+10));
+      float x = (mouseX-(windowHeight+10));
       float y = (mouseY-570);
       boolean clickedOnLeft = (x%230 < 110);
       if (x >= 0 && x < 2*230 && y >= 0 && y < 4*50 && x%230 < 220 && y%50 < 40) {
@@ -189,7 +189,7 @@ void mousePressed() {
 }
 void mouseReleased() {
   if (!draggedFar) {
-    if (mouseX < WINDOW_HEIGHT) { // DO NOT LOOK AT THIS CODE EITHER it is bad
+    if (mouseX < windowHeight) { // DO NOT LOOK AT THIS CODE EITHER it is bad
       dragging = 1;
       float mX = toWorldXCoordinate(mouseX, mouseY);
       float mY = toWorldYCoordinate(mouseX, mouseY);
@@ -229,13 +229,13 @@ float grossify(float input, float total) { // Very weird function
   return (input/GROSS_OVERALL_SCALE_FACTOR-total*0.5*SCALE_TO_FIX_BUG)/SCALE_TO_FIX_BUG;
 }
 float toWorldXCoordinate(float x, float y) {
-  float w = WINDOW_HEIGHT/2;
+  float w = windowHeight/2;
   float angle = atan2(y-w, x-w);
   float dist = dist(w, w, x, y);
   return cameraX+grossify(cos(angle-cameraR)*dist+w, BOARD_WIDTH)/zoom;
 }
 float toWorldYCoordinate(float x, float y) {
-  float w = WINDOW_HEIGHT/2;
+  float w = windowHeight/2;
   float angle = atan2(y-w, x-w);
   float dist = dist(w, w, x, y);
   return cameraY+grossify(sin(angle-cameraR)*dist+w, BOARD_HEIGHT)/zoom;
