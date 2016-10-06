@@ -4,8 +4,6 @@ final float NOISE_STEP_SIZE = 0.1;
 final int BOARD_WIDTH = 100;
 final int BOARD_HEIGHT = 100;
 
-float GROSS_OVERALL_SCALE_FACTOR;
-
 final float SCALE_TO_FIX_BUG = 100;
 
 final double TIME_STEP = 0.001;
@@ -15,6 +13,7 @@ final float MAX_TEMPERATURE = 1.0;
 final int ROCKS_TO_ADD = 0;
 final int CREATURE_MINIMUM = 60;
 
+float scaleFactor;
 int windowWidth;
 int windowHeight;
 float cameraX = BOARD_WIDTH*0.5;
@@ -33,7 +32,7 @@ void settings() {
   windowHeight = displayHeight;
 
   // set scaling to be custom to current users screen size
-  GROSS_OVERALL_SCALE_FACTOR = ((float)windowHeight)/BOARD_HEIGHT/SCALE_TO_FIX_BUG;
+  scaleFactor = ((float)windowHeight)/BOARD_HEIGHT/SCALE_TO_FIX_BUG;
 
   //Alow window to be docked and resized the UI still needs to be changed to make UI look good after resize
   size(windowWidth, windowHeight);
@@ -73,7 +72,7 @@ void draw() {
     cameraR = 0;
   }
   pushMatrix();
-  scale(GROSS_OVERALL_SCALE_FACTOR);
+  scale(scaleFactor);
   evoBoard.drawBlankBoard(SCALE_TO_FIX_BUG);
   translate(BOARD_WIDTH*0.5*SCALE_TO_FIX_BUG, BOARD_HEIGHT*0.5*SCALE_TO_FIX_BUG);
   scale(zoom);
@@ -226,7 +225,7 @@ void setZoom(float target, float x, float y) {
   zoom = target;
 }
 float grossify(float input, float total) { // Very weird function
-  return (input/GROSS_OVERALL_SCALE_FACTOR-total*0.5*SCALE_TO_FIX_BUG)/SCALE_TO_FIX_BUG;
+  return (input/scaleFactor-total*0.5*SCALE_TO_FIX_BUG)/SCALE_TO_FIX_BUG;
 }
 float toWorldXCoordinate(float x, float y) {
   float w = windowHeight/2;
