@@ -1,0 +1,8 @@
+machine:
+  post:
+    - curl --location --output processing.tgz http://download.processing.org/processing-3.2.1-linux64.tgz
+    - tar xfz processing.tgz
+
+test:
+  override:
+    - $HOME/processing-3.2.1/processing-java --sketch=EvolvioColor --build
