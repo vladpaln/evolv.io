@@ -210,31 +210,12 @@ class Creature extends SoftBody {
       return color(0, 0, 1);
     }
   }
+  
   public void drawSoftBody(float scaleUp, float camZoom, boolean showVision) {
     ellipseMode(RADIUS);
     double radius = getRadius();
-    if (showVision) {
-      for (int i = 0; i < visionAngles.length; i++) {
-        color visionUIcolor = color(0, 0, 1);
-        if (visionResults[i*3+2] > BRIGHTNESS_THRESHOLD) {
-          visionUIcolor = color(0, 0, 0);
-        }
-        stroke(visionUIcolor);
-        strokeWeight(board.CREATURE_STROKE_WEIGHT);
-        float endX = (float)getVisionEndX(i);
-        float endY = (float)getVisionEndY(i);
-        line((float)(px*scaleUp), (float)(py*scaleUp), endX*scaleUp, endY*scaleUp);
-        noStroke();
-        fill(visionUIcolor);
-        ellipse((float)(visionOccludedX[i]*scaleUp), (float)(visionOccludedY[i]*scaleUp), 
-          2*CROSS_SIZE*scaleUp, 2*CROSS_SIZE*scaleUp);
-        stroke((float)(visionResults[i*3]), (float)(visionResults[i*3+1]), (float)(visionResults[i*3+2]));
-        strokeWeight(board.CREATURE_STROKE_WEIGHT);
-        line((float)((visionOccludedX[i]-CROSS_SIZE)*scaleUp), (float)((visionOccludedY[i]-CROSS_SIZE)*scaleUp), 
-          (float)((visionOccludedX[i]+CROSS_SIZE)*scaleUp), (float)((visionOccludedY[i]+CROSS_SIZE)*scaleUp));
-        line((float)((visionOccludedX[i]-CROSS_SIZE)*scaleUp), (float)((visionOccludedY[i]+CROSS_SIZE)*scaleUp), 
-          (float)((visionOccludedX[i]+CROSS_SIZE)*scaleUp), (float)((visionOccludedY[i]-CROSS_SIZE)*scaleUp));
-      }
+    if (showVision && camZoom > 3.5) {
+      drawVisionAngles(board, scaleUp);
     }
     noStroke();
     if (fightLevel > 0) {
@@ -249,34 +230,60 @@ class Creature extends SoftBody {
         (float)(radius*scaleUp+1+75.0/camZoom), (float)(radius*scaleUp+1+75.0/camZoom));
     }
     super.drawSoftBody(scaleUp);
-    noFill();
-    strokeWeight(board.CREATURE_STROKE_WEIGHT);
-    stroke(0, 0, 1);
-    ellipseMode(RADIUS);
-    ellipse((float)(px*scaleUp), (float)(py*scaleUp), 
-      (float)(board.MINIMUM_SURVIVABLE_SIZE*scaleUp), (float)(board.MINIMUM_SURVIVABLE_SIZE*scaleUp));
-    pushMatrix();
-    translate((float)(px*scaleUp), (float)(py*scaleUp));
-    scale((float)radius);
-    rotate((float)rotation);
-    strokeWeight((float)(board.CREATURE_STROKE_WEIGHT/radius));
-    stroke(0, 0, 0);
-    fill((float)mouthHue, 1.0, 1.0);
-    ellipse(0.6*scaleUp, 0, 0.37*scaleUp, 0.37*scaleUp);
-    /*rect(-0.7*scaleUp, -0.2*scaleUp, 1.1*scaleUp, 0.4*scaleUp);
-     beginShape();
-     vertex(0.3*scaleUp, -0.5*scaleUp);
-     vertex(0.3*scaleUp, 0.5*scaleUp);
-     vertex(0.8*scaleUp, 0.0*scaleUp);
-     endShape(CLOSE);*/
-    popMatrix();
-    if (showVision) {
+    
+    if(camZoom > 3.5)
+      drawMouth(board, scaleUp, radius, rotation, camZoom, mouthHue);
+      
+    if (showVision && camZoom > 3.5) {
       fill(0, 0, 1);
       textFont(font, 0.2*scaleUp);
       textAlign(CENTER);
       text(getCreatureName(), (float)(px*scaleUp), (float)((py-getRadius()*1.4-0.07)*scaleUp));
     }
   }
+  
+  public void drawVisionAngles(Board board, float scaleUp) {
+    for (int i = 0; i < visionAngles.length; i++) {
+        color visionUIcolor = color(0, 0, 1);
+        if (visionResults[i * 3 + 2] > BRIGHTNESS_THRESHOLD) {
+          visionUIcolor = color(0, 0, 0);
+        }
+        stroke(visionUIcolor);
+        strokeWeight(board.CREATURE_STROKE_WEIGHT);
+        float endX = (float)getVisionEndX(i);
+        float endY = (float)getVisionEndY(i);
+        line((float)(px * scaleUp), (float)(py * scaleUp), endX * scaleUp, endY * scaleUp);
+        noStroke();
+        fill(visionUIcolor);
+        ellipse((float)(visionOccludedX[i] * scaleUp), (float)(visionOccludedY[i] * scaleUp), 
+          2 * CROSS_SIZE * scaleUp, 2 * CROSS_SIZE * scaleUp);
+        stroke((float)(visionResults[i*3]), (float)(visionResults[i * 3 + 1]), (float)(visionResults[i * 3 + 2]));
+        strokeWeight(board.CREATURE_STROKE_WEIGHT);
+        line((float)((visionOccludedX[i] - CROSS_SIZE) * scaleUp), (float)((visionOccludedY[i] - CROSS_SIZE) * scaleUp), 
+          (float)((visionOccludedX[i] + CROSS_SIZE) * scaleUp), (float)((visionOccludedY[i] + CROSS_SIZE) * scaleUp));
+        line((float)((visionOccludedX[i] - CROSS_SIZE) * scaleUp), (float)((visionOccludedY[i] + CROSS_SIZE) * scaleUp), 
+          (float)((visionOccludedX[i] + CROSS_SIZE) * scaleUp), (float)((visionOccludedY[i] - CROSS_SIZE) * scaleUp));
+      }
+  }
+  
+  public void drawMouth(Board board, float scaleUp, double radius, double rotation, float camZoom, double mouthHue) {
+    noFill();
+    strokeWeight(board.CREATURE_STROKE_WEIGHT);
+    stroke(0, 0, 1);
+    ellipseMode(RADIUS);
+    ellipse((float)(px * scaleUp), (float)(py * scaleUp), 
+      (float)(board.MINIMUM_SURVIVABLE_SIZE * scaleUp), (float)(board.MINIMUM_SURVIVABLE_SIZE * scaleUp));
+    pushMatrix();
+    translate((float)(px * scaleUp), (float)(py * scaleUp));
+    scale((float)radius);
+    rotate((float)rotation);
+    strokeWeight((float)(board.CREATURE_STROKE_WEIGHT / radius));
+    stroke(0, 0, 0);
+    fill((float)mouthHue, 1.0, 1.0);
+    ellipse(0.6 * scaleUp, 0, 0.37 * scaleUp, 0.37 * scaleUp);
+    popMatrix();
+  }
+  
   public void doThread(double timeStep, Boolean userControl) { // just kidding, multithreading doesn't really help here.
     //collide(timeStep);
     //metabolize(timeStep);
