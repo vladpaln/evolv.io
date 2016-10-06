@@ -15,5 +15,5 @@ evolv\.io uses a neural net and evolution in order to simulate creatures evolvin
 
 1. Download the EvolvioColor folder (Click the green `Clone or download` button and select `Download ZIP`, then extract using e.g. WinRAR)
 2. Download [Processing](https://www.processing.org) version 3.2.1
-3. Click `File > Open` and open (EvolvioColor/EvolvioColor.pde)[EvolvioColor/EvolvioColor.pde].
+3. Click `File > Open` and open [EvolvioColor/EvolvioColor.pde](EvolvioColor/EvolvioColor.pde).
 4. Click `Play`.
