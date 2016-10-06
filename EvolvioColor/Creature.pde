@@ -231,14 +231,14 @@ class Creature extends SoftBody {
     }
     super.drawSoftBody(scaleUp);
 
-    if (camZoom > MAX_DETAILED_ZOOM)
+    if (camZoom > MAX_DETAILED_ZOOM) {
       drawMouth(board, scaleUp, radius, rotation, camZoom, mouthHue);
-
-    if (showVision && camZoom > MAX_DETAILED_ZOOM) {
-      fill(0, 0, 1);
-      textFont(font, 0.2*scaleUp);
-      textAlign(CENTER);
-      text(getCreatureName(), (float)(px*scaleUp), (float)((py-getRadius()*1.4-0.07)*scaleUp));
+      if (showVision) {
+        fill(0, 0, 1);
+        textFont(font, 0.2*scaleUp);
+        textAlign(CENTER);
+        text(getCreatureName(), (float)(px*scaleUp), (float)((py-getRadius()*1.4-0.07)*scaleUp));
+      }
     }
   }
   public void drawVisionAngles(Board board, float scaleUp) {
