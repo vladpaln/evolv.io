@@ -82,7 +82,7 @@ void draw() {
   translate(-cameraX*SCALE_TO_FIX_BUG, -cameraY*SCALE_TO_FIX_BUG);
   evoBoard.drawBoard(SCALE_TO_FIX_BUG, zoom, (int)toWorldXCoordinate(mouseX, mouseY), (int)toWorldYCoordinate(mouseX, mouseY));
   popMatrix();
-  evoBoard.drawUI(SCALE_TO_FIX_BUG, TIME_STEP, windowHeight, 0, windowWidth, windowHeight, font);
+  evoBoard.drawUI(SCALE_TO_FIX_BUG, zoom, TIME_STEP, windowHeight, 0, windowWidth, windowHeight, font);
 
   evoBoard.fileSave();
   prevMouseX = mouseX;

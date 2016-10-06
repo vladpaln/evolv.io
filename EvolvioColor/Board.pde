@@ -26,7 +26,7 @@ class Board {
   ArrayList<Creature> creatures;
   Creature selectedCreature = null;
   int creatureIDUpTo = 0;
-  float[] letterFrequencies = {8.167, 1.492, 2.782, 4.253, 12.702, 2.228, 2.015, 6.094, 6.966, 0.153, 0.772, 4.025, 2.406, 6.749, 
+  float[] letterFrequencies = {8.167, 1.492, 2.782, 4.253, 12.702, 2.228, 2.015, 6.094, 6.966, 0.153, 0.772, 4.025, 2.406, 6.749,
     7.507, 1.929, 0.095, 5.987, 6.327, 9.056, 2.758, 0.978, 2.361, 0.150, 1.974, 10000.0};//0.074};
   final int LIST_SLOTS = 6;
   int creatureRankMetric = 0;
@@ -78,7 +78,7 @@ class Board {
     ROCKS_TO_ADD = rta;
     rocks = new ArrayList<SoftBody>(0);
     for (int i = 0; i < ROCKS_TO_ADD; i++) {
-      rocks.add(new SoftBody(random(0, boardWidth), random(0, boardHeight), 0, 0, 
+      rocks.add(new SoftBody(random(0, boardWidth), random(0, boardHeight), 0, 0,
         getRandomSize(), ROCK_DENSITY, hue(ROCK_COLOR), saturation(ROCK_COLOR), brightness(ROCK_COLOR), this, year));
     }
 
@@ -119,7 +119,7 @@ class Board {
     fill(BACKGROUND_COLOR);
     rect(0, 0, scaleUp*boardWidth, scaleUp*boardHeight);
   }
-  public void drawUI(float scaleUp, double timeStep, int x1, int y1, int x2, int y2, PFont font) {
+  public void drawUI(float scaleUp, float camZoom, double timeStep, int x1, int y1, int x2, int y2, PFont font) {
     fill(0, 0, 0);
     noStroke();
     rect(x1, y1, x2-x1, y2-y1);
@@ -128,6 +128,8 @@ class Board {
     translate(x1, y1);
 
     fill(0, 0, 1);
+    textAlign(RIGHT);
+    text(nfs(camZoom*100, 0, 3)+" %", 0, y2-y1-30);
     textAlign(LEFT);
     textFont(font, 48);
     String yearText = "Year "+nf((float)year, 0, 2);
@@ -203,9 +205,9 @@ class Board {
       text("Sort by: "+sorts[creatureRankMetric], 350, 123);
 
       textFont(font, 19);
-      String[] buttonTexts = {"Brain Control", "Maintain pop. at "+creatureMinimum, 
-        "Screenshot now", "-   Image every "+nf((float)imageSaveInterval, 0, 2)+" years   +", 
-        "Text file now", "-    Text every "+nf((float)textSaveInterval, 0, 2)+" years    +", 
+      String[] buttonTexts = {"Brain Control", "Maintain pop. at "+creatureMinimum,
+        "Screenshot now", "-   Image every "+nf((float)imageSaveInterval, 0, 2)+" years   +",
+        "Text file now", "-    Text every "+nf((float)textSaveInterval, 0, 2)+" years    +",
         "-    Play Speed ("+playSpeed+"x)    +", "This button does nothing"};
       if (userControl) {
         buttonTexts[0] = "Keyboard Control";
@@ -418,7 +420,7 @@ class Board {
   private double getSeason() {
     return (year%1.0);
   }
-  private void drawThermometer(float x1, float y1, float w, float h, double prog, double min, double max, 
+  private void drawThermometer(float x1, float y1, float w, float h, double prog, double min, double max,
     color fillColor) {
     noStroke();
     fill(0, 0, 0.2);
@@ -499,8 +501,8 @@ class Board {
         c.addEnergy(c.SAFE_SIZE);
         c.reproduce(c.SAFE_SIZE, timeStep);
       } else {
-        creatures.add(new Creature(random(0, boardWidth), random(0, boardHeight), 0, 0, 
-          random(MIN_CREATURE_ENERGY, MAX_CREATURE_ENERGY), 1, random(0, 1), 1, 1, 
+        creatures.add(new Creature(random(0, boardWidth), random(0, boardHeight), 0, 0,
+          random(MIN_CREATURE_ENERGY, MAX_CREATURE_ENERGY), 1, random(0, 1), 1, 1,
           this, year, random(0, 2*PI), 0, "", "[PRIMORDIAL]", true, null, null, 1, random(0, 1)));
       }
     }
