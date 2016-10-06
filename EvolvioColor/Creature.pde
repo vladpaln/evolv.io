@@ -49,9 +49,9 @@ class Creature extends SoftBody {
   CreatureThread thread;
   NameGenerator nameGenerator = new NameGenerator();
 
-  public Creature(double tpx, double tpy, double tvx, double tvy, double tenergy,
-    double tdensity, double thue, double tsaturation, double tbrightness, Board tb, double bt,
-    double rot, double tvr, String tname, String tparents, boolean mutateName,
+  public Creature(double tpx, double tpy, double tvx, double tvy, double tenergy, 
+    double tdensity, double thue, double tsaturation, double tbrightness, Board tb, double bt, 
+    double rot, double tvr, String tname, String tparents, boolean mutateName, 
     Axon[][][] tbrain, double[][] tneurons, int tgen, double tmouthHue) {
     super(tpx, tpy, tvx, tvy, tenergy, tdensity, thue, tsaturation, tbrightness, tb, bt);
     if (tbrain == null) {
@@ -119,9 +119,9 @@ class Creature extends SoftBody {
     strokeWeight(2);
     textFont(font, 0.58*scaleUp);
     fill(0, 0, 1);
-    String[] inputLabels = {"0Hue", "0Sat", "0Bri", "1Hue",
+    String[] inputLabels = {"0Hue", "0Sat", "0Bri", "1Hue", 
       "1Sat", "1Bri", "2Hue", "2Sat", "2Bri", "Size", "MHue", "Mem", "Const."};
-    String[] outputLabels = {"BHue", "Accel.", "Turn", "Eat", "Fight", "Birth", "How funny?",
+    String[] outputLabels = {"BHue", "Accel.", "Turn", "Eat", "Fight", "Birth", "How funny?", 
       "How popular?", "How generous?", "How smart?", "MHue", "Mem", "Const."};
     for (int y = 0; y < BRAIN_HEIGHT; y++) {
       textAlign(RIGHT);
@@ -226,7 +226,7 @@ class Creature extends SoftBody {
     stroke(0, 0, 1);
     fill(0, 0, 1);
     if (this == board.selectedCreature) {
-      ellipse((float)(px*scaleUp), (float)(py*scaleUp),
+      ellipse((float)(px*scaleUp), (float)(py*scaleUp), 
         (float)(radius*scaleUp+1+75.0/camZoom), (float)(radius*scaleUp+1+75.0/camZoom));
     }
     super.drawSoftBody(scaleUp);
@@ -254,13 +254,13 @@ class Creature extends SoftBody {
       line((float)(px * scaleUp), (float)(py * scaleUp), endX * scaleUp, endY * scaleUp);
       noStroke();
       fill(visionUIcolor);
-      ellipse((float)(visionOccludedX[i] * scaleUp), (float)(visionOccludedY[i] * scaleUp),
+      ellipse((float)(visionOccludedX[i] * scaleUp), (float)(visionOccludedY[i] * scaleUp), 
         2 * CROSS_SIZE * scaleUp, 2 * CROSS_SIZE * scaleUp);
       stroke((float)(visionResults[i*3]), (float)(visionResults[i * 3 + 1]), (float)(visionResults[i * 3 + 2]));
       strokeWeight(board.CREATURE_STROKE_WEIGHT);
-      line((float)((visionOccludedX[i] - CROSS_SIZE) * scaleUp), (float)((visionOccludedY[i] - CROSS_SIZE) * scaleUp),
+      line((float)((visionOccludedX[i] - CROSS_SIZE) * scaleUp), (float)((visionOccludedY[i] - CROSS_SIZE) * scaleUp), 
         (float)((visionOccludedX[i] + CROSS_SIZE) * scaleUp), (float)((visionOccludedY[i] + CROSS_SIZE) * scaleUp));
-      line((float)((visionOccludedX[i] - CROSS_SIZE) * scaleUp), (float)((visionOccludedY[i] + CROSS_SIZE) * scaleUp),
+      line((float)((visionOccludedX[i] - CROSS_SIZE) * scaleUp), (float)((visionOccludedY[i] + CROSS_SIZE) * scaleUp), 
         (float)((visionOccludedX[i] + CROSS_SIZE) * scaleUp), (float)((visionOccludedY[i] - CROSS_SIZE) * scaleUp));
     }
   }
@@ -269,7 +269,7 @@ class Creature extends SoftBody {
     strokeWeight(board.CREATURE_STROKE_WEIGHT);
     stroke(0, 0, 1);
     ellipseMode(RADIUS);
-    ellipse((float)(px * scaleUp), (float)(py * scaleUp),
+    ellipse((float)(px * scaleUp), (float)(py * scaleUp), 
       (float)(board.MINIMUM_SURVIVABLE_SIZE * scaleUp), (float)(board.MINIMUM_SURVIVABLE_SIZE * scaleUp));
     pushMatrix();
     translate((float)(px * scaleUp), (float)(py * scaleUp));
@@ -531,9 +531,9 @@ class Creature extends SoftBody {
         }
         newSaturation = 1;
         newBrightness = 1;
-        board.creatures.add(new Creature(newPX, newPY, 0, 0,
-          babySize, density, newHue, newSaturation, newBrightness, board, board.year, random(0, 2*PI), 0,
-          stitchName(parentNames), andifyParents(parentNames), true,
+        board.creatures.add(new Creature(newPX, newPY, 0, 0, 
+          babySize, density, newHue, newSaturation, newBrightness, board, board.year, random(0, 2*PI), 0, 
+          stitchName(parentNames), andifyParents(parentNames), true, 
           newBrain, newNeurons, highestGen+1, newMouthHue));
       }
     }
