@@ -85,13 +85,13 @@ class Creature extends SoftBody {
     id = board.creatureIDUpTo+1;
     if (tname.length() >= 1) {
       if (mutateName) {
-        name = nameGenerator.mutateName(tname, board);
+        name = nameGenerator.mutateName(tname);
       } else {
         name = tname;
       }
-      name = nameGenerator.sanitizeName(name, board);
+      name = nameGenerator.sanitizeName(name);
     } else {
-      name = nameGenerator.newName(board);
+      name = nameGenerator.newName();
     }
     parents = tparents;
     board.creatureIDUpTo++;
