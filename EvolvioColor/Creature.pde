@@ -2,6 +2,7 @@ class Creature extends SoftBody {
   double ACCELERATION_ENERGY = 0.18;
   double ACCELERATION_BACK_ENERGY = 0.24;
   double SWIM_ENERGY = 0.008;
+  double LAND_ENERGY = 0.006;
   double TURN_ENERGY = 0.05;
   double EAT_ENERGY = 0.05;
   double EAT_SPEED = 0.5; // 1 is instant, 0 is nonexistent, 0.001 is verrry slow.
@@ -9,9 +10,14 @@ class Creature extends SoftBody {
   double FIGHT_ENERGY = 0.06;
   double INJURED_ENERGY = 0.25;
   double METABOLISM_ENERGY = 0.004;
+  double MUTATION_CHANGE = 0.05;
   String name;
   String parents;
   int gen;
+  
+  double waterPreference = 0;
+  double landPreference = 1;
+  
   int id;
   double MAX_VISION_DISTANCE = 10;
   double currentEnergy;
@@ -52,7 +58,7 @@ class Creature extends SoftBody {
   public Creature(double tpx, double tpy, double tvx, double tvy, double tenergy, 
     double tdensity, double thue, double tsaturation, double tbrightness, Board tb, double bt, 
     double rot, double tvr, String tname, String tparents, boolean mutateName, 
-    Axon[][][] tbrain, double[][] tneurons, int tgen, double tmouthHue) {
+    Axon[][][] tbrain, double[][] tneurons, int tgen, double tmouthHue, double waterPreference, double landPreference) {
     super(tpx, tpy, tvx, tvy, tenergy, tdensity, thue, tsaturation, tbrightness, tb, bt);
     if (tbrain == null) {
       axons = new Axon[BRAIN_WIDTH-1][BRAIN_HEIGHT][BRAIN_HEIGHT-1];
@@ -108,6 +114,8 @@ class Creature extends SoftBody {
     }
     gen = tgen;
     mouthHue = tmouthHue;
+    this.waterPreference = waterPreference;
+    this.landPreference = landPreference;
   }
   public void drawBrain(PFont font, float scaleUp, int mX, int mY) {
     final float neuronSize = 0.4;
@@ -188,7 +196,6 @@ class Creature extends SoftBody {
       if (neurons[end][5] > 0 && board.year-birthTime >= MATURE_AGE && energy > SAFE_SIZE) {
         reproduce(SAFE_SIZE, timeStep);
       }
-      mouthHue = Math.abs(neurons[end][10]) % 1.0;
       for (int i = 0; i < MEMORY_COUNT; i++) {
         memories[i] = neurons[end][11+i];
       }
@@ -211,6 +218,7 @@ class Creature extends SoftBody {
       return color(0, 0, 1);
     }
   }
+  
   public void drawSoftBody(float scaleUp, float camZoom, boolean showVision) {
     ellipseMode(RADIUS);
     double radius = getRadius();
@@ -241,6 +249,7 @@ class Creature extends SoftBody {
       }
     }
   }
+  
   public void drawVisionAngles(Board board, float scaleUp) {
     for (int i = 0; i < visionAngles.length; i++) {
       color visionUIcolor = color(0, 0, 1);
@@ -264,6 +273,7 @@ class Creature extends SoftBody {
         (float)((visionOccludedX[i] + CROSS_SIZE) * scaleUp), (float)((visionOccludedY[i] - CROSS_SIZE) * scaleUp));
     }
   }
+  
   public void drawMouth(Board board, float scaleUp, double radius, double rotation, float camZoom, double mouthHue) {
     noFill();
     strokeWeight(board.CREATURE_STROKE_WEIGHT);
@@ -281,6 +291,7 @@ class Creature extends SoftBody {
     ellipse(0.6 * scaleUp, 0, 0.37 * scaleUp, 0.37 * scaleUp);
     popMatrix();
   }
+  
   public void doThread(double timeStep, Boolean userControl) { // just kidding, multithreading doesn't really help here.
     //collide(timeStep);
     //metabolize(timeStep);
@@ -288,9 +299,11 @@ class Creature extends SoftBody {
     thread = new CreatureThread("Thread "+id, this, timeStep, userControl);
     thread.start();
   }
+  
   public void metabolize(double timeStep) {
     loseEnergy(energy*METABOLISM_ENERGY*timeStep);
   }
+  
   public void accelerate(double amount, double timeStep) {
     double multiplied = amount*timeStep/getMass();
     vx += Math.cos(rotation)*multiplied;
@@ -301,10 +314,12 @@ class Creature extends SoftBody {
       loseEnergy(Math.abs(amount*ACCELERATION_BACK_ENERGY*timeStep));
     }
   }
+  
   public void turn(double amount, double timeStep) {
     vr += 0.04*amount*timeStep/getMass();
     loseEnergy(Math.abs(amount*TURN_ENERGY*energy*timeStep));
   }
+  
   public Tile getRandomCoveredTile() {
     double radius = (float)getRadius();
     double choiceX = 0;
@@ -317,6 +332,7 @@ class Creature extends SoftBody {
     int y = yBound((int)choiceY);
     return board.tiles[x][y];
   }
+  
   public void eat(double attemptedAmount, double timeStep) {
     double amount = attemptedAmount/(1.0+distance(0, 0, vx, vy)*EAT_WHILE_MOVING_INEFFICIENCY_MULTIPLIER); // The faster you're moving, the less efficiently you can eat.
     if (amount < 0) {
@@ -324,6 +340,14 @@ class Creature extends SoftBody {
       loseEnergy(-attemptedAmount*EAT_ENERGY*timeStep);
     } else {
       Tile coveredTile = getRandomCoveredTile();
+      boolean isWater = coveredTile.isWater;
+      double preferenceMultiplier = 1;
+      if(isWater) {
+        preferenceMultiplier = (waterPreference - landPreference);
+      } else {
+        preferenceMultiplier = (landPreference - waterPreference);
+      }
+      
       double foodToEat = coveredTile.foodLevel*(1-Math.pow((1-EAT_SPEED), amount*timeStep));
       if (foodToEat > coveredTile.foodLevel) {
         foodToEat = coveredTile.foodLevel;
@@ -332,13 +356,14 @@ class Creature extends SoftBody {
       double foodDistance = Math.abs(coveredTile.foodType-mouthHue);
       double multiplier = 1.0-foodDistance/FOOD_SENSITIVITY;
       if (multiplier >= 0) {
-        addEnergy(foodToEat*multiplier);
+        addEnergy(foodToEat*multiplier*preferenceMultiplier);
       } else {
-        loseEnergy(-foodToEat*multiplier);
+        loseEnergy(-foodToEat*multiplier*preferenceMultiplier);
       }
       loseEnergy(attemptedAmount*EAT_ENERGY*timeStep);
     }
   }
+  
   public void fight(double amount, double timeStep) {
     if (amount > 0 && board.year-birthTime >= MATURE_AGE) {
       fightLevel = amount;
@@ -357,6 +382,7 @@ class Creature extends SoftBody {
       fightLevel = 0;
     }
   }
+  
   public void loseEnergy(double energyLost) {
     if (energyLost > 0) {
       energy -= energyLost;
@@ -492,6 +518,8 @@ class Creature extends SoftBody {
         double newSaturation = 0;
         double newBrightness = 0;
         double newMouthHue = 0;
+        double newLandPreference = 0;
+        double newWaterPreference = 0;
         int parentsTotal = parents.size();
         String[] parentNames = new String[parentsTotal];
         Axon[][][] newBrain = new Axon[BRAIN_WIDTH-1][BRAIN_HEIGHT][BRAIN_HEIGHT-1];
@@ -524,6 +552,7 @@ class Creature extends SoftBody {
           newSaturation += parent.saturation/parentsTotal;
           newBrightness += parent.brightness/parentsTotal;
           newMouthHue += parent.mouthHue/parentsTotal;
+          newWaterPreference += parent.waterPreference/parentsTotal;
           parentNames[i] = parent.name;
           if (parent.gen > highestGen) {
             highestGen = parent.gen;
@@ -531,13 +560,24 @@ class Creature extends SoftBody {
         }
         newSaturation = 1;
         newBrightness = 1;
+        newWaterPreference = mutate(newWaterPreference, 0, 1);
+        newLandPreference = 1 - newWaterPreference;
         board.creatures.add(new Creature(newPX, newPY, 0, 0, 
           babySize, density, newHue, newSaturation, newBrightness, board, board.year, random(0, 2*PI), 0, 
           stitchName(parentNames), andifyParents(parentNames), true, 
-          newBrain, newNeurons, highestGen+1, newMouthHue));
+          newBrain, newNeurons, highestGen+1, newMouthHue, newWaterPreference, newLandPreference));
       }
     }
   }
+  
+  private double mutate(double value, double minimum, double maximum) {
+    if(random(0, 1) <= MUTATION_CHANGE) {
+      return random((float) minimum, (float) maximum);
+    } else {
+      return value;
+    }
+  }
+  
   public String stitchName(String[] s) {
     String result = "";
     for (int i = 0; i < s.length; i++) {
@@ -548,6 +588,7 @@ class Creature extends SoftBody {
     }
     return result;
   }
+  
   public String andifyParents(String[] s) {
     String result = "";
     for (int i = 0; i < s.length; i++) {
@@ -562,33 +603,41 @@ class Creature extends SoftBody {
   public String getCreatureName() {
     return capitalize(name);
   }
+  
   public String capitalize(String n) {
     return n.substring(0, 1).toUpperCase()+n.substring(1, n.length());
   }
 
   public void applyMotions(double timeStep) {
     if (getRandomCoveredTile().fertility > 1) {
-      loseEnergy(SWIM_ENERGY*energy);
+      loseEnergy(SWIM_ENERGY * energy * (landPreference));
+    } else {
+      loseEnergy(LAND_ENERGY * energy * (waterPreference));
     }
     super.applyMotions(timeStep);
     rotation += vr;
     vr *= Math.max(0, 1-FRICTION/getMass());
   }
+  
   public double getEnergyUsage(double timeStep) {
     return (energy-previousEnergy[ENERGY_HISTORY_LENGTH-1])/ENERGY_HISTORY_LENGTH/timeStep;
   }
+  
   public double getBabyEnergy() {
     return energy-SAFE_SIZE;
   }
+  
   public void addEnergy(double amount) {
     energy += amount;
   }
+  
   public void setPreviousEnergy() {
     for (int i = ENERGY_HISTORY_LENGTH-1; i >= 1; i--) {
       previousEnergy[i] = previousEnergy[i-1];
     }
     previousEnergy[0] = energy;
   }
+  
   public double measure(int choice) {
     int sign = 1-2*(choice%2);
     if (choice < 2) {
@@ -600,40 +649,28 @@ class Creature extends SoftBody {
     }
     return 0;
   }
+  
   public void setHue(double set) {
     hue = Math.min(Math.max(set, 0), 1);
   }
+  
   public void setMouthHue(double set) {
     mouthHue = Math.min(Math.max(set, 0), 1);
   }
+  
   public void setSaturarion(double set) {
     saturation = Math.min(Math.max(set, 0), 1);
   }
+  
   public void setBrightness(double set) {
     brightness = Math.min(Math.max(set, 0), 1);
   }
-  /*public void setVisionAngle(double set) {
-   visionAngle = set;//Math.min(Math.max(set, -Math.PI/2), Math.PI/2);
-   while(visionAngle < -Math.PI) {
-   visionAngle += Math.PI*2;
-   }
-   while(visionAngle > Math.PI) {
-   visionAngle -= Math.PI*2;
-   }
-   }
-   public void setVisionDistance(double set) {
-   visionDistance = Math.min(Math.max(set, 0), MAX_VISION_DISTANCE);
-   }*/
-  /*public double getVisionStartX() {
-   return px;//+getRadius()*Math.cos(rotation);
-   }
-   public double getVisionStartY() {
-   return py;//+getRadius()*Math.sin(rotation);
-   }*/
+  
   public double getVisionEndX(int i) {
     double visionTotalAngle = rotation+visionAngles[i];
     return px+visionDistances[i]*Math.cos(visionTotalAngle);
   }
+  
   public double getVisionEndY(int i) {
     double visionTotalAngle = rotation+visionAngles[i];
     return py+visionDistances[i]*Math.sin(visionTotalAngle);
