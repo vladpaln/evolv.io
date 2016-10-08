@@ -48,7 +48,6 @@ class Board {
   int[] populationHistory;
   double recordPopulationEvery = 0.02;
   int playSpeed = 1;
-  public int threadsToFinish = 0;
 
   public Board(int w, int h, float stepSize, float min, float max, int rta, int cm, int SEED, String INITIAL_FILE_NAME, double ts) {
     noiseSeed(SEED);
@@ -348,10 +347,8 @@ class Board {
      rocks.get(i).collide(timeStep*OBJECT_TIMESTEPS_PER_YEAR);
      }*/
     maintainCreatureMinimum(false);
-    threadsToFinish = creatures.size();
     for (int i = 0; i < creatures.size(); i++) {
       Creature me = creatures.get(i);
-      //me.doThread(timeStep, userControl);
       me.collide(timeStep);
       me.metabolize(timeStep);
       me.useBrain(timeStep, !userControl);

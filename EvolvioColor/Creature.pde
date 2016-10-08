@@ -46,7 +46,6 @@ class Creature extends SoftBody {
   float CROSS_SIZE = 0.022;
 
   double mouthHue;
-  CreatureThread thread;
   NameGenerator nameGenerator = new NameGenerator();
 
   public Creature(double tpx, double tpy, double tvx, double tvy, double tenergy, 
@@ -281,16 +280,11 @@ class Creature extends SoftBody {
     ellipse(0.6 * scaleUp, 0, 0.37 * scaleUp, 0.37 * scaleUp);
     popMatrix();
   }
-  public void doThread(double timeStep, Boolean userControl) { // just kidding, multithreading doesn't really help here.
-    //collide(timeStep);
-    //metabolize(timeStep);
-    //useBrain(timeStep, !userControl);
-    thread = new CreatureThread("Thread "+id, this, timeStep, userControl);
-    thread.start();
-  }
+  
   public void metabolize(double timeStep) {
     loseEnergy(energy*METABOLISM_ENERGY*timeStep);
   }
+  
   public void accelerate(double amount, double timeStep) {
     double multiplied = amount*timeStep/getMass();
     vx += Math.cos(rotation)*multiplied;
