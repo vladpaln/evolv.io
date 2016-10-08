@@ -10,7 +10,7 @@ class Creature extends SoftBody {
   double FIGHT_ENERGY = 0.06;
   double INJURED_ENERGY = 0.25;
   double METABOLISM_ENERGY = 0.004;
-  double MUTATION_CHANGE = 0.05;
+  double ENVIRONMENT_PREFERENCE_MUTATION_CHANGE = 0.05;
   String name;
   String parents;
   int gen;
@@ -560,7 +560,7 @@ class Creature extends SoftBody {
         }
         newSaturation = 1;
         newBrightness = 1;
-        newWaterPreference = mutate(newWaterPreference, 0, 1);
+        newWaterPreference = mutateEnvironmentPreference(newWaterPreference, 0, 1);
         newLandPreference = 1 - newWaterPreference;
         board.creatures.add(new Creature(newPX, newPY, 0, 0, 
           babySize, density, newHue, newSaturation, newBrightness, board, board.year, random(0, 2*PI), 0, 
@@ -570,8 +570,8 @@ class Creature extends SoftBody {
     }
   }
   
-  private double mutate(double value, double minimum, double maximum) {
-    if(random(0, 1) <= MUTATION_CHANGE) {
+  private double mutateEnvironmentPreference(double value, double minimum, double maximum) {
+    if(random(0, 1) <= ENVIRONMENT_PREFERENCE_MUTATION_CHANGE) {
       return random((float) minimum, (float) maximum);
     } else {
       return value;
