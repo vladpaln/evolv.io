@@ -26,8 +26,6 @@ class Board {
   ArrayList<Creature> creatures;
   Creature selectedCreature = null;
   int creatureIDUpTo = 0;
-  float[] letterFrequencies = {8.167, 1.492, 2.782, 4.253, 12.702, 2.228, 2.015, 6.094, 6.966, 0.153, 0.772, 4.025, 2.406, 6.749, 
-    7.507, 1.929, 0.095, 5.987, 6.327, 9.056, 2.758, 0.978, 2.361, 0.150, 1.974, 10000.0};//0.074};
   final int LIST_SLOTS = 6;
   int creatureRankMetric = 0;
   color buttonColor = color(0.82, 0.8, 0.7);
@@ -48,7 +46,6 @@ class Board {
   int[] populationHistory;
   double recordPopulationEvery = 0.02;
   int playSpeed = 1;
-  public int threadsToFinish = 0;
 
   public Board(int w, int h, float stepSize, float min, float max, int rta, int cm, int SEED, String INITIAL_FILE_NAME, double ts) {
     noiseSeed(SEED);
@@ -348,10 +345,8 @@ class Board {
      rocks.get(i).collide(timeStep*OBJECT_TIMESTEPS_PER_YEAR);
      }*/
     maintainCreatureMinimum(false);
-    threadsToFinish = creatures.size();
     for (int i = 0; i < creatures.size(); i++) {
       Creature me = creatures.get(i);
-      //me.doThread(timeStep, userControl);
       me.collide(timeStep);
       me.metabolize(timeStep);
       me.useBrain(timeStep, !userControl);

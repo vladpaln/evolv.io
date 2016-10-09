@@ -52,7 +52,6 @@ class Creature extends SoftBody {
   float CROSS_SIZE = 0.022;
 
   double mouthHue;
-  CreatureThread thread;
   NameGenerator nameGenerator = new NameGenerator();
 
   public Creature(double tpx, double tpy, double tvx, double tvy, double tenergy, 
@@ -91,13 +90,13 @@ class Creature extends SoftBody {
     id = board.creatureIDUpTo+1;
     if (tname.length() >= 1) {
       if (mutateName) {
-        name = nameGenerator.mutateName(tname, board);
+        name = nameGenerator.mutateName(tname);
       } else {
         name = tname;
       }
-      name = nameGenerator.sanitizeName(name, board);
+      name = nameGenerator.sanitizeName(name);
     } else {
-      name = nameGenerator.newName(board);
+      name = nameGenerator.newName();
     }
     parents = tparents;
     board.creatureIDUpTo++;
@@ -290,14 +289,6 @@ class Creature extends SoftBody {
     fill((float)mouthHue, 1.0, 1.0);
     ellipse(0.6 * scaleUp, 0, 0.37 * scaleUp, 0.37 * scaleUp);
     popMatrix();
-  }
-  
-  public void doThread(double timeStep, Boolean userControl) { // just kidding, multithreading doesn't really help here.
-    //collide(timeStep);
-    //metabolize(timeStep);
-    //useBrain(timeStep, !userControl);
-    thread = new CreatureThread("Thread "+id, this, timeStep, userControl);
-    thread.start();
   }
   
   public void metabolize(double timeStep) {
