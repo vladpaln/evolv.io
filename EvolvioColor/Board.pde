@@ -135,7 +135,7 @@ class Board {
     textFont(font, 24);
     text("Population: "+creatures.size(), 10, 80);
     String[] seasons = {"Winter", "Spring", "Summer", "Autumn"};
-    text(seasons[(int)(getSeason()*4)], seasonTextXCoor, 30);
+    text(seasons[(int)(getSeason()*4)] + "\nSeed: " + SEED, seasonTextXCoor, 30);
 
     if (selectedCreature == null) {
       for (int i = 0; i < LIST_SLOTS; i++) {
