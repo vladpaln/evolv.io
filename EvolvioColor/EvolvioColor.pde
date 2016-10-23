@@ -162,6 +162,8 @@ void mousePressed() {
               evoBoard.playSpeed *= 2;
             }
           }
+        } else if (buttonNum == 7) {
+          //Code for the eighth button
         }
       }
     } else if (mouseX >= height+10 && mouseX < width-50 && evoBoard.selectedCreature == null) {
