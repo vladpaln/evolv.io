@@ -360,14 +360,14 @@ class Board {
               if (keyCode == RIGHT) me.turn(0.1, timeStep*OBJECT_TIMESTEPS_PER_YEAR);
             } else {
               if (key == ' ') me.eat(0.1, timeStep*OBJECT_TIMESTEPS_PER_YEAR);
-              if (key == 'v') me.eat(-0.1, timeStep*OBJECT_TIMESTEPS_PER_YEAR);
-              if (key == 'f')  me.fight(0.5, timeStep*OBJECT_TIMESTEPS_PER_YEAR);
-              if (key == 'u') me.setHue(me.hue+0.02);
-              if (key == 'j') me.setHue(me.hue-0.02);
+              if (key == 'v' || key == 'V') me.eat(-0.1, timeStep*OBJECT_TIMESTEPS_PER_YEAR);
+              if (key == 'f' || key == 'F')  me.fight(0.5, timeStep*OBJECT_TIMESTEPS_PER_YEAR);
+              if (key == 'u' || key == 'U') me.setHue(me.hue+0.02);
+              if (key == 'j' || key == 'J') me.setHue(me.hue-0.02);
 
-              if (key == 'i') me.setMouthHue(me.mouthHue+0.02);
-              if (key == 'k') me.setMouthHue(me.mouthHue-0.02);
-              if (key == 'b') {
+              if (key == 'i' || key == 'I') me.setMouthHue(me.mouthHue+0.02);
+              if (key == 'k' || key == 'K') me.setMouthHue(me.mouthHue-0.02);
+              if (key == 'b' || key == 'B') {
                 if (!wasPressingB) {
                   me.reproduce(MANUAL_BIRTH_SIZE, timeStep);
                 }
