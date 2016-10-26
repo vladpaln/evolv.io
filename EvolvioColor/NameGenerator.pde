@@ -17,17 +17,17 @@ class NameGenerator {
     if (input.length() >= 3) {
       if (random(0, 1) < 0.2) {
         int removeIndex = (int)random(0, input.length());
-        input = input.substring(0, removeIndex)+input.substring(removeIndex+1, input.length());
+        input = input.substring(0, removeIndex) + input.substring(removeIndex + 1, input.length());
       }
     }
     if (input.length() <= 9) {
       if (random(0, 1) < 0.2) {
-        int insertIndex = (int)random(0, input.length()+1);
+        int insertIndex = (int)random(0, input.length() + 1);
         input = input.substring(0, insertIndex) + getRandomChar() + input.substring(insertIndex, input.length());
       }
     }
     int changeIndex = (int)random(0, input.length());
-    input = input.substring(0, changeIndex) + getRandomChar() + input.substring(changeIndex+1, input.length());
+    input = input.substring(0, changeIndex) + getRandomChar() + input.substring(changeIndex + 1, input.length());
     return input;
   }
 
@@ -38,7 +38,7 @@ class NameGenerator {
       letterFactor -= LETTER_FREQUENCIES[letterChoice];
       letterChoice++;
     }
-    return (char)(letterChoice+96);
+    return (char)(letterChoice + 96);
   }
 
   public String sanitizeName(String input) {
@@ -55,7 +55,7 @@ class NameGenerator {
         consonantsSoFar++;
       }
       if (vowelsSoFar <= 2 && consonantsSoFar <= 2) {
-        output = output+ch;
+        output = output + ch;
       } else {
         double chanceOfAddingChar = 0.5;
         if (input.length() <= MIN_NAME_LENGTH) {
@@ -68,7 +68,7 @@ class NameGenerator {
           while (extraChar == ' ' || (isVowel(ch) == isVowel(extraChar))) {
             extraChar = getRandomChar();
           }
-          output = output+extraChar+ch;
+          output = output + extraChar + ch;
           if (isVowel(ch)) {
             consonantsSoFar = 0;
             vowelsSoFar = 1;

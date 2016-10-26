@@ -12,13 +12,13 @@ class Axon {
   }
 
   public Axon mutateAxon() {
-    double mutabilityMutate = Math.pow(0.5, pmRan()*MUTABILITY_MUTABILITY);
-    return new Axon(weight+r()*mutability/MUTATE_MULTI, mutability*mutabilityMutate);
+    double mutabilityMutate = Math.pow(0.5, pmRan() * MUTABILITY_MUTABILITY);
+    return new Axon(weight + r() * mutability / MUTATE_MULTI, mutability * mutabilityMutate);
   }
   public double r() {
     return Math.pow(pmRan(), mutatePower);
   }
   public double pmRan() {
-    return Math.random()*2-1;
+    return Math.random() * 2 - 1;
   }
 }
