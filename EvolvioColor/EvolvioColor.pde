@@ -122,17 +122,27 @@ void mousePressed() {
         int mX = (int)(x / 230);
         int mY = (int)(y / 50);
         int buttonNum = mX + mY * 2;
-        if (buttonNum == 0) {
+
+
+        switch(buttonNum) {
+
+          case(0):
           evoBoard.userControl = !evoBoard.userControl;
-        } else if (buttonNum == 1) {
+          break;
+
+          case(1):
           if (clickedOnLeft) {
             evoBoard.creatureMinimum -= evoBoard.creatureMinimumIncrement;
           } else {
             evoBoard.creatureMinimum += evoBoard.creatureMinimumIncrement;
           }
-        } else if (buttonNum == 2) {
+          break;
+
+          case(2):
           evoBoard.prepareForFileSave(0);
-        } else if (buttonNum == 3) {
+          break;
+
+          case(3):
           if (clickedOnLeft) {
             evoBoard.imageSaveInterval *= 0.5;
           } else {
@@ -141,9 +151,13 @@ void mousePressed() {
           if (evoBoard.imageSaveInterval >= 0.7) {
             evoBoard.imageSaveInterval = Math.round(evoBoard.imageSaveInterval);
           }
-        } else if (buttonNum == 4) {
+          break;
+
+          case(4):
           evoBoard.prepareForFileSave(2);
-        } else if (buttonNum == 5) {
+          break;
+
+          case(5):
           if (clickedOnLeft) {
             evoBoard.textSaveInterval *= 0.5;
           } else {
@@ -152,7 +166,9 @@ void mousePressed() {
           if (evoBoard.textSaveInterval >= 0.7) {
             evoBoard.textSaveInterval = Math.round(evoBoard.textSaveInterval);
           }
-        } else if (buttonNum == 6) {
+          break;
+
+          case(6):
           if (clickedOnLeft) {
             if (evoBoard.playSpeed >= 2) {
               evoBoard.playSpeed /= 2;
@@ -166,8 +182,11 @@ void mousePressed() {
               evoBoard.playSpeed *= 2;
             }
           }
-        } else if (buttonNum == 7) {
+          break;
+
+          case(7):
           // Code for the eighth button
+          break;
         }
       }
     } else if (mouseX >= height + 10 && mouseX < width - 50 && evoBoard.selectedCreature == null) {
