@@ -60,6 +60,7 @@ class Board {
   final double FLASH_SPEED = 80;
   boolean userControl;
 
+  final String[] sorts = {"Biggest", "Smallest", "Youngest", "Oldest", "A to Z", "Z to A", "Highest Gen", "Lowest Gen"};
 
 
   public Board(int w, int h, float stepSize, float min, float max, int rta, int cm, int SEED, String INITIAL_FILE_NAME, double ts) {
@@ -216,7 +217,6 @@ class Board {
       fill(0, 0, 1);
       textAlign(CENTER);
       text("Reset zoom", 120, 123);
-      String[] sorts = {"Biggest", "Smallest", "Youngest", "Oldest", "A to Z", "Z to A", "Highest Gen", "Lowest Gen"};
       text("Sort by: " + sorts[creatureRankMetric], 350, 123);
 
       textFont(font, 19);
@@ -571,6 +571,14 @@ class Board {
         fileSaveCounts[i]++;
       }
     }
+  }
+  
+  public void incrementSort() {
+    evoBoard.creatureRankMetric = (evoBoard.creatureRankMetric + 1) % sorts.length;
+  }
+  
+  public void decrementSort() {
+    evoBoard.creatureRankMetric = (evoBoard.creatureRankMetric + sorts.length - 1) % sorts.length;
   }
 
   public String[] toBigString() { // Convert current evolvio board into string. Does not work

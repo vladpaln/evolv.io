@@ -112,7 +112,12 @@ void mousePressed() {
       if (mouseX >= windowHeight + 10 && mouseX < windowHeight + 230) {
         resetZoom();
       } else if (mouseX >= windowHeight + 240 && mouseX < windowHeight + 460) {
-        evoBoard.creatureRankMetric = (evoBoard.creatureRankMetric + 1) % 8;
+        if (mouseButton == LEFT) {
+          evoBoard.incrementSort();
+        }
+        else if (mouseButton == RIGHT){
+          evoBoard.decrementSort();
+        }
       }
     } else if (mouseY >= 570) {
       float x = (mouseX - (windowHeight + 10));
