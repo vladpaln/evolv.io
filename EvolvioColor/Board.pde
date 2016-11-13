@@ -16,7 +16,7 @@ class Board {
   ArrayList<Creature> creatures;
   Creature selectedCreature = null;
   int creatureIDUpTo = 0;
-  int creatureRankMetric = 0;
+  private int creatureRankMetric = 0;
   final int LIST_SLOTS = 6;
   Creature[] list = new Creature[LIST_SLOTS];
   final int creatureMinimumIncrement = 5;
@@ -162,19 +162,19 @@ class Board {
       }
       for (int i = 0; i < creatures.size(); i++) {
         int lookingAt = 0;
-        if (creatureRankMetric == 4) {
-          while (lookingAt < LIST_SLOTS && list[lookingAt] != null && list[lookingAt].name.compareTo(creatures.get(i).name) < 0) {
-            lookingAt++;
-          }
-        } else if (creatureRankMetric == 5) {
-          while (lookingAt < LIST_SLOTS && list[lookingAt] != null && list[lookingAt].name.compareTo(creatures.get(i).name) >= 0) {
-            lookingAt++;
-          }
-        } else {
-          while (lookingAt < LIST_SLOTS && list[lookingAt] != null && list[lookingAt].measure(creatureRankMetric) > creatures.get(i).measure(creatureRankMetric)) {
-            lookingAt++;
+        boolean done = false;
+        while (lookingAt < LIST_SLOTS && list[lookingAt] != null & !done) {
+          if (creatureRankMetric == 4 && list[lookingAt].name.compareTo(creatures.get(i).name) < 0) {
+              lookingAt++;
+          } else if (creatureRankMetric == 5 && list[lookingAt].name.compareTo(creatures.get(i).name) >= 0) {
+              lookingAt++;
+          } else if (list[lookingAt].measure(creatureRankMetric) > creatures.get(i).measure(creatureRankMetric)) {
+              lookingAt++;
+          } else {
+            done = true;
           }
         }
+
         if (lookingAt < LIST_SLOTS) {
           for (int j = LIST_SLOTS - 1; j >= lookingAt + 1; j--) {
             list[j] = list[j - 1];
