@@ -531,7 +531,7 @@ class Board {
       } else {
         creatures.add(new Creature(random(0, boardWidth), random(0, boardHeight), 0, 0, 
           random(MIN_CREATURE_ENERGY, MAX_CREATURE_ENERGY), 1, random(0, 1), 1, 1, 
-          this, year, random(0, 2 * PI), 0, "", "[PRIMORDIAL]", true, null, null, 1, random(0, 1)));
+          this, year, random(0, 2 * PI), 0, "", "[PRIMORDIAL]", true, null, 1, random(0, 1)));
       }
     }
   }
