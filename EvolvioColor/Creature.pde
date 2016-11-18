@@ -10,6 +10,7 @@ class Creature extends SoftBody {
   double FIGHT_ENERGY = 0.06;
   double INJURED_ENERGY = 0.25;
   double METABOLISM_ENERGY = 0.004;
+  double AGE_FACTOR = 1; // 0 no ageing
   double currentEnergy;
   final int ENERGY_HISTORY_LENGTH = 6;
   double[] previousEnergy = new double[ENERGY_HISTORY_LENGTH];
@@ -297,7 +298,8 @@ class Creature extends SoftBody {
   }
   
   public void metabolize(double timeStep) {
-    loseEnergy(energy * METABOLISM_ENERGY * timeStep);
+    double age = AGE_FACTOR * (board.year - birthTime); // the older the more work necessary
+    loseEnergy(energy * METABOLISM_ENERGY * age * timeStep);
   }
   
   public void accelerate(double amount, double timeStep) {
@@ -629,6 +631,8 @@ class Creature extends SoftBody {
     }
     return 0;
   }
+  
+  
 
   public void setHue(double set) {
     hue = Math.min(Math.max(set, 0), 1);
