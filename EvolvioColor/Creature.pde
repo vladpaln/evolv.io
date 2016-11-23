@@ -23,7 +23,6 @@ class Creature extends SoftBody {
 
   // Vision or View or Preference
   double MAX_VISION_DISTANCE = 10;
-  final double STARTING_AXON_VARIABILITY = 1.0;
   final double FOOD_SENSITIVITY = 0.3;
   final double MAX_DETAILED_ZOOM = 3.5; // Maximum zoom to draw details at
   double[] visionAngles = {0, -0.4, 0.4};
@@ -34,18 +33,11 @@ class Creature extends SoftBody {
   double[] visionOccludedY = new double[visionAngles.length];
   double visionResults[] = new double[9];
 
-  // Brain
-  final int BRAIN_WIDTH = 3;
-  final int BRAIN_HEIGHT = 13;
-  final double AXON_START_MUTABILITY = 0.0005;
+  Brain brain;
   final float BRIGHTNESS_THRESHOLD = 0.7;
-  Axon[][][] axons;
-  double[][] neurons;
 
   // Misc or Unsorted
   float preferredRank = 8;
-  int MEMORY_COUNT = 1;
-  double[] memories;
   float CROSS_SIZE = 0.022;
   double mouthHue;
   double vr = 0;
@@ -58,34 +50,13 @@ class Creature extends SoftBody {
   public Creature(double tpx, double tpy, double tvx, double tvy, double tenergy, 
     double tdensity, double thue, double tsaturation, double tbrightness, Board tb, double bt, 
     double rot, double tvr, String tname, String tparents, boolean mutateName, 
-    Axon[][][] tbrain, double[][] tneurons, int tgen, double tmouthHue) {
+    Brain brain, int tgen, double tmouthHue) {
 
     super(tpx, tpy, tvx, tvy, tenergy, tdensity, thue, tsaturation, tbrightness, tb, bt);
-    if (tbrain == null) {
-      axons = new Axon[BRAIN_WIDTH - 1][BRAIN_HEIGHT][BRAIN_HEIGHT - 1];
-      neurons = new double[BRAIN_WIDTH][BRAIN_HEIGHT];
-      for (int x = 0; x < BRAIN_WIDTH - 1; x++) {
-        for (int y = 0; y < BRAIN_HEIGHT; y++) {
-          for (int z = 0; z < BRAIN_HEIGHT - 1; z++) {
-            double startingWeight = (Math.random() * 2 - 1) * STARTING_AXON_VARIABILITY;
-            axons[x][y][z] = new Axon(startingWeight, AXON_START_MUTABILITY);
-          }
-        }
-      }
-      neurons = new double[BRAIN_WIDTH][BRAIN_HEIGHT];
-      for (int x = 0; x < BRAIN_WIDTH; x++) {
-        for (int y = 0; y < BRAIN_HEIGHT; y++) {
-          if (y == BRAIN_HEIGHT-1) {
-            neurons[x][y] = 1;
-          } else {
-            neurons[x][y] = 0;
-          }
-        }
-      }
-    } else {
-      axons = tbrain;
-      neurons = tneurons;
-    }
+
+    if(brain ==null)brain = new Brain(null,null);
+    this.brain = brain;
+
     rotation = rot;
     vr = tvr;
     isCreature = true;
@@ -109,121 +80,37 @@ class Creature extends SoftBody {
     for (int i = 0; i < 9; i++) {
       visionResults[i] = 0;
     }
-    memories = new double[MEMORY_COUNT];
-    for (int i = 0; i < MEMORY_COUNT; i++) {
-      memories[i] = 0;
-    }
     gen = tgen;
     mouthHue = tmouthHue;
   }
 
   public void drawBrain(PFont font, float scaleUp, int mX, int mY) {
-    final float neuronSize = 0.4;
-    noStroke();
-    fill(0, 0, 0.4);
-    rect((-1.7 - neuronSize) * scaleUp, -neuronSize * scaleUp, (2.4 + BRAIN_WIDTH + neuronSize * 2) * scaleUp, (BRAIN_HEIGHT + neuronSize * 2) * scaleUp);
-
-    ellipseMode(RADIUS);
-    strokeWeight(2);
-    textFont(font, 0.58 * scaleUp);
-    fill(0, 0, 1);
-    String[] inputLabels = {"0Hue", "0Sat", "0Bri", "1Hue", 
-      "1Sat", "1Bri", "2Hue", "2Sat", "2Bri", "Size", "MHue", "Mem", "Const."};
-    String[] outputLabels = {"BHue", "Accel.", "Turn", "Eat", "Fight", "Birth", "How funny?", 
-      "How popular?", "How generous?", "How smart?", "MHue", "Mem", "Const."};
-    for (int y = 0; y < BRAIN_HEIGHT; y++) {
-      textAlign(RIGHT);
-      text(inputLabels[y], (-neuronSize - 0.1) * scaleUp, (y + (neuronSize * 0.6)) * scaleUp);
-      textAlign(LEFT);
-      text(outputLabels[y], (BRAIN_WIDTH - 1 + neuronSize + 0.1) * scaleUp, (y + (neuronSize * 0.6)) * scaleUp);
-    }
-    textAlign(CENTER);
-    for (int x = 0; x < BRAIN_WIDTH; x++) {
-      for (int y = 0; y < BRAIN_HEIGHT; y++) {
-        noStroke();
-        double val = neurons[x][y];
-        fill(neuronFillColor(val));
-        ellipse(x * scaleUp, y * scaleUp, neuronSize * scaleUp, neuronSize * scaleUp);
-        fill(neuronTextColor(val));
-        text(nf((float)val, 0, 1), x * scaleUp, (y + (neuronSize * 0.6)) * scaleUp);
-      }
-    }
-    if (mX >= 0 && mX < BRAIN_WIDTH && mY >= 0 && mY < BRAIN_HEIGHT) {
-      for (int y = 0; y < BRAIN_HEIGHT; y++) {
-        if (mX >= 1 && mY < BRAIN_HEIGHT - 1) {
-          drawAxon(mX - 1, y, mX, mY, scaleUp);
-        }
-        if (mX < BRAIN_WIDTH - 1 && y < BRAIN_HEIGHT - 1) {
-          drawAxon(mX, mY, mX + 1, y, scaleUp);
-        }
-      }
-    }
-  }
-
-  public void drawAxon(int x1, int y1, int x2, int y2, float scaleUp) {
-    stroke(neuronFillColor(axons[x1][y1][y2].weight*neurons[x1][y1]));
-
-    line(x1 * scaleUp, y1 * scaleUp, x2 * scaleUp, y2 * scaleUp);
+    brain.draw(font, scaleUp, mX, mY);
   }
 
   public void useBrain(double timeStep, boolean useOutput) {
+    double inputs[]= new double[11];
     for (int i = 0; i < 9; i++) {
-      neurons[0][i] = visionResults[i];
+      inputs[i] = visionResults[i];
     }
-    neurons[0][9] = energy;
-    neurons[0][10] = mouthHue;
-    for (int i = 0; i < MEMORY_COUNT; i++) {
-      neurons[0][11 + i] = memories[i];
-    }
-    for (int x = 1; x < BRAIN_WIDTH; x++) {
-      for (int y = 0; y < BRAIN_HEIGHT-1; y++) {
-        double total = 0;
-        for (int input = 0; input < BRAIN_HEIGHT; input++) {
-          total += neurons[x - 1][input] * axons[x - 1][input][y].weight;
-        }
-        if (x == BRAIN_WIDTH - 1) {
-          neurons[x][y] = total;
-        } else {
-          neurons[x][y] = sigmoid(total);
-        }
-      }
-    }
+    inputs[9]= energy;
+    inputs[10] = mouthHue;
+    brain.input(inputs);
+
     if (useOutput) {
-      int end = BRAIN_WIDTH - 1;
-      hue = Math.abs(neurons[end][0]) % 1.0;
-      accelerate(neurons[end][1], timeStep);
-      turn(neurons[end][2], timeStep);
-      eat(neurons[end][3], timeStep);
-      fight(neurons[end][4], timeStep * 100);
-      if (neurons[end][5] > 0 && board.year-birthTime >= MATURE_AGE && energy > SAFE_SIZE) {
+      double[] output = brain.outputs();
+      hue = Math.abs(output[0]) % 1.0;
+      accelerate(output[1], timeStep);
+      turn(output[2], timeStep);
+      eat(output[3], timeStep);
+      fight(output[4], timeStep * 100);
+      if (output[5] > 0 && board.year-birthTime >= MATURE_AGE && energy > SAFE_SIZE) {
         reproduce(SAFE_SIZE, timeStep);
       }
-      mouthHue = Math.abs(neurons[end][10]) % 1.0;
-      for (int i = 0; i < MEMORY_COUNT; i++) {
-        memories[i] = neurons[end][11 + i];
-      }
+      mouthHue = Math.abs(output[10]) % 1.0;
     }
   }
 
-  public double sigmoid(double input) {
-    return 1.0 / (1.0 + Math.pow(2.71828182846, -input));
-  }
-
-  public color neuronFillColor(double d) {
-    if (d >= 0) {
-      return color(0, 0, 1, (float)(d));
-    } else {
-      return color(0, 0, 0, (float)(-d));
-    }
-  }
-
-  public color neuronTextColor(double d) {
-    if (d >= 0) {
-      return color(0, 0, 0);
-    } else {
-      return color(0, 0, 1);
-    }
-  }
 
   public void drawSoftBody(float scaleUp, float camZoom, boolean showVision) {
     ellipseMode(RADIUS);
@@ -240,7 +127,7 @@ class Creature extends SoftBody {
     stroke(0, 0, 1);
     fill(0, 0, 1);
     if (this == board.selectedCreature) {
-      ellipse((float)(px * scaleUp), (float)(py * scaleUp),
+      ellipse((float)(px * scaleUp), (float)(py * scaleUp), 
         (float)(radius * scaleUp + 1 + 75.0 / camZoom), (float)(radius * scaleUp + 1 + 75.0 / camZoom));
     }
     super.drawSoftBody(scaleUp);
@@ -296,12 +183,12 @@ class Creature extends SoftBody {
     ellipse(0.6 * scaleUp, 0, 0.37 * scaleUp, 0.37 * scaleUp);
     popMatrix();
   }
-  
+
   public void metabolize(double timeStep) {
     double age = AGE_FACTOR * (board.year - birthTime); // the older the more work necessary
     loseEnergy(energy * METABOLISM_ENERGY * age * timeStep);
   }
-  
+
   public void accelerate(double amount, double timeStep) {
     double multiplied = amount * timeStep / getMass();
     vx += Math.cos(rotation) * multiplied;
@@ -499,7 +386,7 @@ class Creature extends SoftBody {
       double availableEnergy = getBabyEnergy();
       for (int i = 0; i < colliders.size(); i++) {
         SoftBody possibleParent = colliders.get(i);
-        if (possibleParent.isCreature && ((Creature)possibleParent).neurons[BRAIN_WIDTH-1][9] > -1) { // Must be a WILLING creature to also give birth.
+        if (possibleParent.isCreature && ((Creature)possibleParent).brain.outputs()[9] > -1) { // Must be a WILLING creature to also give birth.
           float distance = dist((float)px, (float)py, (float)possibleParent.px, (float)possibleParent.py);
           double combinedRadius = getRadius() * FIGHT_RANGE + possibleParent.getRadius();
           if (distance < combinedRadius) {
@@ -517,25 +404,7 @@ class Creature extends SoftBody {
         double newMouthHue = 0;
         int parentsTotal = parents.size();
         String[] parentNames = new String[parentsTotal];
-        Axon[][][] newBrain = new Axon[BRAIN_WIDTH - 1][BRAIN_HEIGHT][BRAIN_HEIGHT - 1];
-        double[][] newNeurons = new double[BRAIN_WIDTH][BRAIN_HEIGHT];
-        float randomParentRotation = random(0, 1);
-        for (int x = 0; x < BRAIN_WIDTH - 1; x++) {
-          for (int y = 0; y < BRAIN_HEIGHT; y++) {
-            for (int z = 0; z < BRAIN_HEIGHT - 1; z++) {
-              float axonAngle = atan2((y + z) / 2.0 - BRAIN_HEIGHT / 2.0, x - BRAIN_WIDTH / 2) / (2 * PI) + PI;
-              Creature parentForAxon = parents.get((int)(((axonAngle + randomParentRotation) % 1.0) * parentsTotal));
-              newBrain[x][y][z] = parentForAxon.axons[x][y][z].mutateAxon();
-            }
-          }
-        }
-        for (int x = 0; x < BRAIN_WIDTH; x++) {
-          for (int y = 0; y < BRAIN_HEIGHT; y++) {
-            float axonAngle = atan2(y - BRAIN_HEIGHT / 2.0, x - BRAIN_WIDTH / 2) / (2 * PI) + PI;
-            Creature parentForAxon = parents.get((int)(((axonAngle + randomParentRotation) % 1.0) * parentsTotal));
-            newNeurons[x][y] = parentForAxon.neurons[x][y];
-          }
-        }
+        Brain newBrain = brain.evolve(parents);
         for (int i = 0; i < parentsTotal; i++) {
           int chosenIndex = (int)random(0, parents.size());
           Creature parent = parents.get(chosenIndex);
@@ -555,9 +424,9 @@ class Creature extends SoftBody {
         newSaturation = 1;
         newBrightness = 1;
         board.creatures.add(new Creature(newPX, newPY, 0, 0, 
-          babySize, density, newHue, newSaturation, newBrightness, board, board.year, random(0, 2 * PI), 0,
+          babySize, density, newHue, newSaturation, newBrightness, board, board.year, random(0, 2 * PI), 0, 
           stitchName(parentNames), andifyParents(parentNames), true, 
-          newBrain, newNeurons, highestGen + 1, newMouthHue));
+          newBrain, highestGen + 1, newMouthHue));
       }
     }
   }
@@ -631,8 +500,8 @@ class Creature extends SoftBody {
     }
     return 0;
   }
-  
-  
+
+
 
   public void setHue(double set) {
     hue = Math.min(Math.max(set, 0), 1);
