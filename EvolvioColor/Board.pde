@@ -399,11 +399,6 @@ class Board {
           }
         }
       }
-      if (me.getRadius() < MINIMUM_SURVIVABLE_SIZE) {
-        me.returnToEarth();
-        creatures.remove(me);
-        i--;
-      }
     }
     finishIterate(timeStep);
   }

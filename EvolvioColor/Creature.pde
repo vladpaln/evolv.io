@@ -187,6 +187,11 @@ class Creature extends SoftBody {
   public void metabolize(double timeStep) {
     double age = AGE_FACTOR * (board.year - birthTime); // the older the more work necessary
     loseEnergy(energy * METABOLISM_ENERGY * age * timeStep);
+    
+    if (energy < SAFE_SIZE) {
+        returnToEarth();
+        board.creatures.remove(this);
+    }
   }
 
   public void accelerate(double amount, double timeStep) {
