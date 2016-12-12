@@ -75,7 +75,7 @@ class Board {
         float fertility = noise(x * stepSize * 3, y * stepSize * 3) * (1 - bigForce) * 5.0 + noise(x * stepSize * 0.5, y * stepSize * 0.5) * bigForce * 5.0 - 1.5;
         float climateType = noise(x * stepSize * 0.2 + 10000, y * stepSize * 0.2 + 10000) * 1.63 - 0.4;
         climateType = min(max(climateType, 0), 0.8);
-        tiles[x][y] = new Tile(x, y, fertility, 0, climateType, this);
+        tiles[x][y] = new Tile(x, y, fertility, climateType, this);
       }
     }
     MIN_TEMPERATURE = min;

@@ -17,11 +17,11 @@ class Tile {
 
   Board board;
 
-  public Tile(int x, int y, double f, float food, float type, Board b) {
+  public Tile(int x, int y, double f, float type, Board b) {
     posX = x;
     posY = y;
     fertility = Math.max(0, f);
-    foodLevel = Math.max(0, food);
+    foodLevel = fertility;
     climateType = foodType = type;
     board = b;
   }
