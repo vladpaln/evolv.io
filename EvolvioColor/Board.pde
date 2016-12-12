@@ -55,6 +55,7 @@ class Board {
 
   // Misc or Unsorted
   final color BACKGROUND_COLOR = color(0, 0, 0.1);
+  final static double MAX_DETAILED_ZOOM = 3.5; // Maximum zoom to draw details at
   color buttonColor = color(0.82, 0.8, 0.7);
   String folder = "TEST";
   final double FLASH_SPEED = 80;
@@ -119,7 +120,7 @@ class Board {
   public void drawBoard(float scaleUp, float camZoom, int mX, int mY) {
     for (int x = 0; x < boardWidth; x++) {
       for (int y = 0; y < boardHeight; y++) {
-        tiles[x][y].drawTile(scaleUp, (mX == x && mY == y));
+        tiles[x][y].drawTile(scaleUp, camZoom, (mX == x && mY == y));
       }
     }
     for (int i = 0; i < rocks.size(); i++) {

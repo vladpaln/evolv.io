@@ -42,13 +42,13 @@ class Tile {
     foodLevel = f;
   }
 
-  public void drawTile(float scaleUp, boolean showEnergy) {
+  public void drawTile(float scaleUp, float camZoom, boolean showEnergy) {
     stroke(0, 0, 0, 1);
     strokeWeight(2);
     color landColor = getColor();
     fill(landColor);
     rect(posX * scaleUp, posY * scaleUp, scaleUp, scaleUp);
-    if (showEnergy) {
+    if (showEnergy && camZoom > Board.MAX_DETAILED_ZOOM) {
       if (brightness(landColor) >= 0.7) {
         fill(0, 0, 0, 1);
       } else {
