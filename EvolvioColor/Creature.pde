@@ -3,7 +3,7 @@ class Creature extends SoftBody {
   double ACCELERATION_ENERGY = 0.18;
   double ACCELERATION_BACK_ENERGY = 0.24;
   double SWIM_ENERGY = 0.008;
-  double TURN_ENERGY = 0.05;
+  double TURN_ENERGY = 0.06;
   double EAT_ENERGY = 0.05;
   double EAT_SPEED = 0.5; // 1 is instant, 0 is nonexistent, 0.001 is verrry slow.
   double EAT_WHILE_MOVING_INEFFICIENCY_MULTIPLIER = 2.0; // The bigger this number is, the less effiently creatures eat when they're moving.
