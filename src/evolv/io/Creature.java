@@ -63,11 +63,20 @@ class Creature extends SoftBody {
 
 	NameGenerator nameGenerator;
 
+	public Creature(EvolvioColor evolvioColor, Board tb) {
+		this(evolvioColor, evolvioColor.random(0, tb.boardWidth),
+				evolvioColor.random(0, tb.boardHeight), 0, 0,
+				evolvioColor.random(tb.MIN_CREATURE_ENERGY, tb.MAX_CREATURE_ENERGY), 1,
+				evolvioColor.random(0, 1), 1, 1, tb,
+				evolvioColor.random(0, 2 * EvolvioColor.PI), 0, "", "[PRIMORDIAL]", true, null, 1,
+				evolvioColor.random(0, 1));
+	}
+
 	public Creature(EvolvioColor evolvioColor, double tpx, double tpy, double tvx, double tvy, double tenergy,
-			double tdensity, double thue, double tsaturation, double tbrightness, Board tb, double bt, double rot,
+			double tdensity, double thue, double tsaturation, double tbrightness, Board tb, double rot,
 			double tvr, String tname, String tparents, boolean mutateName, Brain brain, int tgen, double tmouthHue) {
 
-		super(evolvioColor, tpx, tpy, tvx, tvy, tenergy, tdensity, thue, tsaturation, tbrightness, tb, bt);
+		super(evolvioColor, tpx, tpy, tvx, tvy, tenergy, tdensity, thue, tsaturation, tbrightness, tb);
 		nameGenerator = new NameGenerator(evolvioColor);
 		this.evolvioColor = evolvioColor;
 
@@ -485,7 +494,7 @@ class Creature extends SoftBody {
 				newSaturation = 1;
 				newBrightness = 1;
 				board.creatures.add(new Creature(this.evolvioColor, newPX, newPY, 0, 0, babySize, density, newHue,
-						newSaturation, newBrightness, board, board.year,
+						newSaturation, newBrightness, board,
 						this.evolvioColor.random(0, 2 * EvolvioColor.PI), 0, stitchName(parentNames),
 						andifyParents(parentNames), true, newBrain, highestGen + 1, newMouthHue));
 			}
@@ -496,8 +505,8 @@ class Creature extends SoftBody {
 		String result = "";
 		for (int i = 0; i < s.length; i++) {
 			float portion = ((float) s[i].length()) / s.length;
-			int start = EvolvioColor.min(EvolvioColor.max(EvolvioColor.round(portion * i), 0), s[i].length());
-			int end = EvolvioColor.min(EvolvioColor.max(EvolvioColor.round(portion * (i + 1)), 0), s[i].length());
+			int start = Math.min(Math.max(Math.round(portion * i), 0), s[i].length());
+			int end = Math.min(Math.max(Math.round(portion * (i + 1)), 0), s[i].length());
 			result = result + s[i].substring(start, end);
 		}
 		return result;

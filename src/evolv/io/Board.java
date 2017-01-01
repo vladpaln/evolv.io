@@ -111,7 +111,7 @@ class Board {
 			rocks.add(new SoftBody(this.evolvioColor, this.evolvioColor.random(0, boardWidth),
 					this.evolvioColor.random(0, boardHeight), 0, 0, getRandomSize(), ROCK_DENSITY,
 					this.evolvioColor.hue(ROCK_COLOR), this.evolvioColor.saturation(ROCK_COLOR),
-					this.evolvioColor.brightness(ROCK_COLOR), this, year));
+					this.evolvioColor.brightness(ROCK_COLOR), this));
 		}
 
 		creatureMinimum = cm;
@@ -571,12 +571,7 @@ class Board {
 				c.addEnergy(c.SAFE_SIZE);
 				c.reproduce(c.SAFE_SIZE, timeStep);
 			} else {
-				creatures.add(new Creature(this.evolvioColor, this.evolvioColor.random(0, boardWidth),
-						this.evolvioColor.random(0, boardHeight), 0, 0,
-						this.evolvioColor.random(MIN_CREATURE_ENERGY, MAX_CREATURE_ENERGY), 1,
-						this.evolvioColor.random(0, 1), 1, 1, this, year,
-						this.evolvioColor.random(0, 2 * EvolvioColor.PI), 0, "", "[PRIMORDIAL]", true, null, 1,
-						this.evolvioColor.random(0, 1)));
+				creatures.add(new Creature(this.evolvioColor, this));
 			}
 		}
 	}
