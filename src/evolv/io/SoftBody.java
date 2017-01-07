@@ -37,7 +37,7 @@ class SoftBody {
 	Board board;
 
 	public SoftBody(EvolvioColor evolvioColor, double tpx, double tpy, double tvx, double tvy, double tenergy,
-			double tdensity, double thue, double tsaturation, double tbrightness, Board tb, double bt) {
+			double tdensity, double thue, double tsaturation, double tbrightness, Board tb) {
 		this.evolvioColor = evolvioColor;
 		px = tpx;
 		py = tpy;
@@ -51,7 +51,7 @@ class SoftBody {
 		board = tb;
 		setSBIP(false);
 		setSBIP(false); // Just to set previous SBIPs as well.
-		birthTime = bt;
+		birthTime = tb.year;
 		ENERGY_DENSITY = 1.0f / (tb.MINIMUM_SURVIVABLE_SIZE * tb.MINIMUM_SURVIVABLE_SIZE * EvolvioColor.PI);
 	}
 
