@@ -1,99 +1,77 @@
 package evolv.io;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 import processing.core.PFont;
 
 class Brain {
 	// Constants - Bring to a config file eventually
-	final static int MEMORY_COUNT = 1;
+	final static int MEMORY_COUNT = 0;
 	final static int BRAIN_WIDTH = 5;
 	final static int BRAIN_HEIGHT = 11 + MEMORY_COUNT + 1;
-	final static double AXON_START_MUTABILITY = 0.0005f;
-	final static double STARTING_AXON_VARIABILITY = 1.0f;
+	final static int STARTING_AXON_COUNT = 20;
 
 	private final EvolvioColor evolvioColor;
-	Axon[][][] axons;
+	List<Axon> axons;
+	List<Axon> learning;
 	double[][] neurons;
+	int count;
 
 	// labels
 	String[] inputLabels = new String[BRAIN_HEIGHT];
 	String[] outputLabels = new String[BRAIN_HEIGHT];
 
-	//Generate a new brain
+	// Generate a new brain
 	public Brain(EvolvioColor evolvioColor) {
 		this.evolvioColor = evolvioColor;
 
-		// generate brain
-		axons = new Axon[BRAIN_WIDTH - 1][BRAIN_HEIGHT][BRAIN_HEIGHT - 1];
-		neurons = new double[BRAIN_WIDTH][BRAIN_HEIGHT];
-		for (int x = 0; x < BRAIN_WIDTH - 1; x++) {
-			for (int y = 0; y < BRAIN_HEIGHT; y++) {
-				for (int z = 0; z < BRAIN_HEIGHT - 1; z++) {
-					double startingWeight = (Math.random() * 2 - 1) * STARTING_AXON_VARIABILITY;
-					axons[x][y][z] = new Axon(startingWeight, AXON_START_MUTABILITY);
-				}
-			}
-		}
-		neurons = new double[BRAIN_WIDTH][BRAIN_HEIGHT];
-		for (int x = 0; x < BRAIN_WIDTH; x++) {
-			for (int y = 0; y < BRAIN_HEIGHT; y++) {
-				if (y == BRAIN_HEIGHT - 1) {
-					neurons[x][y] = 1;
-				} else {
-					neurons[x][y] = 0;
-				}
-			}
-		}
+		// Make sure axon bounds are set before the set are made
+		// In case we have different sized brains
+		Axon.setMaxX(BRAIN_WIDTH);
+		Axon.setMaxY(BRAIN_HEIGHT);
 
-		initializeStrings();
-	}
+		// initialize brain
+		axons = new ArrayList<Axon>();
+		for (int i = 0; i < STARTING_AXON_COUNT; i++) {
+			axons.add(new Axon());
+		}
+		Collections.sort(axons);
+		simplifyBrain();
 
-	//Create a brain from existing ones
-	public Brain(ArrayList<Creature> parents) {
-		evolvioColor = parents.get(0).brain.evolvioColor;
-		int parentsTotal = parents.size();
-		axons = new Axon[BRAIN_WIDTH - 1][BRAIN_HEIGHT][BRAIN_HEIGHT - 1];
-		neurons = new double[BRAIN_WIDTH][BRAIN_HEIGHT];
-		float randomParentRotation = this.evolvioColor.random(0, 1);
-		for (int x = 0; x < BRAIN_WIDTH - 1; x++) {
-			for (int y = 0; y < BRAIN_HEIGHT; y++) {
-				for (int z = 0; z < BRAIN_HEIGHT - 1; z++) {
-					float axonAngle = EvolvioColor.atan2((y + z) / 2.0f - BRAIN_HEIGHT / 2.0f, x - BRAIN_WIDTH / 2)
-							/ (2 * EvolvioColor.PI) + EvolvioColor.PI;
-					Brain parentForAxon = parents
-							.get((int) (((axonAngle + randomParentRotation) % 1.0f) * parentsTotal)).brain;
-					axons[x][y][z] = parentForAxon.axons[x][y][z].mutateAxon();
-				}
-			}
-		}
-		for (int x = 0; x < BRAIN_WIDTH; x++) {
-			for (int y = 0; y < BRAIN_HEIGHT; y++) {
-				float axonAngle = EvolvioColor.atan2(y - BRAIN_HEIGHT / 2.0f, x - BRAIN_WIDTH / 2)
-						/ (2 * EvolvioColor.PI) + EvolvioColor.PI;
-				Brain parentForAxon = parents
-						.get((int) (((axonAngle + randomParentRotation) % 1.0f) * parentsTotal)).brain;
-				neurons[x][y] = parentForAxon.neurons[x][y];
-			}
-		}
+		learning = new ArrayList<Axon>();
+		count = 0;
 		
-		initializeStrings();
+		neurons = new double[BRAIN_WIDTH][BRAIN_HEIGHT];
+		initArray(neurons);
+
+		initStrings();
 	}
 
-	private void initializeStrings() {
-		String[] baseInput = { "0Hue", "0Sat", "0Bri", "1Hue", "1Sat", "1Bri", "2Hue", "2Sat", "2Bri", "Size", "MHue" };
-		String[] baseOutput = { "BHue", "Accel.", "Turn", "Eat", "Fight", "Birth", "How funny?", "How popular?",
-				"How generous?", "How smart?", "MHue" };
-		for (int i = 0; i < 11; i++) {
-			inputLabels[i] = baseInput[i];
-			outputLabels[i] = baseOutput[i];
+	// Create a brain from existing ones
+	public Brain(ArrayList<Creature> parents) {
+		this.evolvioColor = parents.get(0).brain.evolvioColor;
+
+		// initialize brain
+		axons = new ArrayList<Axon>();
+		for (Iterator<Creature> iter = parents.iterator(); iter.hasNext();) {
+			for(Iterator<Axon> ater = iter.next().brain.axons.iterator();ater.hasNext();){
+				axons.add(ater.next().mutateAxon());
+			}
 		}
-		for (int i = 0; i < MEMORY_COUNT; i++) {
-			inputLabels[i + 11] = "memory";
-			outputLabels[i + 11] = "memory";
-		}
-		inputLabels[BRAIN_HEIGHT - 1] = "const.";
-		outputLabels[BRAIN_HEIGHT - 1] = "const.";
+		Collections.sort(axons);
+		simplifyBrain();
+		
+		learning = new ArrayList<Axon>();
+		count = 0;
+		
+		neurons = new double[BRAIN_WIDTH][BRAIN_HEIGHT];
+		initArray(neurons);
+
+		initStrings();
 	}
 
 	public void draw(PFont font, float scaleUp, int mX, int mY) {
@@ -126,15 +104,11 @@ class Brain {
 						(y + (neuronSize * 0.6f)) * scaleUp);
 			}
 		}
-		if (mX >= 0 && mX < BRAIN_WIDTH && mY >= 0 && mY < BRAIN_HEIGHT) {
-			for (int y = 0; y < BRAIN_HEIGHT; y++) {
-				if (mX >= 1 && mY < BRAIN_HEIGHT - 1) {
-					drawAxon(mX - 1, y, mX, mY, scaleUp);
-				}
-				if (mX < BRAIN_WIDTH - 1 && y < BRAIN_HEIGHT - 1) {
-					drawAxon(mX, mY, mX + 1, y, scaleUp);
-				}
-			}
+		for (Iterator<Axon> iter = axons.iterator(); iter.hasNext();) {
+			drawAxon(iter.next(), scaleUp);
+		}
+		for (Iterator<Axon> iter = learning.iterator(); iter.hasNext();) {
+			drawAxon(iter.next(), scaleUp);
 		}
 	}
 
@@ -150,22 +124,6 @@ class Brain {
 		runBrain();
 	}
 
-	private void runBrain() {
-		for (int x = 1; x < BRAIN_WIDTH; x++) {
-			for (int y = 0; y < BRAIN_HEIGHT - 1; y++) {
-				double total = 0;
-				for (int input = 0; input < BRAIN_HEIGHT; input++) {
-					total += neurons[x - 1][input] * axons[x - 1][input][y].weight;
-				}
-				if (x == BRAIN_WIDTH - 1) {
-					neurons[x][y] = total;
-				} else {
-					neurons[x][y] = sigmoid(total);
-				}
-			}
-		}
-	}
-
 	public double[] outputs() {
 		int end = BRAIN_WIDTH - 1;
 		double[] output = new double[11];
@@ -175,21 +133,41 @@ class Brain {
 		return output;
 	}
 
-	private void drawAxon(int x1, int y1, int x2, int y2, float scaleUp) {
-		this.evolvioColor.stroke(neuronFillColor(axons[x1][y1][y2].weight * neurons[x1][y1]));
+	private void drawAxon(Axon axon, float scaleUp) {
+		this.evolvioColor.stroke(neuronFillColor(axon.weight * neurons[axon.startX][axon.startY]));
 
-		this.evolvioColor.line(x1 * scaleUp, y1 * scaleUp, x2 * scaleUp, y2 * scaleUp);
+		this.evolvioColor.line(axon.startX * scaleUp, axon.startY * scaleUp, axon.endX * scaleUp, axon.endY * scaleUp);
 	}
 
-	private double sigmoid(double input) {
-		return 1.0f / (1.0f + Math.pow(2.71828182846f, -input));
+	private void initArray(double[][] array) {
+		for (int x = 0; x < array.length; x++) {
+			for (int y = 0; y < array[x].length; y++) {
+				array[x][y] = 0;
+			}
+		}
+	}
+
+	private void initStrings() {
+		String[] baseInput = { "0Hue", "0Sat", "0Bri", "1Hue", "1Sat", "1Bri", "2Hue", "2Sat", "2Bri", "Size", "MHue" };
+		String[] baseOutput = { "BHue", "Accel.", "Turn", "Eat", "Fight", "Birth", "How funny?", "How popular?",
+				"How generous?", "How smart?", "MHue" };
+		for (int i = 0; i < 11; i++) {
+			inputLabels[i] = baseInput[i];
+			outputLabels[i] = baseOutput[i];
+		}
+		for (int i = 0; i < MEMORY_COUNT; i++) {
+			inputLabels[i + 11] = "memory";
+			outputLabels[i + 11] = "memory";
+		}
+		inputLabels[BRAIN_HEIGHT - 1] = "const.";
+		outputLabels[BRAIN_HEIGHT - 1] = "const.";
 	}
 
 	private int neuronFillColor(double d) {
 		if (d >= 0) {
-			return this.evolvioColor.color(0, 0, 1, (float) (d));
+			return this.evolvioColor.color(0, 0, 1, (float) (0.5+d));
 		} else {
-			return this.evolvioColor.color(0, 0, 0, (float) (-d));
+			return this.evolvioColor.color(0, 0, 0, (float) (0.5-d));
 		}
 	}
 
@@ -198,6 +176,66 @@ class Brain {
 			return this.evolvioColor.color(0, 0, 0);
 		} else {
 			return this.evolvioColor.color(0, 0, 1);
+		}
+	}
+
+	private void runBrain() {
+		double[][] temp = new double[neurons.length][neurons[0].length];
+		initArray(temp);
+
+		for (Iterator<Axon> iter = axons.iterator(); iter.hasNext();) {
+			Axon curr = iter.next();
+			temp[curr.endX][curr.endY] += curr.weight * neurons[curr.startX][curr.startY];
+		}
+		for (Iterator<Axon> iter = learning.iterator(); iter.hasNext();) {
+			Axon curr = iter.next();
+			temp[curr.endX][curr.endY] += curr.weight * neurons[curr.startX][curr.startY];
+		}
+		for (int x = 1; x < temp.length - 1; x++) {
+			for (int y = 0; y < temp[x].length; y++) {
+				neurons[x][y] = sigmoid(temp[x][y]);
+			}
+		}
+		for (int y = 0; y < temp[temp.length - 1].length; y++) {
+			neurons[temp.length - 1][y] = temp[temp.length - 1][y];
+		}
+		count++;
+		outputLabels[8] = Integer.toString(count);
+		if(this.count>1000){
+			count = 0;
+			learning.add(new Axon());
+			for(ListIterator<Axon> iter = learning.listIterator();iter.hasNext();){
+				iter.set(iter.next().mutateAxon());
+			}
+		}
+	}
+
+	private double sigmoid(double input) {
+		return 1.0f / (1.0f + Math.pow(2.71828182846f, -input));
+	}
+
+	private void simplifyBrain() {
+		ListIterator<Axon> iter = axons.listIterator();
+		Axon last = iter.next();
+		List<Axon> duplicates = new ArrayList<Axon>();
+		boolean change = false;
+		while (iter.hasNext()) {
+			change = false;
+			duplicates.clear();
+			Axon curr = iter.next();
+			while (curr.compareTo(last) == 0) {
+				change = true;
+				iter.remove();
+				if (iter.hasNext())
+					curr = iter.next();
+				else
+					break;
+			}
+			if (change) {
+				duplicates.add(iter.previous());
+				iter.set(new Axon(duplicates));
+			}
+			last = curr;
 		}
 	}
 }
