@@ -81,7 +81,7 @@ class Creature extends SoftBody {
 		this.evolvioColor = evolvioColor;
 
 		if (brain == null)
-			brain = new Brain(this.evolvioColor, null, null);
+			brain = new Brain(this.evolvioColor);
 		this.brain = brain;
 
 		rotation = rot;
@@ -474,7 +474,7 @@ class Creature extends SoftBody {
 				double newMouthHue = 0;
 				int parentsTotal = parents.size();
 				String[] parentNames = new String[parentsTotal];
-				Brain newBrain = brain.evolve(parents);
+				Brain newBrain = new Brain(parents);
 				for (int i = 0; i < parentsTotal; i++) {
 					int chosenIndex = (int) this.evolvioColor.random(0, parents.size());
 					Creature parent = parents.get(chosenIndex);
