@@ -13,7 +13,13 @@ evolv\.io uses a neural net and evolution in order to simulate creatures evolvin
 
 # Executing
 
-1. Download the EvolvioColor folder (Click the green `Clone or download` button and select `Download ZIP`, then extract using e.g. WinRAR)
-2. Download [Processing](https://www.processing.org) version 3.2.1
-3. Click `File > Open` and open [EvolvioColor/EvolvioColor.pde](EvolvioColor/EvolvioColor.pde).
-4. Click `Play`.
+1. Download/install Eclipse Neon for Java Developers.
+2. Launch Eclipse.
+3. Click `File > New > Project > Maven > Check out Maven Projects from SCM > Next`.
+4. Click the `Find more SCM connectors in the m2e Marketplace`
+5. Search for `egit`.
+6. Check `m2e-egit` and click `Finish`. (Click next-next-next until it is acutally installed)
+7. Restart Eclipse when it asks you to.
+8. Click `File > New > Project > Maven > Check out Maven Projects from SCM > Next`.
+9. Put `https://github.com/evolvio/evolv.io.git` in for the SCM URL and click `Finish`.
+10. Click `Run > Run`
