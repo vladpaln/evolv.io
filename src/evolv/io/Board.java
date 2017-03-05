@@ -415,9 +415,9 @@ class Board {
 							if (this.evolvioColor.keyCode == EvolvioColor.DOWN)
 								me.accelerate(-0.04f, timeStep * OBJECT_TIMESTEPS_PER_YEAR);
 							if (this.evolvioColor.keyCode == EvolvioColor.LEFT)
-								me.turn(-0.1f, timeStep * OBJECT_TIMESTEPS_PER_YEAR);
+								me.rotate(-0.1f, timeStep * OBJECT_TIMESTEPS_PER_YEAR);
 							if (this.evolvioColor.keyCode == EvolvioColor.RIGHT)
-								me.turn(0.1f, timeStep * OBJECT_TIMESTEPS_PER_YEAR);
+								me.rotate(0.1f, timeStep * OBJECT_TIMESTEPS_PER_YEAR);
 						} else {
 							if (this.evolvioColor.key == ' ')
 								me.eat(0.1f, timeStep * OBJECT_TIMESTEPS_PER_YEAR);

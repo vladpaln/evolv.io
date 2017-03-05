@@ -1,6 +1,8 @@
 package evolv.io;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import processing.core.PFont;
 
@@ -63,18 +65,22 @@ class Creature extends SoftBody {
 
 	NameGenerator nameGenerator;
 
+	private static List<CreatureAction> CreatureActions = Arrays.asList(new CreatureAction.AdjustHue(),
+			new CreatureAction.Accelerate(), new CreatureAction.Rotate(), new CreatureAction.Eat(),
+			new CreatureAction.Fight(), new CreatureAction.Reproduce(), new CreatureAction.None(),
+			new CreatureAction.None(), new CreatureAction.None(), new CreatureAction.None(),
+			new CreatureAction.AdjustMouthHue());
+
 	public Creature(EvolvioColor evolvioColor, Board tb) {
-		this(evolvioColor, evolvioColor.random(0, tb.boardWidth),
-				evolvioColor.random(0, tb.boardHeight), 0, 0,
-				evolvioColor.random(tb.MIN_CREATURE_ENERGY, tb.MAX_CREATURE_ENERGY), 1,
-				evolvioColor.random(0, 1), 1, 1, tb,
-				evolvioColor.random(0, 2 * EvolvioColor.PI), 0, "", "[PRIMORDIAL]", true, null, 1,
+		this(evolvioColor, evolvioColor.random(0, tb.boardWidth), evolvioColor.random(0, tb.boardHeight), 0, 0,
+				evolvioColor.random(tb.MIN_CREATURE_ENERGY, tb.MAX_CREATURE_ENERGY), 1, evolvioColor.random(0, 1), 1, 1,
+				tb, evolvioColor.random(0, 2 * EvolvioColor.PI), 0, "", "[PRIMORDIAL]", true, null, 1,
 				evolvioColor.random(0, 1));
 	}
 
 	public Creature(EvolvioColor evolvioColor, double tpx, double tpy, double tvx, double tvy, double tenergy,
-			double tdensity, double thue, double tsaturation, double tbrightness, Board tb, double rot,
-			double tvr, String tname, String tparents, boolean mutateName, Brain brain, int tgen, double tmouthHue) {
+			double tdensity, double thue, double tsaturation, double tbrightness, Board tb, double rot, double tvr,
+			String tname, String tparents, boolean mutateName, Brain brain, int tgen, double tmouthHue) {
 
 		super(evolvioColor, tpx, tpy, tvx, tvy, tenergy, tdensity, thue, tsaturation, tbrightness, tb);
 		nameGenerator = new NameGenerator(evolvioColor);
@@ -126,15 +132,9 @@ class Creature extends SoftBody {
 
 		if (useOutput) {
 			double[] output = brain.outputs();
-			hue = Math.abs(output[0]) % 1.0f;
-			accelerate(output[1], timeStep);
-			turn(output[2], timeStep);
-			eat(output[3], timeStep);
-			fight(output[4], timeStep * 100);
-			if (output[5] > 0 && board.year - birthTime >= MATURE_AGE && energy > SAFE_SIZE) {
-				reproduce(SAFE_SIZE, timeStep);
+			for (int i = 0; i < output.length; i++) {
+				CreatureActions.get(i).doAction(this, output[i], timeStep);
 			}
-			mouthHue = Math.abs(output[10]) % 1.0f;
 		}
 	}
 
@@ -241,7 +241,7 @@ class Creature extends SoftBody {
 		}
 	}
 
-	public void turn(double amount, double timeStep) {
+	public void rotate(double amount, double timeStep) {
 		vr += 0.04f * amount * timeStep / getMass();
 		loseEnergy(Math.abs(amount * TURN_ENERGY * energy * timeStep));
 	}
@@ -494,9 +494,9 @@ class Creature extends SoftBody {
 				newSaturation = 1;
 				newBrightness = 1;
 				board.creatures.add(new Creature(this.evolvioColor, newPX, newPY, 0, 0, babySize, density, newHue,
-						newSaturation, newBrightness, board,
-						this.evolvioColor.random(0, 2 * EvolvioColor.PI), 0, stitchName(parentNames),
-						andifyParents(parentNames), true, newBrain, highestGen + 1, newMouthHue));
+						newSaturation, newBrightness, board, this.evolvioColor.random(0, 2 * EvolvioColor.PI), 0,
+						stitchName(parentNames), andifyParents(parentNames), true, newBrain, highestGen + 1,
+						newMouthHue));
 			}
 		}
 	}
