@@ -1,40 +1,45 @@
 package evolv.io;
 
 import java.util.ArrayList;
+import java.util.List;
 
 class SoftBody {
+	private static final float ENERGY_DENSITY = 1.0f
+			/ (Configuration.MINIMUM_SURVIVABLE_SIZE * Configuration.MINIMUM_SURVIVABLE_SIZE * EvolvioColor.PI);
+
 	private final EvolvioColor evolvioColor;
-	double px;
-	double py;
-	double vx;
-	double vy;
-	double energy;
-	float ENERGY_DENSITY; // Set so when a creature is of minimum size, it
-							// equals one.
-	double density;
-	double hue;
-	double saturation;
-	double brightness;
-	double birthTime;
-	boolean isCreature = false;
-	final float FRICTION = Configuration.FRICTION;
-	final float COLLISION_FORCE = Configuration.COLLISION_FORCE;
-	final float FIGHT_RANGE = Configuration.FIGHT_RANGE;
-	double fightLevel = 0;
+	private final Board board;
+	// TODO remove, this should use polymorphism
+	private final boolean isCreature;
+	private final double birthTime;
+	/*
+	 * Set so when a creature is of minimum size, it equals one.
+	 */
+	private final double density;
+	// TODO this should be final
+	private List<SoftBody> colliders;
 
-	int prevSBIPMinX;
-	int prevSBIPMinY;
-	int prevSBIPMaxX;
-	int prevSBIPMaxY;
-	int SBIPMinX;
-	int SBIPMinY;
-	int SBIPMaxX;
-	int SBIPMaxY;
-	ArrayList<SoftBody> colliders;
-	Board board;
+	private double px;
+	private double py;
+	private double vx;
+	private double vy;
+	private double energy;
+	private double hue;
+	private double saturation;
+	private double brightness;
+	private double fightLevel;
 
-	public SoftBody(EvolvioColor evolvioColor, double tpx, double tpy, double tvx, double tvy, double tenergy,
-			double tdensity, double thue, double tsaturation, double tbrightness, Board tb) {
+	private int prevSBIPMinX;
+	private int prevSBIPMinY;
+	private int prevSBIPMaxX;
+	private int prevSBIPMaxY;
+	private int SBIPMinX;
+	private int SBIPMinY;
+	private int SBIPMaxX;
+	private int SBIPMaxY;
+
+	public SoftBody(EvolvioColor evolvioColor, Board tb, double tpx, double tpy, double tvx, double tvy, double tenergy,
+			double tdensity, double thue, double tsaturation, double tbrightness, boolean isCreature) {
 		this.evolvioColor = evolvioColor;
 		px = tpx;
 		py = tpy;
@@ -49,12 +54,11 @@ class SoftBody {
 		setSBIP(false);
 		setSBIP(false); // Just to set previous SBIPs as well.
 		birthTime = tb.getYear();
-		ENERGY_DENSITY = 1.0f
-				/ (Configuration.MINIMUM_SURVIVABLE_SIZE * Configuration.MINIMUM_SURVIVABLE_SIZE * EvolvioColor.PI);
+		this.isCreature = isCreature;
 	}
 
 	public void setSBIP(boolean shouldRemove) {
-		double radius = getRadius() * FIGHT_RANGE;
+		double radius = getRadius() * Configuration.FIGHT_RANGE;
 		prevSBIPMinX = SBIPMinX;
 		prevSBIPMinY = SBIPMinY;
 		prevSBIPMaxX = SBIPMaxX;
@@ -103,6 +107,7 @@ class SoftBody {
 	}
 
 	public void collide(double timeStep) {
+		// TODO this should be cleared instead of making a new list every time
 		colliders = new ArrayList<SoftBody>(0);
 		for (int x = SBIPMinX; x <= SBIPMaxX; x++) {
 			for (int y = SBIPMinY; y <= SBIPMaxY; y++) {
@@ -119,7 +124,7 @@ class SoftBody {
 			float distance = EvolvioColor.dist((float) px, (float) py, (float) collider.px, (float) collider.py);
 			double combinedRadius = getRadius() + collider.getRadius();
 			if (distance < combinedRadius) {
-				double force = combinedRadius * COLLISION_FORCE;
+				double force = combinedRadius * Configuration.COLLISION_FORCE;
 				vx += ((px - collider.px) / distance) * force / getMass();
 				vy += ((py - collider.py) / distance) * force / getMass();
 			}
@@ -130,8 +135,8 @@ class SoftBody {
 	public void applyMotions(double timeStep) {
 		px = xBodyBound(px + vx * timeStep);
 		py = yBodyBound(py + vy * timeStep);
-		vx *= Math.max(0, 1 - FRICTION / getMass());
-		vy *= Math.max(0, 1 - FRICTION / getMass());
+		vx *= Math.max(0, 1 - Configuration.FRICTION / getMass());
+		vy *= Math.max(0, 1 - Configuration.FRICTION / getMass());
 		setSBIP(true);
 	}
 
@@ -145,6 +150,14 @@ class SoftBody {
 				(float) (radius * scaleUp));
 	}
 
+	public Board getBoard() {
+		return board;
+	}
+
+	public boolean isCreature() {
+		return isCreature;
+	}
+
 	public double getRadius() {
 		if (energy <= 0) {
 			return 0;
@@ -155,5 +168,97 @@ class SoftBody {
 
 	public double getMass() {
 		return energy / ENERGY_DENSITY * density;
+	}
+
+	public double getDensity() {
+		return density;
+	}
+
+	public List<SoftBody> getColliders() {
+		return colliders;
+	}
+
+	public double getPx() {
+		return px;
+	}
+
+	public double getPy() {
+		return py;
+	}
+
+	public double getVx() {
+		return vx;
+	}
+
+	public double getVy() {
+		return vy;
+	}
+
+	public void setVx(double vx) {
+		this.vx = vx;
+	}
+
+	public void setVy(double vy) {
+		this.vy = vy;
+	}
+
+	public double getEnergy() {
+		return energy;
+	}
+
+	public void setEnergy(double energy) {
+		this.energy = energy;
+	}
+
+	public double getBirthTime() {
+		return birthTime;
+	}
+
+	public double getHue() {
+		return hue;
+	}
+
+	public double getSaturation() {
+		return saturation;
+	}
+
+	public double getBrightness() {
+		return brightness;
+	}
+
+	public void setHue(double hue) {
+		this.hue = Math.min(Math.max(hue, 0), 1);
+	}
+
+	public void setSaturation(double saturation) {
+		this.saturation = Math.min(Math.max(saturation, 0), 1);
+	}
+
+	public void setBrightness(double brightness) {
+		this.brightness = Math.min(Math.max(brightness, 0), 1);
+	}
+
+	public double getFightLevel() {
+		return fightLevel;
+	}
+
+	public void setFightLevel(double fightLevel) {
+		this.fightLevel = fightLevel;
+	}
+
+	public int getSBIPMinX() {
+		return SBIPMinX;
+	}
+
+	public int getSBIPMaxX() {
+		return SBIPMaxX;
+	}
+
+	public int getSBIPMinY() {
+		return SBIPMinY;
+	}
+
+	public int getSBIPMaxY() {
+		return SBIPMaxY;
 	}
 }

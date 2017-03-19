@@ -76,8 +76,8 @@ public class EvolvioColor extends PApplet {
 			}
 		}
 		if (evoBoard.isUserControl() && evoBoard.getSelectedCreature() != null) {
-			cameraX = (float) evoBoard.getSelectedCreature().px;
-			cameraY = (float) evoBoard.getSelectedCreature().py;
+			cameraX = (float) evoBoard.getSelectedCreature().getPx();
+			cameraY = (float) evoBoard.getSelectedCreature().getPy();
 			cameraR = -PI / 2.0f - (float) evoBoard.getSelectedCreature().getRotation();
 		} else {
 			cameraR = 0;
@@ -120,8 +120,8 @@ public class EvolvioColor extends PApplet {
 		} else {
 			if (abs(mouseX - (windowHeight + 65)) <= 60 && abs(mouseY - 147) <= 60
 					&& evoBoard.getSelectedCreature() != null) {
-				cameraX = (float) evoBoard.getSelectedCreature().px;
-				cameraY = (float) evoBoard.getSelectedCreature().py;
+				cameraX = (float) evoBoard.getSelectedCreature().getPx();
+				cameraY = (float) evoBoard.getSelectedCreature().getPy();
 				zoom = 16;
 			} else if (mouseY >= 95 && mouseY < 135 && evoBoard.getSelectedCreature() == null) {
 				if (mouseX >= windowHeight + 10 && mouseX < windowHeight + 230) {
@@ -198,8 +198,8 @@ public class EvolvioColor extends PApplet {
 				int listIndex = (mouseY - 150) / 70;
 				if (listIndex >= 0 && listIndex < Configuration.LIST_SLOTS) {
 					evoBoard.setSelectedCreature(evoBoard.getCreatureInList(listIndex));
-					cameraX = (float) evoBoard.getSelectedCreature().px;
-					cameraY = (float) evoBoard.getSelectedCreature().py;
+					cameraX = (float) evoBoard.getSelectedCreature().getPx();
+					cameraY = (float) evoBoard.getSelectedCreature().getPy();
 					zoom = 16;
 				}
 			}
@@ -232,8 +232,8 @@ public class EvolvioColor extends PApplet {
 				if (x >= 0 && x < Configuration.BOARD_WIDTH && y >= 0 && y < Configuration.BOARD_HEIGHT) {
 					for (int i = 0; i < evoBoard.getSoftBodiesInPosition(x, y).size(); i++) {
 						SoftBody body = evoBoard.getSoftBodiesInPosition(x, y).get(i);
-						if (body.isCreature) {
-							float distance = dist(mX, mY, (float) body.px, (float) body.py);
+						if (body.isCreature()) {
+							float distance = dist(mX, mY, (float) body.getPx(), (float) body.getPy());
 							if (distance <= body.getRadius()) {
 								evoBoard.setSelectedCreature((Creature) body);
 								zoom = 16;

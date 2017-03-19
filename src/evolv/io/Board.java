@@ -81,10 +81,10 @@ class Board {
 		}
 
 		for (int i = 0; i < Configuration.ROCKS_TO_ADD; i++) {
-			rocks.add(new SoftBody(this.evolvioColor, this.evolvioColor.random(0, Configuration.BOARD_WIDTH),
+			rocks.add(new SoftBody(this.evolvioColor, this, this.evolvioColor.random(0, Configuration.BOARD_WIDTH),
 					this.evolvioColor.random(0, Configuration.BOARD_HEIGHT), 0, 0, getRandomSize(),
 					Configuration.ROCK_DENSITY, this.evolvioColor.hue(rockColor),
-					this.evolvioColor.saturation(rockColor), this.evolvioColor.brightness(rockColor), this));
+					this.evolvioColor.saturation(rockColor), this.evolvioColor.brightness(rockColor), false));
 		}
 
 		maintainCreatureMinimum(false);
@@ -166,8 +166,8 @@ class Board {
 			}
 			double maxEnergy = 0;
 			for (int i = 0; i < Configuration.LIST_SLOTS; i++) {
-				if (list[i] != null && list[i].energy > maxEnergy) {
-					maxEnergy = list[i].energy;
+				if (list[i] != null && list[i].getEnergy() > maxEnergy) {
+					maxEnergy = list[i].getEnergy();
 				}
 			}
 			for (int i = 0; i < Configuration.LIST_SLOTS; i++) {
@@ -180,19 +180,18 @@ class Board {
 					this.evolvioColor.noStroke();
 					this.evolvioColor.fill(0.333f, 1, 0.4f);
 					float multi = (x2 - x1 - 200);
-					if (list[i].energy > 0) {
-						this.evolvioColor.rect(85, y + 5, (float) (multi * list[i].energy / maxEnergy), 25);
+					if (list[i].getEnergy() > 0) {
+						this.evolvioColor.rect(85, y + 5, (float) (multi * list[i].getEnergy() / maxEnergy), 25);
 					}
-					if (list[i].energy > 1) {
+					if (list[i].getEnergy() > 1) {
 						this.evolvioColor.fill(0.333f, 1, 0.8f);
 						this.evolvioColor.rect(85 + (float) (multi / maxEnergy), y + 5,
-								(float) (multi * (list[i].energy - 1) / maxEnergy), 25);
+								(float) (multi * (list[i].getEnergy() - 1) / maxEnergy), 25);
 					}
 					this.evolvioColor.fill(0, 0, 1);
-					this.evolvioColor.text(
-							list[i].getCreatureName() + " [" + list[i].getId() + "] (" + toAge(list[i].birthTime) + ")",
-							90, y);
-					this.evolvioColor.text("Energy: " + EvolvioColor.nf(100 * (float) (list[i].energy), 0, 2), 90,
+					this.evolvioColor.text(list[i].getCreatureName() + " [" + list[i].getId() + "] ("
+							+ toAge(list[i].getBirthTime()) + ")", 90, y);
+					this.evolvioColor.text("Energy: " + EvolvioColor.nf(100 * (float) (list[i].getEnergy()), 0, 2), 90,
 							y + 25);
 				}
 			}
@@ -253,20 +252,21 @@ class Board {
 			}
 			this.evolvioColor.fill(0, 0, 1);
 			this.evolvioColor.text("Name: " + selectedCreature.getCreatureName(), 10, 225);
-			this.evolvioColor.text("Energy: " + EvolvioColor.nf(100 * (float) selectedCreature.energy, 0, 2) + " yums",
-					10, 250);
+			this.evolvioColor.text(
+					"Energy: " + EvolvioColor.nf(100 * (float) selectedCreature.getEnergy(), 0, 2) + " yums", 10, 250);
 			this.evolvioColor.text("E Change: " + EvolvioColor.nf(100 * energyUsage, 0, 2) + " yums/year", 10, 275);
 
 			this.evolvioColor.text("ID: " + selectedCreature.getId(), 10, 325);
-			this.evolvioColor.text("X: " + EvolvioColor.nf((float) selectedCreature.px, 0, 2), 10, 350);
-			this.evolvioColor.text("Y: " + EvolvioColor.nf((float) selectedCreature.py, 0, 2), 10, 375);
+			this.evolvioColor.text("X: " + EvolvioColor.nf((float) selectedCreature.getPx(), 0, 2), 10, 350);
+			this.evolvioColor.text("Y: " + EvolvioColor.nf((float) selectedCreature.getPy(), 0, 2), 10, 375);
 			this.evolvioColor.text("Rotation: " + EvolvioColor.nf((float) selectedCreature.getRotation(), 0, 2), 10,
 					400);
-			this.evolvioColor.text("B-day: " + toDate(selectedCreature.birthTime), 10, 425);
-			this.evolvioColor.text("(" + toAge(selectedCreature.birthTime) + ")", 10, 450);
+			this.evolvioColor.text("B-day: " + toDate(selectedCreature.getBirthTime()), 10, 425);
+			this.evolvioColor.text("(" + toAge(selectedCreature.getBirthTime()) + ")", 10, 450);
 			this.evolvioColor.text("Generation: " + selectedCreature.getGen(), 10, 475);
 			this.evolvioColor.text("Parents: " + selectedCreature.getParents(), 10, 500, 210, 255);
-			this.evolvioColor.text("Hue: " + EvolvioColor.nf((float) (selectedCreature.hue), 0, 2), 10, 550, 210, 255);
+			this.evolvioColor.text("Hue: " + EvolvioColor.nf((float) (selectedCreature.getHue()), 0, 2), 10, 550, 210,
+					255);
 			this.evolvioColor.text("Mouth hue: " + EvolvioColor.nf((float) (selectedCreature.getMouthHue()), 0, 2), 10,
 					575, 210, 255);
 
@@ -389,9 +389,9 @@ class Board {
 							if (this.evolvioColor.key == 'f' || this.evolvioColor.key == 'F')
 								me.fight(0.5f, timeStep * Configuration.TIMESTEPS_PER_YEAR);
 							if (this.evolvioColor.key == 'u' || this.evolvioColor.key == 'U')
-								me.setHue(me.hue + 0.02f);
+								me.setHue(me.getHue() + 0.02f);
 							if (this.evolvioColor.key == 'j' || this.evolvioColor.key == 'J')
-								me.setHue(me.hue - 0.02f);
+								me.setHue(me.getHue() - 0.02f);
 
 							if (this.evolvioColor.key == 'i' || this.evolvioColor.key == 'I')
 								me.setMouthHue(me.getMouthHue() + 0.02f);
@@ -593,7 +593,7 @@ class Board {
 	private void drawCreature(Creature c, float x, float y, float scale, float scaleUp, PFont font) {
 		this.evolvioColor.pushMatrix();
 		float scaleIconUp = scaleUp * scale;
-		this.evolvioColor.translate((float) (-c.px * scaleIconUp), (float) (-c.py * scaleIconUp));
+		this.evolvioColor.translate((float) (-c.getPx() * scaleIconUp), (float) (-c.getPy() * scaleIconUp));
 		this.evolvioColor.translate(x, y);
 		c.drawSoftBody(scaleIconUp, 40.0f / scale, false, font);
 		this.evolvioColor.popMatrix();
