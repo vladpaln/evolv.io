@@ -57,6 +57,7 @@ public class Configuration {
 	public static final double EAT_ENERGY = 0.05;
 	public static final double EAT_SPEED = 0.5;
 	public static final double EAT_WHILE_MOVING_INEFFICIENCY_MULTIPLIER = 2.0;
+	public static final int ENERGY_HISTORY_LENGTH = 6;
 	public static final double FIGHT_ENERGY = 0.06;
 	public static final double INJURED_ENERGY = 0.25;
 	public static final double METABOLISM_ENERGY = 0.004;

@@ -155,9 +155,10 @@ class Board {
 				int lookingAt = 0;
 				boolean done = false;
 				while (lookingAt < Configuration.LIST_SLOTS && list[lookingAt] != null & !done) {
-					if (sortMetric == 4 && list[lookingAt].name.compareTo(creatures.get(i).name) < 0) {
+					if (sortMetric == 4 && list[lookingAt].getName().compareTo(creatures.get(i).getName()) < 0) {
 						lookingAt++;
-					} else if (sortMetric == 5 && list[lookingAt].name.compareTo(creatures.get(i).name) >= 0) {
+					} else if (sortMetric == 5
+							&& list[lookingAt].getName().compareTo(creatures.get(i).getName()) >= 0) {
 						lookingAt++;
 					} else if (list[lookingAt].measure(sortMetric) > creatures.get(i).measure(sortMetric)) {
 						lookingAt++;
@@ -181,8 +182,8 @@ class Board {
 			}
 			for (int i = 0; i < Configuration.LIST_SLOTS; i++) {
 				if (list[i] != null) {
-					list[i].preferredRank += (i - list[i].preferredRank) * 0.4f;
-					float y = y1 + 175 + 70 * list[i].preferredRank;
+					list[i].setPreferredRank(list[i].getPreferredRank() + ((i - list[i].getPreferredRank()) * 0.4f));
+					float y = y1 + 175 + 70 * list[i].getPreferredRank();
 					drawCreature(list[i], 45, y + 5, 2.3f, scaleUp);
 					this.evolvioColor.textFont(font, 24);
 					this.evolvioColor.textAlign(EvolvioColor.LEFT);
@@ -199,8 +200,8 @@ class Board {
 					}
 					this.evolvioColor.fill(0, 0, 1);
 					this.evolvioColor.text(
-							list[i].getCreatureName() + " [" + list[i].id + "] (" + toAge(list[i].birthTime) + ")", 90,
-							y);
+							list[i].getCreatureName() + " [" + list[i].getId() + "] (" + toAge(list[i].birthTime) + ")",
+							90, y);
 					this.evolvioColor.text("Energy: " + EvolvioColor.nf(100 * (float) (list[i].energy), 0, 2), 90,
 							y + 25);
 				}
@@ -266,17 +267,18 @@ class Board {
 					10, 250);
 			this.evolvioColor.text("E Change: " + EvolvioColor.nf(100 * energyUsage, 0, 2) + " yums/year", 10, 275);
 
-			this.evolvioColor.text("ID: " + selectedCreature.id, 10, 325);
+			this.evolvioColor.text("ID: " + selectedCreature.getId(), 10, 325);
 			this.evolvioColor.text("X: " + EvolvioColor.nf((float) selectedCreature.px, 0, 2), 10, 350);
 			this.evolvioColor.text("Y: " + EvolvioColor.nf((float) selectedCreature.py, 0, 2), 10, 375);
-			this.evolvioColor.text("Rotation: " + EvolvioColor.nf((float) selectedCreature.rotation, 0, 2), 10, 400);
+			this.evolvioColor.text("Rotation: " + EvolvioColor.nf((float) selectedCreature.getRotation(), 0, 2), 10,
+					400);
 			this.evolvioColor.text("B-day: " + toDate(selectedCreature.birthTime), 10, 425);
 			this.evolvioColor.text("(" + toAge(selectedCreature.birthTime) + ")", 10, 450);
-			this.evolvioColor.text("Generation: " + selectedCreature.gen, 10, 475);
-			this.evolvioColor.text("Parents: " + selectedCreature.parents, 10, 500, 210, 255);
+			this.evolvioColor.text("Generation: " + selectedCreature.getGen(), 10, 475);
+			this.evolvioColor.text("Parents: " + selectedCreature.getParents(), 10, 500, 210, 255);
 			this.evolvioColor.text("Hue: " + EvolvioColor.nf((float) (selectedCreature.hue), 0, 2), 10, 550, 210, 255);
-			this.evolvioColor.text("Mouth hue: " + EvolvioColor.nf((float) (selectedCreature.mouthHue), 0, 2), 10, 575,
-					210, 255);
+			this.evolvioColor.text("Mouth hue: " + EvolvioColor.nf((float) (selectedCreature.getMouthHue()), 0, 2), 10,
+					575, 210, 255);
 
 			if (userControl) {
 				this.evolvioColor.text(
@@ -403,9 +405,9 @@ class Board {
 								me.setHue(me.hue - 0.02f);
 
 							if (this.evolvioColor.key == 'i' || this.evolvioColor.key == 'I')
-								me.setMouthHue(me.mouthHue + 0.02f);
+								me.setMouthHue(me.getMouthHue() + 0.02f);
 							if (this.evolvioColor.key == 'k' || this.evolvioColor.key == 'K')
-								me.setMouthHue(me.mouthHue - 0.02f);
+								me.setMouthHue(me.getMouthHue() - 0.02f);
 							if (this.evolvioColor.key == 'b' || this.evolvioColor.key == 'B') {
 								if (!isPressingKeyB) {
 									me.reproduce(Configuration.MANUAL_BIRTH_SIZE, timeStep);
@@ -557,8 +559,8 @@ class Board {
 		while (creatures.size() < creatureMinimum) {
 			if (choosePreexisting) {
 				Creature c = getRandomCreature();
-				c.addEnergy(c.SAFE_SIZE);
-				c.reproduce(c.SAFE_SIZE, timeStep);
+				c.addEnergy(Configuration.SAFE_SIZE);
+				c.reproduce(Configuration.SAFE_SIZE, timeStep);
 			} else {
 				creatures.add(new Creature(this.evolvioColor, this));
 			}

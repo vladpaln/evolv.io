@@ -95,7 +95,7 @@ class Brain {
 					float axonAngle = EvolvioColor.atan2((y + z) / 2.0f - BRAIN_HEIGHT / 2.0f,
 							x - Configuration.BRAIN_WIDTH / 2) / (2 * EvolvioColor.PI) + EvolvioColor.PI;
 					Brain parentForAxon = parents
-							.get((int) (((axonAngle + randomParentRotation) % 1.0f) * parentsTotal)).brain;
+							.get((int) (((axonAngle + randomParentRotation) % 1.0f) * parentsTotal)).getBrain();
 					newBrain[x][y][z] = parentForAxon.axons[x][y][z].mutateAxon();
 				}
 			}
@@ -104,8 +104,8 @@ class Brain {
 			for (int y = 0; y < BRAIN_HEIGHT; y++) {
 				float axonAngle = EvolvioColor.atan2(y - BRAIN_HEIGHT / 2.0f, x - Configuration.BRAIN_WIDTH / 2)
 						/ (2 * EvolvioColor.PI) + EvolvioColor.PI;
-				Brain parentForAxon = parents
-						.get((int) (((axonAngle + randomParentRotation) % 1.0f) * parentsTotal)).brain;
+				Brain parentForAxon = parents.get((int) (((axonAngle + randomParentRotation) % 1.0f) * parentsTotal))
+						.getBrain();
 				newNeurons[x][y] = parentForAxon.neurons[x][y];
 			}
 		}
