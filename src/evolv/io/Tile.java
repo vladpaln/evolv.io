@@ -4,36 +4,34 @@ import processing.core.PFont;
 
 class Tile {
 	private final EvolvioColor evolvioColor;
-	public final int barrenColor;
-	public final int fertileColor;
-	public final int blackColor;
-	public final int waterColor;
-	public final float FOOD_GROWTH_RATE = Configuration.FOOD_GROWTH_RATE;
+	private final Board board;
+	private final int barrenColor;
+	private final int fertileColor;
+	private final int blackColor;
+	private final int waterColor;
+	private final double climateType;
+	private final double foodType;
+	private final int posX;
+	private final int posY;
 
-	double fertility;
-	double foodLevel;
-	private final float maxGrowthLevel = Configuration.MAX_GROWTH_LEVEL;
-	private int posX;
-	private int posY;
-	private double lastUpdateTime = 0;
+	private double fertility;
+	private double foodLevel;
+	private double lastUpdateTime;
 
-	public double climateType;
-	public double foodType;
-
-	Board board;
-
-	public Tile(EvolvioColor evolvioColor, int x, int y, double f, float type, Board b) {
-		barrenColor = evolvioColor.color(0, 0, 1);
-		fertileColor = evolvioColor.color(0, 0, 0.2f);
-		blackColor = evolvioColor.color(0, 1, 0);
-		waterColor = evolvioColor.color(0, 0, 0);
+	public Tile(EvolvioColor evolvioColor, Board board, int x, int y, double f, float type) {
 		this.evolvioColor = evolvioColor;
-		posX = x;
-		posY = y;
-		fertility = Math.max(0, f);
-		foodLevel = fertility;
-		climateType = foodType = type;
-		board = b;
+		this.board = board;
+		this.barrenColor = evolvioColor.color(0, 0, 1);
+		this.fertileColor = evolvioColor.color(0, 0, 0.2f);
+		this.blackColor = evolvioColor.color(0, 1, 0);
+		this.waterColor = evolvioColor.color(0, 0, 0);
+		// TODO can climate type and food type be consolidated?
+		this.climateType = type;
+		this.foodType = type;
+		this.posX = x;
+		this.posY = y;
+		this.fertility = Math.max(0, f);
+		this.foodLevel = fertility;
 	}
 
 	public double getFertility() {
@@ -42,6 +40,10 @@ class Tile {
 
 	public double getFoodLevel() {
 		return foodLevel;
+	}
+
+	public double getFoodType() {
+		return foodType;
 	}
 
 	public void setFertility(double f) {
@@ -82,17 +84,17 @@ class Tile {
 			if (fertility > 1) { // This means the tile is water.
 				foodLevel = 0;
 			} else {
-				if (growthChange > 0) { // Food is growing. Exponentially
-										// approach maxGrowthLevel.
-					if (foodLevel < maxGrowthLevel) {
-						double newDistToMax = (maxGrowthLevel - foodLevel)
-								* Math.pow(2.71828182846f, -growthChange * fertility * FOOD_GROWTH_RATE);
-						double foodGrowthAmount = (maxGrowthLevel - newDistToMax) - foodLevel;
+				if (growthChange > 0) {
+					// Food is growing. Exponentially approach maxGrowthLevel.
+					if (foodLevel < Configuration.MAX_GROWTH_LEVEL) {
+						double newDistToMax = (Configuration.MAX_GROWTH_LEVEL - foodLevel)
+								* Math.exp(-growthChange * fertility * Configuration.FOOD_GROWTH_RATE);
+						double foodGrowthAmount = (Configuration.MAX_GROWTH_LEVEL - newDistToMax) - foodLevel;
 						addFood(foodGrowthAmount, climateType, false);
 					}
-				} else { // Food is dying off. Exponentially approach 0.
-					removeFood(foodLevel - foodLevel * Math.pow(2.71828182846f, growthChange * FOOD_GROWTH_RATE),
-							false);
+				} else {
+					// Food is dying off. Exponentially approach 0.
+					removeFood(foodLevel - foodLevel * Math.exp(growthChange * Configuration.FOOD_GROWTH_RATE), false);
 				}
 				/*
 				 * if (growableTime > 0) { if (foodLevel < maxGrowthLevel) {
@@ -128,15 +130,16 @@ class Tile {
 	}
 
 	public int getColor() {
+		// TODO shouldn't be iterating in a getter
 		iterate();
 		int foodColor = this.evolvioColor.color((float) (foodType), 1, 1);
 		if (fertility > 1) {
 			return waterColor;
-		} else if (foodLevel < maxGrowthLevel) {
+		} else if (foodLevel < Configuration.MAX_GROWTH_LEVEL) {
 			return interColorFixedHue(interColor(barrenColor, fertileColor, fertility), foodColor,
-					foodLevel / maxGrowthLevel, this.evolvioColor.hue(foodColor));
+					foodLevel / Configuration.MAX_GROWTH_LEVEL, this.evolvioColor.hue(foodColor));
 		} else {
-			return interColorFixedHue(foodColor, blackColor, 1.0f - maxGrowthLevel / foodLevel,
+			return interColorFixedHue(foodColor, blackColor, 1.0f - Configuration.MAX_GROWTH_LEVEL / foodLevel,
 					this.evolvioColor.hue(foodColor));
 		}
 	}
@@ -144,35 +147,20 @@ class Tile {
 	public int interColor(int a, int b, double x) {
 		double hue = inter(this.evolvioColor.hue(a), this.evolvioColor.hue(b), x);
 		double sat = inter(this.evolvioColor.saturation(a), this.evolvioColor.saturation(b), x);
-		double bri = inter(this.evolvioColor.brightness(a), this.evolvioColor.brightness(b), x); // I
-																									// know
-																									// it's
-		// dumb to
-		// do
-		// interpolation
-		// with HSL
-		// but oh
-		// well
+		double bri = inter(this.evolvioColor.brightness(a), this.evolvioColor.brightness(b), x);
+		// I know it's dumb to do interpolation with HSL but oh well
 		return this.evolvioColor.color((float) (hue), (float) (sat), (float) (bri));
 	}
 
 	public int interColorFixedHue(int a, int b, double x, double hue) {
 		double satB = this.evolvioColor.saturation(b);
-		if (this.evolvioColor.brightness(b) == 0) { // I want black to be
-													// calculated as 100%
-			// saturation
+		if (this.evolvioColor.brightness(b) == 0) {
+			// I want black to be calculated as 100% saturation
 			satB = 1;
 		}
 		double sat = inter(this.evolvioColor.saturation(a), satB, x);
-		double bri = inter(this.evolvioColor.brightness(a), this.evolvioColor.brightness(b), x); // I
-																									// know
-																									// it's
-		// dumb to
-		// do
-		// interpolation
-		// with HSL
-		// but oh
-		// well
+		double bri = inter(this.evolvioColor.brightness(a), this.evolvioColor.brightness(b), x);
+		// I know it's dumb to do interpolation with HSL but oh well
 		return this.evolvioColor.color((float) (hue), (float) (sat), (float) (bri));
 	}
 

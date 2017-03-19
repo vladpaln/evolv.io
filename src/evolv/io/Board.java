@@ -69,7 +69,7 @@ class Board {
 				float climateType = this.evolvioColor.noise(x * Configuration.NOISE_STEP_SIZE * 0.2f + 10000,
 						y * Configuration.NOISE_STEP_SIZE * 0.2f + 10000) * 1.63f - 0.4f;
 				climateType = EvolvioColor.min(EvolvioColor.max(climateType, 0), 0.8f);
-				tiles[x][y] = new Tile(this.evolvioColor, x, y, fertility, climateType, this);
+				tiles[x][y] = new Tile(this.evolvioColor, this, x, y, fertility, climateType);
 			}
 		}
 
