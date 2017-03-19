@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import processing.core.PFont;
-
 class Creature extends SoftBody {
 	private static final float CROSS_SIZE = 0.022f;
 	private static final double[] VISION_ANGLES = { 0, -0.4f, 0.4f };

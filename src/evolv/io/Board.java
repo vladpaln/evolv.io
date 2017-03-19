@@ -3,8 +3,6 @@ package evolv.io;
 import java.util.ArrayList;
 import java.util.List;
 
-import processing.core.PFont;
-
 class Board {
 	private static final String[] SORT_METRIC_NAMES = { "Biggest", "Smallest", "Youngest", "Oldest", "A to Z", "Z to A",
 			"Highest Gen", "Lowest Gen" };

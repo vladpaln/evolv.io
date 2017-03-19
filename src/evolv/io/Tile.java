@@ -1,7 +1,5 @@
 package evolv.io;
 
-import processing.core.PFont;
-
 class Tile {
 	private final EvolvioColor evolvioColor;
 	private final Board board;

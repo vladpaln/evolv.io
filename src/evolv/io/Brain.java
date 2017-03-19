@@ -2,8 +2,6 @@ package evolv.io;
 
 import java.util.ArrayList;
 
-import processing.core.PFont;
-
 class Brain {
 	private static final int BRAIN_HEIGHT = 11 + Configuration.MEMORY_COUNT + 1;
 	private static final String[] INPUT_LABELS = new String[BRAIN_HEIGHT];
