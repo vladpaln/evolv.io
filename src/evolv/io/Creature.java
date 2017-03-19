@@ -63,8 +63,6 @@ class Creature extends SoftBody {
 	final double SAFE_SIZE = 1.25f;
 	final double MATURE_AGE = 0.01f;
 
-	NameGenerator nameGenerator;
-
 	private static List<CreatureAction> CreatureActions = Arrays.asList(new CreatureAction.AdjustHue(),
 			new CreatureAction.Accelerate(), new CreatureAction.Rotate(), new CreatureAction.Eat(),
 			new CreatureAction.Fight(), new CreatureAction.Reproduce(), new CreatureAction.None(),
@@ -83,7 +81,6 @@ class Creature extends SoftBody {
 			String tname, String tparents, boolean mutateName, Brain brain, int tgen, double tmouthHue) {
 
 		super(evolvioColor, tpx, tpy, tvx, tvy, tenergy, tdensity, thue, tsaturation, tbrightness, tb);
-		nameGenerator = new NameGenerator(evolvioColor);
 		this.evolvioColor = evolvioColor;
 
 		if (brain == null)
@@ -96,13 +93,13 @@ class Creature extends SoftBody {
 		id = board.creatureIDUpTo + 1;
 		if (tname.length() >= 1) {
 			if (mutateName) {
-				name = nameGenerator.mutateName(tname);
+				name = NameGenerator.mutateName(tname);
 			} else {
 				name = tname;
 			}
-			name = nameGenerator.sanitizeName(name);
+			name = NameGenerator.sanitizeName(name);
 		} else {
-			name = nameGenerator.newName();
+			name = NameGenerator.newName();
 		}
 		parents = tparents;
 		board.creatureIDUpTo++;

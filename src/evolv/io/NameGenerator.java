@@ -1,70 +1,52 @@
 package evolv.io;
 
+import java.util.Random;
+
 class NameGenerator {
-	/**
-	 * 
-	 */
-	private final EvolvioColor evolvioColor;
+	private static final int MIN_NAME_LENGTH = 3;
+	private static final int MAX_NAME_LENGTH = 10;
+	private static final float[] LETTER_FREQUENCIES = { 8.167f, 1.492f, 2.782f, 4.253f, 12.702f, 2.228f, 2.015f, 6.094f,
+			6.966f, 0.153f, 0.772f, 4.025f, 2.406f, 6.749f, 7.507f, 1.929f, 0.095f, 5.987f, 6.327f, 9.056f, 2.758f,
+			0.978f, 2.361f, 0.150f, 1.974f, 0.074f };
+	private static final Random RANDOM = new Random();
 
-	/**
-	 * @param evolvioColor
-	 */
-	NameGenerator(EvolvioColor evolvioColor) {
-		this.evolvioColor = evolvioColor;
-	}
-
-	final int MIN_NAME_LENGTH = 3;
-	final int MAX_NAME_LENGTH = 10;
-	final float[] LETTER_FREQUENCIES = { 8.167f, 1.492f, 2.782f, 4.253f, 12.702f, 2.228f, 2.015f, 6.094f, 6.966f,
-			0.153f, 0.772f, 4.025f, 2.406f, 6.749f, 7.507f, 1.929f, 0.095f, 5.987f, 6.327f, 9.056f, 2.758f, 0.978f,
-			2.361f, 0.150f, 1.974f, 0.074f };
-
-	public String newName() {
-		String nameSoFar = "";
-		int chosenLength = (int) (this.evolvioColor.random(MIN_NAME_LENGTH, MAX_NAME_LENGTH));
+	public static String newName() {
+		int chosenLength = MIN_NAME_LENGTH + RANDOM.nextInt(MAX_NAME_LENGTH - MIN_NAME_LENGTH);
+		char[] nameChars = new char[chosenLength];
 		for (int i = 0; i < chosenLength; i++) {
-			nameSoFar += getRandomChar();
+			nameChars[i] = getRandomChar();
 		}
-		return sanitizeName(nameSoFar);
+		return sanitizeName(String.valueOf(nameChars));
 	}
 
-	public String mutateName(String input) {
+	public static String mutateName(String input) {
+		// TODO this can probably be optimised with a StringBuilder
 		if (input.length() >= 3) {
-			if (this.evolvioColor.random(0, 1) < 0.2f) {
-				int removeIndex = (int) this.evolvioColor.random(0, input.length());
+			if (RANDOM.nextFloat() < 0.2f) {
+				int removeIndex = RANDOM.nextInt(input.length());
 				input = input.substring(0, removeIndex) + input.substring(removeIndex + 1, input.length());
 			}
 		}
 		if (input.length() <= 9) {
-			if (this.evolvioColor.random(0, 1) < 0.2f) {
-				int insertIndex = (int) this.evolvioColor.random(0, input.length() + 1);
+			if (RANDOM.nextFloat() < 0.2f) {
+				int insertIndex = RANDOM.nextInt(input.length() + 1);
 				input = input.substring(0, insertIndex) + getRandomChar()
 						+ input.substring(insertIndex, input.length());
 			}
 		}
-		int changeIndex = (int) this.evolvioColor.random(0, input.length());
-		input = input.substring(0, changeIndex) + getRandomChar()
-				+ input.substring(changeIndex + 1, input.length());
+		int changeIndex = RANDOM.nextInt(input.length());
+		input = input.substring(0, changeIndex) + getRandomChar() + input.substring(changeIndex + 1, input.length());
 		return input;
 	}
 
-	public char getRandomChar() {
-		float letterFactor = this.evolvioColor.random(0, 100);
-		int letterChoice = 0;
-		while (letterFactor > 0) {
-			letterFactor -= LETTER_FREQUENCIES[letterChoice];
-			letterChoice++;
-		}
-		return (char) (letterChoice + 96);
-	}
-
-	public String sanitizeName(String input) {
-		String output = "";
+	public static String sanitizeName(String input) {
+		StringBuilder output = new StringBuilder();
 		int vowelsSoFar = 0;
 		int consonantsSoFar = 0;
 		for (int i = 0; i < input.length(); i++) {
 			char ch = input.charAt(i);
-			if (isVowel(ch)) {
+			boolean isVowel = isVowel(ch);
+			if (isVowel) {
 				consonantsSoFar = 0;
 				vowelsSoFar++;
 			} else {
@@ -72,7 +54,7 @@ class NameGenerator {
 				consonantsSoFar++;
 			}
 			if (vowelsSoFar <= 2 && consonantsSoFar <= 2) {
-				output = output + ch;
+				output.append(ch);
 			} else {
 				double chanceOfAddingChar = 0.5f;
 				if (input.length() <= MIN_NAME_LENGTH) {
@@ -80,13 +62,13 @@ class NameGenerator {
 				} else if (input.length() >= MAX_NAME_LENGTH) {
 					chanceOfAddingChar = 0.0f;
 				}
-				if (this.evolvioColor.random(0, 1) < chanceOfAddingChar) {
+				if (RANDOM.nextFloat() < chanceOfAddingChar) {
 					char extraChar = ' ';
-					while (extraChar == ' ' || (isVowel(ch) == isVowel(extraChar))) {
+					while (extraChar == ' ' || (isVowel == isVowel(extraChar))) {
 						extraChar = getRandomChar();
 					}
-					output = output + extraChar + ch;
-					if (isVowel(ch)) {
+					output.append(extraChar).append(ch);
+					if (isVowel) {
 						consonantsSoFar = 0;
 						vowelsSoFar = 1;
 					} else {
@@ -96,10 +78,21 @@ class NameGenerator {
 				}
 			}
 		}
-		return output;
+		return output.toString();
 	}
 
-	public boolean isVowel(char a) {
+	private static char getRandomChar() {
+		float letterFactor = RANDOM.nextFloat() * 100;
+		int letterChoice = 0;
+		while (letterFactor > 0) {
+			letterFactor -= LETTER_FREQUENCIES[letterChoice];
+			letterChoice++;
+		}
+		// TODO make the link between 96 and 'a' more meaningful
+		return (char) (letterChoice + 96);
+	}
+
+	private static boolean isVowel(char a) {
 		return (a == 'a' || a == 'e' || a == 'i' || a == 'o' || a == 'u' || a == 'y');
 	}
 }
