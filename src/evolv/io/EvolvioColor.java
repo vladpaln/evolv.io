@@ -71,7 +71,7 @@ public class EvolvioColor extends PApplet {
 
 	@Override
 	public void draw() {
-		for (int iteration = 0; iteration < evoBoard.playSpeed; iteration++) {
+		for (int iteration = 0; iteration < evoBoard.getPlaySpeed(); iteration++) {
 			evoBoard.iterate(TIME_STEP);
 		}
 		if (dist(prevMouseX, prevMouseY, mouseX, mouseY) > 5) {
@@ -89,10 +89,10 @@ public class EvolvioColor extends PApplet {
 				dragging = 2;
 			}
 		}
-		if (evoBoard.userControl && evoBoard.selectedCreature != null) {
-			cameraX = (float) evoBoard.selectedCreature.px;
-			cameraY = (float) evoBoard.selectedCreature.py;
-			cameraR = -PI / 2.0f - (float) evoBoard.selectedCreature.rotation;
+		if (evoBoard.isUserControl() && evoBoard.getSelectedCreature() != null) {
+			cameraX = (float) evoBoard.getSelectedCreature().px;
+			cameraY = (float) evoBoard.getSelectedCreature().py;
+			cameraR = -PI / 2.0f - (float) evoBoard.getSelectedCreature().rotation;
 		} else {
 			cameraR = 0;
 		}
@@ -101,7 +101,7 @@ public class EvolvioColor extends PApplet {
 		evoBoard.drawBlankBoard(SCALE_TO_FIX_BUG);
 		translate(BOARD_WIDTH * 0.5f * SCALE_TO_FIX_BUG, BOARD_HEIGHT * 0.5f * SCALE_TO_FIX_BUG);
 		scale(zoom);
-		if (evoBoard.userControl && evoBoard.selectedCreature != null) {
+		if (evoBoard.isUserControl() && evoBoard.getSelectedCreature() != null) {
 			rotate(cameraR);
 		}
 		translate(-cameraX * SCALE_TO_FIX_BUG, -cameraY * SCALE_TO_FIX_BUG);
@@ -131,18 +131,18 @@ public class EvolvioColor extends PApplet {
 			dragging = 1;
 		} else {
 			if (abs(mouseX - (windowHeight + 65)) <= 60 && abs(mouseY - 147) <= 60
-					&& evoBoard.selectedCreature != null) {
-				cameraX = (float) evoBoard.selectedCreature.px;
-				cameraY = (float) evoBoard.selectedCreature.py;
+					&& evoBoard.getSelectedCreature() != null) {
+				cameraX = (float) evoBoard.getSelectedCreature().px;
+				cameraY = (float) evoBoard.getSelectedCreature().py;
 				zoom = 16;
-			} else if (mouseY >= 95 && mouseY < 135 && evoBoard.selectedCreature == null) {
+			} else if (mouseY >= 95 && mouseY < 135 && evoBoard.getSelectedCreature() == null) {
 				if (mouseX >= windowHeight + 10 && mouseX < windowHeight + 230) {
 					resetZoom();
 				} else if (mouseX >= windowHeight + 240 && mouseX < windowHeight + 460) {
 					if (mouseButton == LEFT) {
-						evoBoard.incrementSort();
+						evoBoard.incrementSortMetric();
 					} else if (mouseButton == RIGHT) {
-						evoBoard.decrementSort();
+						evoBoard.decrementSortMetric();
 					}
 				}
 			} else if (mouseY >= 570) {
@@ -167,14 +167,14 @@ public class EvolvioColor extends PApplet {
 					switch (buttonNum) {
 
 					case (0):
-						evoBoard.userControl = !evoBoard.userControl;
+						evoBoard.setUserControl(!evoBoard.isUserControl());
 						break;
 
 					case (1):
 						if (clickedOnLeft) {
-							evoBoard.creatureMinimum -= evoBoard.creatureMinimumIncrement;
+							evoBoard.decreaseCreatureMinimum();
 						} else {
-							evoBoard.creatureMinimum += evoBoard.creatureMinimumIncrement;
+							evoBoard.increaseCreatureMinimum();
 						}
 						break;
 
@@ -184,12 +184,9 @@ public class EvolvioColor extends PApplet {
 
 					case (3):
 						if (clickedOnLeft) {
-							evoBoard.imageSaveInterval *= 0.5f;
+							evoBoard.decreaseImageSaveInterval();
 						} else {
-							evoBoard.imageSaveInterval *= 2.0f;
-						}
-						if (evoBoard.imageSaveInterval >= 0.7f) {
-							evoBoard.imageSaveInterval = Math.round(evoBoard.imageSaveInterval);
+							evoBoard.increaseImageSaveInterval();
 						}
 						break;
 
@@ -199,28 +196,17 @@ public class EvolvioColor extends PApplet {
 
 					case (5):
 						if (clickedOnLeft) {
-							evoBoard.textSaveInterval *= 0.5f;
+							evoBoard.decreaseTextSaveInterval();
 						} else {
-							evoBoard.textSaveInterval *= 2.0f;
-						}
-						if (evoBoard.textSaveInterval >= 0.7f) {
-							evoBoard.textSaveInterval = Math.round(evoBoard.textSaveInterval);
+							evoBoard.increaseTextSaveInterval();
 						}
 						break;
 
 					case (6):
 						if (clickedOnLeft) {
-							if (evoBoard.playSpeed >= 2) {
-								evoBoard.playSpeed /= 2;
-							} else {
-								evoBoard.playSpeed = 0;
-							}
+							evoBoard.decreasePlaySpeed();
 						} else {
-							if (evoBoard.playSpeed == 0) {
-								evoBoard.playSpeed = 1;
-							} else {
-								evoBoard.playSpeed *= 2;
-							}
+							evoBoard.increasePlaySpeed();
 						}
 						break;
 
@@ -229,12 +215,12 @@ public class EvolvioColor extends PApplet {
 						break;
 					}
 				}
-			} else if (mouseX >= height + 10 && mouseX < width - 50 && evoBoard.selectedCreature == null) {
+			} else if (mouseX >= height + 10 && mouseX < width - 50 && evoBoard.getSelectedCreature() == null) {
 				int listIndex = (mouseY - 150) / 70;
-				if (listIndex >= 0 && listIndex < evoBoard.LIST_SLOTS) {
-					evoBoard.selectedCreature = evoBoard.list[listIndex];
-					cameraX = (float) evoBoard.selectedCreature.px;
-					cameraY = (float) evoBoard.selectedCreature.py;
+				if (listIndex >= 0 && listIndex < Configuration.LIST_SLOTS) {
+					evoBoard.setSelectedCreature(evoBoard.getCreatureInList(listIndex));
+					cameraX = (float) evoBoard.getSelectedCreature().px;
+					cameraY = (float) evoBoard.getSelectedCreature().py;
 					zoom = 16;
 				}
 			}
@@ -265,12 +251,12 @@ public class EvolvioColor extends PApplet {
 				evoBoard.unselect();
 				cameraR = 0;
 				if (x >= 0 && x < BOARD_WIDTH && y >= 0 && y < BOARD_HEIGHT) {
-					for (int i = 0; i < evoBoard.softBodiesInPositions[x][y].size(); i++) {
-						SoftBody body = (SoftBody) evoBoard.softBodiesInPositions[x][y].get(i);
+					for (int i = 0; i < evoBoard.getSoftBodiesInPosition(x, y).size(); i++) {
+						SoftBody body = evoBoard.getSoftBodiesInPosition(x, y).get(i);
 						if (body.isCreature) {
 							float distance = dist(mX, mY, (float) body.px, (float) body.py);
 							if (distance <= body.getRadius()) {
-								evoBoard.selectedCreature = (Creature) body;
+								evoBoard.setSelectedCreature((Creature) body);
 								zoom = 16;
 							}
 						}

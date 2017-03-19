@@ -65,10 +65,10 @@ class Creature extends SoftBody {
 			new CreatureAction.AdjustMouthHue());
 
 	public Creature(EvolvioColor evolvioColor, Board tb) {
-		this(evolvioColor, evolvioColor.random(0, tb.boardWidth), evolvioColor.random(0, tb.boardHeight), 0, 0,
-				evolvioColor.random(tb.MIN_CREATURE_ENERGY, tb.MAX_CREATURE_ENERGY), 1, evolvioColor.random(0, 1), 1, 1,
-				tb, evolvioColor.random(0, 2 * EvolvioColor.PI), 0, "", "[PRIMORDIAL]", true, null, 1,
-				evolvioColor.random(0, 1));
+		this(evolvioColor, evolvioColor.random(0, tb.getBoardWidth()), evolvioColor.random(0, tb.getBoardHeight()), 0,
+				0, evolvioColor.random(Configuration.MINIMUM_CREATURE_ENERGY, Configuration.MAXIMUM_CREATURE_ENERGY), 1,
+				evolvioColor.random(0, 1), 1, 1, tb, evolvioColor.random(0, 2 * EvolvioColor.PI), 0, "", "[PRIMORDIAL]",
+				true, null, 1, evolvioColor.random(0, 1));
 	}
 
 	public Creature(EvolvioColor evolvioColor, double tpx, double tpy, double tvx, double tvy, double tenergy,
@@ -85,7 +85,7 @@ class Creature extends SoftBody {
 		rotation = rot;
 		vr = tvr;
 		isCreature = true;
-		id = board.creatureIDUpTo + 1;
+		id = board.getCreatureIdUpTo() + 1;
 		if (tname.length() >= 1) {
 			if (mutateName) {
 				name = NameGenerator.mutateName(tname);
@@ -97,7 +97,7 @@ class Creature extends SoftBody {
 			name = NameGenerator.newName();
 		}
 		parents = tparents;
-		board.creatureIDUpTo++;
+		board.incrementCreatureIdUpTo();
 		// visionAngle = 0;
 		// visionDistance = 0;
 		// visionEndX = getVisionStartX();
@@ -133,7 +133,7 @@ class Creature extends SoftBody {
 	public void drawSoftBody(float scaleUp, float camZoom, boolean showVision) {
 		this.evolvioColor.ellipseMode(EvolvioColor.RADIUS);
 		double radius = getRadius();
-		if (showVision && camZoom > Board.MAX_DETAILED_ZOOM) {
+		if (showVision && camZoom > Configuration.MAX_DETAILED_ZOOM) {
 			drawVisionAngles(board, scaleUp);
 		}
 		this.evolvioColor.noStroke();
@@ -142,16 +142,16 @@ class Creature extends SoftBody {
 			this.evolvioColor.ellipse((float) (px * scaleUp), (float) (py * scaleUp),
 					(float) (FIGHT_RANGE * radius * scaleUp), (float) (FIGHT_RANGE * radius * scaleUp));
 		}
-		this.evolvioColor.strokeWeight(board.CREATURE_STROKE_WEIGHT);
+		this.evolvioColor.strokeWeight(Configuration.CREATURE_STROKE_WEIGHT);
 		this.evolvioColor.stroke(0, 0, 1);
 		this.evolvioColor.fill(0, 0, 1);
-		if (this == board.selectedCreature) {
+		if (this == board.getSelectedCreature()) {
 			this.evolvioColor.ellipse((float) (px * scaleUp), (float) (py * scaleUp),
 					(float) (radius * scaleUp + 1 + 75.0f / camZoom), (float) (radius * scaleUp + 1 + 75.0f / camZoom));
 		}
 		super.drawSoftBody(scaleUp);
 
-		if (camZoom > Board.MAX_DETAILED_ZOOM) {
+		if (camZoom > Configuration.MAX_DETAILED_ZOOM) {
 			drawMouth(board, scaleUp, radius, rotation, camZoom, mouthHue);
 			if (showVision) {
 				this.evolvioColor.fill(0, 0, 1);
@@ -170,7 +170,7 @@ class Creature extends SoftBody {
 				visionUIcolor = this.evolvioColor.color(0, 0, 0);
 			}
 			this.evolvioColor.stroke(visionUIcolor);
-			this.evolvioColor.strokeWeight(board.CREATURE_STROKE_WEIGHT);
+			this.evolvioColor.strokeWeight(Configuration.CREATURE_STROKE_WEIGHT);
 			float endX = (float) getVisionEndX(i);
 			float endY = (float) getVisionEndY(i);
 			this.evolvioColor.line((float) (px * scaleUp), (float) (py * scaleUp), endX * scaleUp, endY * scaleUp);
@@ -180,7 +180,7 @@ class Creature extends SoftBody {
 					2 * CROSS_SIZE * scaleUp, 2 * CROSS_SIZE * scaleUp);
 			this.evolvioColor.stroke((float) (visionResults[i * 3]), (float) (visionResults[i * 3 + 1]),
 					(float) (visionResults[i * 3 + 2]));
-			this.evolvioColor.strokeWeight(board.CREATURE_STROKE_WEIGHT);
+			this.evolvioColor.strokeWeight(Configuration.CREATURE_STROKE_WEIGHT);
 			this.evolvioColor.line((float) ((visionOccludedX[i] - CROSS_SIZE) * scaleUp),
 					(float) ((visionOccludedY[i] - CROSS_SIZE) * scaleUp),
 					(float) ((visionOccludedX[i] + CROSS_SIZE) * scaleUp),
@@ -194,16 +194,16 @@ class Creature extends SoftBody {
 
 	public void drawMouth(Board board, float scaleUp, double radius, double rotation, float camZoom, double mouthHue) {
 		this.evolvioColor.noFill();
-		this.evolvioColor.strokeWeight(board.CREATURE_STROKE_WEIGHT);
+		this.evolvioColor.strokeWeight(Configuration.CREATURE_STROKE_WEIGHT);
 		this.evolvioColor.stroke(0, 0, 1);
 		this.evolvioColor.ellipseMode(EvolvioColor.RADIUS);
 		this.evolvioColor.ellipse((float) (px * scaleUp), (float) (py * scaleUp),
-				board.MINIMUM_SURVIVABLE_SIZE * scaleUp, board.MINIMUM_SURVIVABLE_SIZE * scaleUp);
+				Configuration.MINIMUM_SURVIVABLE_SIZE * scaleUp, Configuration.MINIMUM_SURVIVABLE_SIZE * scaleUp);
 		this.evolvioColor.pushMatrix();
 		this.evolvioColor.translate((float) (px * scaleUp), (float) (py * scaleUp));
 		this.evolvioColor.scale((float) radius);
 		this.evolvioColor.rotate((float) rotation);
-		this.evolvioColor.strokeWeight((float) (board.CREATURE_STROKE_WEIGHT / radius));
+		this.evolvioColor.strokeWeight((float) (Configuration.CREATURE_STROKE_WEIGHT / radius));
 		this.evolvioColor.stroke(0, 0, 0);
 		this.evolvioColor.fill((float) mouthHue, 1.0f, 1.0f);
 		this.evolvioColor.ellipse(0.6f * scaleUp, 0, 0.37f * scaleUp, 0.37f * scaleUp);
@@ -211,14 +211,15 @@ class Creature extends SoftBody {
 	}
 
 	public void metabolize(double timeStep) {
-		double age = AGE_FACTOR * (board.year - birthTime); // the older the
-															// more work
-															// necessary
+		double age = AGE_FACTOR * (board.getYear() - birthTime); // the older
+																	// the
+		// more work
+		// necessary
 		loseEnergy(energy * METABOLISM_ENERGY * age * timeStep);
 
 		if (energy < SAFE_SIZE) {
 			returnToEarth();
-			board.creatures.remove(this);
+			board.removeCreature(this);
 		}
 	}
 
@@ -248,7 +249,7 @@ class Creature extends SoftBody {
 		}
 		int x = xBound((int) choiceX);
 		int y = yBound((int) choiceY);
-		return board.tiles[x][y];
+		return board.getTile(x, y);
 	}
 
 	public void eat(double attemptedAmount, double timeStep) {
@@ -284,7 +285,7 @@ class Creature extends SoftBody {
 	}
 
 	public void fight(double amount, double timeStep) {
-		if (amount > 0 && board.year - birthTime >= MATURE_AGE) {
+		if (amount > 0 && board.getYear() - birthTime >= MATURE_AGE) {
 			fightLevel = amount;
 			loseEnergy(fightLevel * FIGHT_ENERGY * energy * timeStep);
 			for (int i = 0; i < colliders.size(); i++) {
@@ -384,10 +385,10 @@ class Creature extends SoftBody {
 	}
 
 	public int getColorAt(double x, double y) {
-		if (x >= 0 && x < board.boardWidth && y >= 0 && y < board.boardHeight) {
-			return board.tiles[(int) (x)][(int) (y)].getColor();
+		if (x >= 0 && x < board.getBoardWidth() && y >= 0 && y < board.getBoardHeight()) {
+			return board.getTile((int) (x), (int) (y)).getColor();
 		} else {
-			return board.BACKGROUND_COLOR;
+			return board.getBackgroundColor();
 		}
 	}
 
@@ -396,9 +397,9 @@ class Creature extends SoftBody {
 	}
 
 	public void addPVOs(int x, int y, ArrayList<SoftBody> PVOs) {
-		if (x >= 0 && x < board.boardWidth && y >= 0 && y < board.boardHeight) {
-			for (int i = 0; i < board.softBodiesInPositions[x][y].size(); i++) {
-				SoftBody newCollider = (SoftBody) board.softBodiesInPositions[x][y].get(i);
+		if (x >= 0 && x < board.getBoardWidth() && y >= 0 && y < board.getBoardHeight()) {
+			for (int i = 0; i < board.getSoftBodiesInPosition(x, y).size(); i++) {
+				SoftBody newCollider = board.getSoftBodiesInPosition(x, y).get(i);
 				if (!PVOs.contains(newCollider) && newCollider != this) {
 					PVOs.add(newCollider);
 				}
@@ -408,16 +409,15 @@ class Creature extends SoftBody {
 
 	public void returnToEarth() {
 		int pieces = 20;
-		double radius = (float) getRadius();
 		for (int i = 0; i < pieces; i++) {
 			getRandomCoveredTile().addFood(energy / pieces, hue, true);
 		}
 		for (int x = SBIPMinX; x <= SBIPMaxX; x++) {
 			for (int y = SBIPMinY; y <= SBIPMaxY; y++) {
-				board.softBodiesInPositions[x][y].remove(this);
+				board.getSoftBodiesInPosition(x, y).remove(this);
 			}
 		}
-		if (board.selectedCreature == this) {
+		if (board.getSelectedCreature() == this) {
 			board.unselect();
 		}
 	}
@@ -485,7 +485,7 @@ class Creature extends SoftBody {
 				}
 				newSaturation = 1;
 				newBrightness = 1;
-				board.creatures.add(new Creature(this.evolvioColor, newPX, newPY, 0, 0, babySize, density, newHue,
+				board.addCreature(new Creature(this.evolvioColor, newPX, newPY, 0, 0, babySize, density, newHue,
 						newSaturation, newBrightness, board, this.evolvioColor.random(0, 2 * EvolvioColor.PI), 0,
 						stitchName(parentNames), andifyParents(parentNames), true, newBrain, highestGen + 1,
 						newMouthHue));

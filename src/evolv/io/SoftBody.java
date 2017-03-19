@@ -48,8 +48,9 @@ class SoftBody {
 		board = tb;
 		setSBIP(false);
 		setSBIP(false); // Just to set previous SBIPs as well.
-		birthTime = tb.year;
-		ENERGY_DENSITY = 1.0f / (tb.MINIMUM_SURVIVABLE_SIZE * tb.MINIMUM_SURVIVABLE_SIZE * EvolvioColor.PI);
+		birthTime = tb.getYear();
+		ENERGY_DENSITY = 1.0f
+				/ (Configuration.MINIMUM_SURVIVABLE_SIZE * Configuration.MINIMUM_SURVIVABLE_SIZE * EvolvioColor.PI);
 	}
 
 	public void setSBIP(boolean shouldRemove) {
@@ -68,7 +69,7 @@ class SoftBody {
 				for (int x = prevSBIPMinX; x <= prevSBIPMaxX; x++) {
 					for (int y = prevSBIPMinY; y <= prevSBIPMaxY; y++) {
 						if (x < SBIPMinX || x > SBIPMaxX || y < SBIPMinY || y > SBIPMaxY) {
-							board.softBodiesInPositions[x][y].remove(this);
+							board.getSoftBodiesInPosition(x, y).remove(this);
 						}
 					}
 				}
@@ -76,7 +77,7 @@ class SoftBody {
 			for (int x = SBIPMinX; x <= SBIPMaxX; x++) {
 				for (int y = SBIPMinY; y <= SBIPMaxY; y++) {
 					if (x < prevSBIPMinX || x > prevSBIPMaxX || y < prevSBIPMinY || y > prevSBIPMaxY) {
-						board.softBodiesInPositions[x][y].add(this);
+						board.getSoftBodiesInPosition(x, y).add(this);
 					}
 				}
 			}
@@ -84,29 +85,29 @@ class SoftBody {
 	}
 
 	public int xBound(int x) {
-		return Math.min(Math.max(x, 0), board.boardWidth - 1);
+		return Math.min(Math.max(x, 0), board.getBoardWidth() - 1);
 	}
 
 	public int yBound(int y) {
-		return Math.min(Math.max(y, 0), board.boardHeight - 1);
+		return Math.min(Math.max(y, 0), board.getBoardHeight() - 1);
 	}
 
 	public double xBodyBound(double x) {
 		double radius = getRadius();
-		return Math.min(Math.max(x, radius), board.boardWidth - radius);
+		return Math.min(Math.max(x, radius), board.getBoardWidth() - radius);
 	}
 
 	public double yBodyBound(double y) {
 		double radius = getRadius();
-		return Math.min(Math.max(y, radius), board.boardHeight - radius);
+		return Math.min(Math.max(y, radius), board.getBoardHeight() - radius);
 	}
 
 	public void collide(double timeStep) {
 		colliders = new ArrayList<SoftBody>(0);
 		for (int x = SBIPMinX; x <= SBIPMaxX; x++) {
 			for (int y = SBIPMinY; y <= SBIPMaxY; y++) {
-				for (int i = 0; i < board.softBodiesInPositions[x][y].size(); i++) {
-					SoftBody newCollider = (SoftBody) board.softBodiesInPositions[x][y].get(i);
+				for (int i = 0; i < board.getSoftBodiesInPosition(x, y).size(); i++) {
+					SoftBody newCollider = board.getSoftBodiesInPosition(x, y).get(i);
 					if (!colliders.contains(newCollider) && newCollider != this) {
 						colliders.add(newCollider);
 					}
@@ -137,7 +138,7 @@ class SoftBody {
 	public void drawSoftBody(float scaleUp) {
 		double radius = getRadius();
 		this.evolvioColor.stroke(0);
-		this.evolvioColor.strokeWeight(board.CREATURE_STROKE_WEIGHT);
+		this.evolvioColor.strokeWeight(Configuration.CREATURE_STROKE_WEIGHT);
 		this.evolvioColor.fill((float) hue, (float) saturation, (float) brightness);
 		this.evolvioColor.ellipseMode(EvolvioColor.RADIUS);
 		this.evolvioColor.ellipse((float) (px * scaleUp), (float) (py * scaleUp), (float) (radius * scaleUp),

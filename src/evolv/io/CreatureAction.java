@@ -61,7 +61,7 @@ public interface CreatureAction {
 			if (modifier <= 0) {
 				return; // This creature doesn't want to reproduce
 			}
-			if (creature.board.year - creature.birthTime < creature.MATURE_AGE) {
+			if (creature.board.getYear() - creature.birthTime < creature.MATURE_AGE) {
 				return; // This creature is too young
 			}
 			if (creature.energy <= creature.SAFE_SIZE) {

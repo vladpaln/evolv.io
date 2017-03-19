@@ -56,7 +56,7 @@ class Tile {
 		int landColor = getColor();
 		this.evolvioColor.fill(landColor);
 		this.evolvioColor.rect(posX * scaleUp, posY * scaleUp, scaleUp, scaleUp);
-		if (showEnergy && camZoom > Board.MAX_DETAILED_ZOOM) {
+		if (showEnergy && camZoom > Configuration.MAX_DETAILED_ZOOM) {
 			if (this.evolvioColor.brightness(landColor) >= 0.7f) {
 				this.evolvioColor.fill(0, 0, 0, 1);
 			} else {
@@ -74,7 +74,7 @@ class Tile {
 	}
 
 	public void iterate() {
-		double updateTime = board.year;
+		double updateTime = board.getYear();
 		if (Math.abs(lastUpdateTime - updateTime) >= 0.00001f) {
 			double growthChange = board.getGrowthOverTimeRange(lastUpdateTime, updateTime);
 			if (fertility > 1) { // This means the tile is water.

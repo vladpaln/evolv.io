@@ -28,6 +28,8 @@ public class Configuration {
 	public static final float MAXIMUM_ROCK_ENERGY_BASE = 1.6f;
 	public static final float ROCK_DENSITY = 5f;
 	public static final double MAX_DETAILED_ZOOM = 3.5;
+	public static final int LIST_SLOTS = 6;
+	public static final double FLASH_SPEED = 80;
 
 	// Brain
 	public static final int MEMORY_COUNT = 1;
