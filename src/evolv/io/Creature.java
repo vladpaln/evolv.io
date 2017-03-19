@@ -79,8 +79,8 @@ class Creature extends SoftBody {
 		return tname;
 	}
 
-	public void drawBrain(PFont font, float scaleUp, int mX, int mY) {
-		brain.draw(font, scaleUp, mX, mY);
+	public void drawBrain(float scaleUp, int mX, int mY) {
+		brain.draw(scaleUp, mX, mY);
 	}
 
 	public void useBrain(double timeStep, boolean useOutput) {
@@ -100,7 +100,7 @@ class Creature extends SoftBody {
 		}
 	}
 
-	public void drawSoftBody(float scaleUp, float camZoom, boolean showVision, PFont font) {
+	public void drawSoftBody(float scaleUp, float camZoom, boolean showVision) {
 		this.evolvioColor.ellipseMode(EvolvioColor.RADIUS);
 		double radius = getRadius();
 		if (showVision && camZoom > Configuration.MAX_DETAILED_ZOOM) {
@@ -126,7 +126,7 @@ class Creature extends SoftBody {
 			drawMouth(getBoard(), scaleUp, radius, rotation, camZoom, mouthHue);
 			if (showVision) {
 				this.evolvioColor.fill(0, 0, 1);
-				this.evolvioColor.textFont(font, 0.2f * scaleUp);
+				this.evolvioColor.textSize(0.2f * scaleUp);
 				this.evolvioColor.textAlign(EvolvioColor.CENTER);
 				this.evolvioColor.text(getCreatureName(), (float) (getPx() * scaleUp),
 						(float) ((getPy() - getRadius() * 1.4f - 0.07f) * scaleUp));

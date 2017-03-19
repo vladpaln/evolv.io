@@ -15,7 +15,6 @@ public class EvolvioColor extends PApplet {
 	private float cameraY = Configuration.BOARD_HEIGHT * 0.5f;
 	private float cameraR;
 	private float zoom = 1;
-	private PFont font;
 
 	// 0 = no drag, 1 = drag screen, 2 and 3 are dragging temp extremes.
 	private int dragging;
@@ -50,7 +49,8 @@ public class EvolvioColor extends PApplet {
 	public void setup() {
 		surface.setResizable(true);
 		colorMode(HSB, 1.0f);
-		this.font = loadFont("Jygquip1-48.vlw");
+		PFont font = loadFont("Jygquip1-48.vlw");
+		textFont(font);
 		this.evoBoard = new Board(this, seed);
 		resetZoom();
 	}
@@ -93,10 +93,10 @@ public class EvolvioColor extends PApplet {
 		}
 		translate(-cameraX * Configuration.SCALE_TO_FIXBUG, -cameraY * Configuration.SCALE_TO_FIXBUG);
 		evoBoard.drawBoard(Configuration.SCALE_TO_FIXBUG, zoom, (int) toWorldXCoordinate(mouseX, mouseY),
-				(int) toWorldYCoordinate(mouseX, mouseY), font);
+				(int) toWorldYCoordinate(mouseX, mouseY));
 		popMatrix();
 		evoBoard.drawUI(Configuration.SCALE_TO_FIXBUG, zoom, Configuration.TIME_STEP, windowHeight, 0, windowWidth,
-				windowHeight, font);
+				windowHeight);
 
 		evoBoard.fileSave();
 		prevMouseX = mouseX;

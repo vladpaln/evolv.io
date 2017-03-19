@@ -112,7 +112,7 @@ class Brain {
 		return new Brain(this.evolvioColor, newBrain, newNeurons);
 	}
 
-	public void draw(PFont font, float scaleUp, int mX, int mY) {
+	public void draw(float scaleUp, int mX, int mY) {
 		final float neuronSize = 0.4f;
 		this.evolvioColor.noStroke();
 		this.evolvioColor.fill(0, 0, 0.4f);
@@ -122,7 +122,7 @@ class Brain {
 
 		this.evolvioColor.ellipseMode(EvolvioColor.RADIUS);
 		this.evolvioColor.strokeWeight(2);
-		this.evolvioColor.textFont(font, 0.58f * scaleUp);
+		this.evolvioColor.textSize(0.58f * scaleUp);
 		this.evolvioColor.fill(0, 0, 1);
 		for (int y = 0; y < BRAIN_HEIGHT; y++) {
 			this.evolvioColor.textAlign(EvolvioColor.RIGHT);

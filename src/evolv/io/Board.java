@@ -97,17 +97,17 @@ class Board {
 		this.populationHistory = new int[Configuration.POPULATION_HISTORY_LENGTH];
 	}
 
-	public void drawBoard(float scaleUp, float camZoom, int mX, int mY, PFont font) {
+	public void drawBoard(float scaleUp, float camZoom, int mX, int mY) {
 		for (int x = 0; x < Configuration.BOARD_WIDTH; x++) {
 			for (int y = 0; y < Configuration.BOARD_HEIGHT; y++) {
-				tiles[x][y].drawTile(scaleUp, camZoom, (mX == x && mY == y), font);
+				tiles[x][y].drawTile(scaleUp, camZoom, (mX == x && mY == y));
 			}
 		}
 		for (int i = 0; i < rocks.size(); i++) {
 			rocks.get(i).drawSoftBody(scaleUp);
 		}
 		for (int i = 0; i < creatures.size(); i++) {
-			creatures.get(i).drawSoftBody(scaleUp, camZoom, true, font);
+			creatures.get(i).drawSoftBody(scaleUp, camZoom, true);
 		}
 	}
 
@@ -116,7 +116,7 @@ class Board {
 		this.evolvioColor.rect(0, 0, scaleUp * Configuration.BOARD_WIDTH, scaleUp * Configuration.BOARD_HEIGHT);
 	}
 
-	public void drawUI(float scaleUp, float camZoom, double timeStep, int x1, int y1, int x2, int y2, PFont font) {
+	public void drawUI(float scaleUp, float camZoom, double timeStep, int x1, int y1, int x2, int y2) {
 		this.evolvioColor.fill(0, 0, 0);
 		this.evolvioColor.noStroke();
 		this.evolvioColor.rect(x1, y1, x2 - x1, y2 - y1);
@@ -128,11 +128,11 @@ class Board {
 		this.evolvioColor.textAlign(EvolvioColor.RIGHT);
 		this.evolvioColor.text(EvolvioColor.nfs(camZoom * 100, 0, 3) + " %", 0, y2 - y1 - 30);
 		this.evolvioColor.textAlign(EvolvioColor.LEFT);
-		this.evolvioColor.textFont(font, 48);
+		this.evolvioColor.textSize(48);
 		String yearText = "Year " + EvolvioColor.nf((float) year, 0, 2);
 		this.evolvioColor.text(yearText, 10, 48);
 		float seasonTextXCoor = this.evolvioColor.textWidth(yearText) + 50;
-		this.evolvioColor.textFont(font, 24);
+		this.evolvioColor.textSize(24);
 		this.evolvioColor.text("Population: " + creatures.size(), 10, 80);
 		String[] seasons = { "Winter", "Spring", "Summer", "Autumn" };
 		this.evolvioColor.text(seasons[(int) (getSeason() * 4)] + "\nSeed: " + randomSeed, seasonTextXCoor, 30);
@@ -174,8 +174,8 @@ class Board {
 				if (list[i] != null) {
 					list[i].setPreferredRank(list[i].getPreferredRank() + ((i - list[i].getPreferredRank()) * 0.4f));
 					float y = y1 + 175 + 70 * list[i].getPreferredRank();
-					drawCreature(list[i], 45, y + 5, 2.3f, scaleUp, font);
-					this.evolvioColor.textFont(font, 24);
+					drawCreature(list[i], 45, y + 5, 2.3f, scaleUp);
+					this.evolvioColor.textSize(24);
 					this.evolvioColor.textAlign(EvolvioColor.LEFT);
 					this.evolvioColor.noStroke();
 					this.evolvioColor.fill(0.333f, 1, 0.4f);
@@ -204,7 +204,7 @@ class Board {
 			this.evolvioColor.text("Reset zoom", 120, 123);
 			this.evolvioColor.text("Sort by: " + SORT_METRIC_NAMES[sortMetric], 350, 123);
 
-			this.evolvioColor.textFont(font, 19);
+			this.evolvioColor.textSize(19);
 			String[] buttonTexts = { "Brain Control", "Maintain pop. at " + creatureMinimum, "Screenshot now",
 					"-   Image every " + EvolvioColor.nf((float) imageSaveInterval, 0, 2) + " years   +",
 					"Text file now",
@@ -281,27 +281,27 @@ class Board {
 			this.evolvioColor.translate(400, 80);
 			float apX = EvolvioColor.round((this.evolvioColor.mouseX - 400 - x1) / 46.0f);
 			float apY = EvolvioColor.round((this.evolvioColor.mouseY - 80 - y1) / 46.0f);
-			selectedCreature.drawBrain(font, 46, (int) apX, (int) apY);
+			selectedCreature.drawBrain(46, (int) apX, (int) apY);
 			this.evolvioColor.popMatrix();
 		}
 		drawPopulationGraph(x1, x2, y1, y2);
 		this.evolvioColor.fill(0, 0, 0);
 		this.evolvioColor.textAlign(EvolvioColor.RIGHT);
-		this.evolvioColor.textFont(font, 24);
+		this.evolvioColor.textSize(24);
 		this.evolvioColor.text("Population: " + creatures.size(), x2 - x1 - 10, y2 - y1 - 10);
 		this.evolvioColor.popMatrix();
 
 		this.evolvioColor.pushMatrix();
 		this.evolvioColor.translate(x2, y1);
 		this.evolvioColor.textAlign(EvolvioColor.RIGHT);
-		this.evolvioColor.textFont(font, 24);
+		this.evolvioColor.textSize(24);
 		this.evolvioColor.text("Temperature", -10, 24);
 		drawThermometer(-45, 30, 20, 660, temperature, Configuration.THERMOMETER_MINIMUM,
 				Configuration.THERMOMETER_MAXIMUM, this.evolvioColor.color(0, 1, 1));
 		this.evolvioColor.popMatrix();
 
 		if (selectedCreature != null) {
-			drawCreature(selectedCreature, x1 + 65, y1 + 147, 2.3f, scaleUp, font);
+			drawCreature(selectedCreature, x1 + 65, y1 + 147, 2.3f, scaleUp);
 		}
 	}
 
@@ -590,12 +590,12 @@ class Board {
 				Configuration.MAXIMUM_ROCK_ENERGY_BASE), 4);
 	}
 
-	private void drawCreature(Creature c, float x, float y, float scale, float scaleUp, PFont font) {
+	private void drawCreature(Creature c, float x, float y, float scale, float scaleUp) {
 		this.evolvioColor.pushMatrix();
 		float scaleIconUp = scaleUp * scale;
 		this.evolvioColor.translate((float) (-c.getPx() * scaleIconUp), (float) (-c.getPy() * scaleIconUp));
 		this.evolvioColor.translate(x, y);
-		c.drawSoftBody(scaleIconUp, 40.0f / scale, false, font);
+		c.drawSoftBody(scaleIconUp, 40.0f / scale, false);
 		this.evolvioColor.popMatrix();
 	}
 
