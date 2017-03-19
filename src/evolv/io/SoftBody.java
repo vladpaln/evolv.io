@@ -85,7 +85,7 @@ class SoftBody {
 	}
 
 	public int xBound(int x) {
-		return Math.min(Math.max(x, 0), board.getBoardWidth() - 1);
+		return Math.min(Math.max(x, 0), Configuration.BOARD_WIDTH - 1);
 	}
 
 	public int yBound(int y) {
@@ -94,7 +94,7 @@ class SoftBody {
 
 	public double xBodyBound(double x) {
 		double radius = getRadius();
-		return Math.min(Math.max(x, radius), board.getBoardWidth() - radius);
+		return Math.min(Math.max(x, radius), Configuration.BOARD_WIDTH - radius);
 	}
 
 	public double yBodyBound(double y) {

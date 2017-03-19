@@ -10,16 +10,15 @@ class Board {
 			"Highest Gen", "Lowest Gen" };
 
 	private final EvolvioColor evolvioColor;
+	private final int randomSeed;
 	// Board
-	private final int boardWidth;
-	private final int boardHeight;
-	private final Tile[][] tiles;
+	private final Tile[][] tiles = new Tile[Configuration.BOARD_WIDTH][Configuration.BOARD_HEIGHT];
 
 	// Creature
 	private final List<SoftBody>[][] softBodiesInPositions;
-	private final List<Creature> creatures;
+	private final List<Creature> creatures = new ArrayList<Creature>(Configuration.CREATURE_MINIMUM);
 	private final Creature[] list = new Creature[Configuration.LIST_SLOTS];
-	private int creatureMinimum;
+	private int creatureMinimum = Configuration.CREATURE_MINIMUM;
 	private Creature selectedCreature;
 	private int creatureIDUpTo;
 	private int sortMetric;
@@ -32,13 +31,13 @@ class Board {
 	private int playSpeed = 1;
 
 	// Temperature
-	private float minTemperature;
-	private float maxTemperature;
+	private float minTemperature = Configuration.MINIMUM_TEMPERATURE;
+	private float maxTemperature = Configuration.MAXIMUM_TEMPERATURE;
 	private double temperature;
 
 	// Rocks
 	private final int rockColor;
-	private final List<SoftBody> rocks;
+	private final List<SoftBody> rocks = new ArrayList<SoftBody>(Configuration.ROCKS_TO_ADD);
 
 	// Saving
 	private final int[] fileSaveCounts;
@@ -49,80 +48,72 @@ class Board {
 	// Misc or Unsorted
 	private final int backgroundColor;
 	private final int buttonColor;
-	private final String folder;
 	private boolean userControl = true;
 
-	public Board(EvolvioColor evolvioColor, int boardWidth, int boardHeight, float stepSize, float minTemperature,
-			float maxTemperature, int rocksToAdd, int creatureMinimum, int randomSeed, String initialFileName,
-			double timeStep) {
+	public Board(EvolvioColor evolvioColor, int randomSeed) {
 		this.rockColor = evolvioColor.color(0, 0, 0.5f);
 		this.backgroundColor = evolvioColor.color(0, 0, 0.1f);
 		this.buttonColor = evolvioColor.color(0.82f, 0.8f, 0.7f);
 		this.evolvioColor = evolvioColor;
+		this.randomSeed = randomSeed;
 		this.evolvioColor.noiseSeed(randomSeed);
 		this.evolvioColor.randomSeed(randomSeed);
-		this.boardWidth = boardWidth;
-		this.boardHeight = boardHeight;
-		this.tiles = new Tile[boardWidth][boardHeight];
-		for (int x = 0; x < boardWidth; x++) {
-			for (int y = 0; y < boardHeight; y++) {
-				float bigForce = EvolvioColor.pow(((float) y) / boardHeight, 0.5f);
-				float fertility = this.evolvioColor.noise(x * stepSize * 3, y * stepSize * 3) * (1 - bigForce) * 5.0f
-						+ this.evolvioColor.noise(x * stepSize * 0.5f, y * stepSize * 0.5f) * bigForce * 5.0f - 1.5f;
-				float climateType = this.evolvioColor.noise(x * stepSize * 0.2f + 10000, y * stepSize * 0.2f + 10000)
-						* 1.63f - 0.4f;
+		for (int x = 0; x < Configuration.BOARD_WIDTH; x++) {
+			for (int y = 0; y < Configuration.BOARD_HEIGHT; y++) {
+				float bigForce = EvolvioColor.pow(((float) y) / Configuration.BOARD_HEIGHT, 0.5f);
+				float fertility = this.evolvioColor.noise(x * Configuration.NOISE_STEP_SIZE * 3,
+						y * Configuration.NOISE_STEP_SIZE * 3) * (1 - bigForce) * 5.0f
+						+ this.evolvioColor.noise(x * Configuration.NOISE_STEP_SIZE * 0.5f,
+								y * Configuration.NOISE_STEP_SIZE * 0.5f) * bigForce * 5.0f
+						- 1.5f;
+				float climateType = this.evolvioColor.noise(x * Configuration.NOISE_STEP_SIZE * 0.2f + 10000,
+						y * Configuration.NOISE_STEP_SIZE * 0.2f + 10000) * 1.63f - 0.4f;
 				climateType = EvolvioColor.min(EvolvioColor.max(climateType, 0), 0.8f);
 				tiles[x][y] = new Tile(this.evolvioColor, x, y, fertility, climateType, this);
 			}
 		}
-		this.minTemperature = minTemperature;
-		this.maxTemperature = maxTemperature;
 
-		softBodiesInPositions = new ArrayList[boardWidth][boardHeight];
-		for (int x = 0; x < boardWidth; x++) {
-			for (int y = 0; y < boardHeight; y++) {
+		this.softBodiesInPositions = new ArrayList[Configuration.BOARD_WIDTH][Configuration.BOARD_HEIGHT];
+		for (int x = 0; x < Configuration.BOARD_WIDTH; x++) {
+			for (int y = 0; y < Configuration.BOARD_HEIGHT; y++) {
 				softBodiesInPositions[x][y] = new ArrayList<SoftBody>(0);
 			}
 		}
 
-		this.rocks = new ArrayList<SoftBody>(0);
-		for (int i = 0; i < rocksToAdd; i++) {
-			rocks.add(new SoftBody(this.evolvioColor, this.evolvioColor.random(0, boardWidth),
-					this.evolvioColor.random(0, boardHeight), 0, 0, getRandomSize(), Configuration.ROCK_DENSITY,
-					this.evolvioColor.hue(rockColor), this.evolvioColor.saturation(rockColor),
-					this.evolvioColor.brightness(rockColor), this));
+		for (int i = 0; i < Configuration.ROCKS_TO_ADD; i++) {
+			rocks.add(new SoftBody(this.evolvioColor, this.evolvioColor.random(0, Configuration.BOARD_WIDTH),
+					this.evolvioColor.random(0, Configuration.BOARD_HEIGHT), 0, 0, getRandomSize(),
+					Configuration.ROCK_DENSITY, this.evolvioColor.hue(rockColor),
+					this.evolvioColor.saturation(rockColor), this.evolvioColor.brightness(rockColor), this));
 		}
 
-		this.creatureMinimum = creatureMinimum;
-		this.creatures = new ArrayList<Creature>(0);
 		maintainCreatureMinimum(false);
-		this.folder = initialFileName;
 		this.fileSaveCounts = new int[4];
 		this.fileSaveTimes = new double[4];
 		for (int i = 0; i < 4; i++) {
 			fileSaveTimes[i] = -999;
 		}
-		this.timeStep = timeStep;
+		this.timeStep = Configuration.TIME_STEP;
 		this.populationHistory = new int[Configuration.POPULATION_HISTORY_LENGTH];
 	}
 
-	public void drawBoard(float scaleUp, float camZoom, int mX, int mY) {
-		for (int x = 0; x < boardWidth; x++) {
-			for (int y = 0; y < boardHeight; y++) {
-				tiles[x][y].drawTile(scaleUp, camZoom, (mX == x && mY == y));
+	public void drawBoard(float scaleUp, float camZoom, int mX, int mY, PFont font) {
+		for (int x = 0; x < Configuration.BOARD_WIDTH; x++) {
+			for (int y = 0; y < Configuration.BOARD_HEIGHT; y++) {
+				tiles[x][y].drawTile(scaleUp, camZoom, (mX == x && mY == y), font);
 			}
 		}
 		for (int i = 0; i < rocks.size(); i++) {
 			rocks.get(i).drawSoftBody(scaleUp);
 		}
 		for (int i = 0; i < creatures.size(); i++) {
-			creatures.get(i).drawSoftBody(scaleUp, camZoom, true);
+			creatures.get(i).drawSoftBody(scaleUp, camZoom, true, font);
 		}
 	}
 
 	public void drawBlankBoard(float scaleUp) {
 		this.evolvioColor.fill(backgroundColor);
-		this.evolvioColor.rect(0, 0, scaleUp * boardWidth, scaleUp * boardHeight);
+		this.evolvioColor.rect(0, 0, scaleUp * Configuration.BOARD_WIDTH, scaleUp * Configuration.BOARD_HEIGHT);
 	}
 
 	public void drawUI(float scaleUp, float camZoom, double timeStep, int x1, int y1, int x2, int y2, PFont font) {
@@ -144,8 +135,7 @@ class Board {
 		this.evolvioColor.textFont(font, 24);
 		this.evolvioColor.text("Population: " + creatures.size(), 10, 80);
 		String[] seasons = { "Winter", "Spring", "Summer", "Autumn" };
-		this.evolvioColor.text(seasons[(int) (getSeason() * 4)] + "\nSeed: " + this.evolvioColor.SEED, seasonTextXCoor,
-				30);
+		this.evolvioColor.text(seasons[(int) (getSeason() * 4)] + "\nSeed: " + randomSeed, seasonTextXCoor, 30);
 
 		if (selectedCreature == null) {
 			for (int i = 0; i < Configuration.LIST_SLOTS; i++) {
@@ -184,7 +174,7 @@ class Board {
 				if (list[i] != null) {
 					list[i].setPreferredRank(list[i].getPreferredRank() + ((i - list[i].getPreferredRank()) * 0.4f));
 					float y = y1 + 175 + 70 * list[i].getPreferredRank();
-					drawCreature(list[i], 45, y + 5, 2.3f, scaleUp);
+					drawCreature(list[i], 45, y + 5, 2.3f, scaleUp, font);
 					this.evolvioColor.textFont(font, 24);
 					this.evolvioColor.textAlign(EvolvioColor.LEFT);
 					this.evolvioColor.noStroke();
@@ -311,7 +301,7 @@ class Board {
 		this.evolvioColor.popMatrix();
 
 		if (selectedCreature != null) {
-			drawCreature(selectedCreature, x1 + 65, y1 + 147, 2.3f, scaleUp);
+			drawCreature(selectedCreature, x1 + 65, y1 + 147, 2.3f, scaleUp, font);
 		}
 	}
 
@@ -337,7 +327,8 @@ class Board {
 		if (type >= 2) {
 			ending = ".txt";
 		}
-		return folder + "/" + modes[type] + "/" + EvolvioColor.nf(fileSaveCounts[type], 5) + ending;
+		return Configuration.INITIAL_FILE_NAME + "/" + modes[type] + "/" + EvolvioColor.nf(fileSaveCounts[type], 5)
+				+ ending;
 	}
 
 	public void iterate(double timeStep) {
@@ -353,12 +344,10 @@ class Board {
 		temperature = getGrowthRate(getSeason());
 		double tempChangeIntoThisFrame = temperature - getGrowthRate(getSeason() - timeStep);
 		double tempChangeOutOfThisFrame = getGrowthRate(getSeason() + timeStep) - temperature;
-		if (tempChangeIntoThisFrame * tempChangeOutOfThisFrame <= 0) { // Temperature
-																		// change
-																		// flipped
-																		// direction.
-			for (int x = 0; x < boardWidth; x++) {
-				for (int y = 0; y < boardHeight; y++) {
+		if (tempChangeIntoThisFrame * tempChangeOutOfThisFrame <= 0) {
+			// Temperature change flipped direction.
+			for (int x = 0; x < Configuration.BOARD_WIDTH; x++) {
+				for (int y = 0; y < Configuration.BOARD_HEIGHT; y++) {
 					tiles[x][y].iterate();
 				}
 			}
@@ -592,12 +581,8 @@ class Board {
 		return tiles[x][y];
 	}
 
-	public int getBoardWidth() {
-		return boardWidth;
-	}
-
 	public int getBoardHeight() {
-		return boardHeight;
+		return Configuration.BOARD_HEIGHT;
 	}
 
 	private double getRandomSize() {
@@ -605,12 +590,12 @@ class Board {
 				Configuration.MAXIMUM_ROCK_ENERGY_BASE), 4);
 	}
 
-	private void drawCreature(Creature c, float x, float y, float scale, float scaleUp) {
+	private void drawCreature(Creature c, float x, float y, float scale, float scaleUp, PFont font) {
 		this.evolvioColor.pushMatrix();
 		float scaleIconUp = scaleUp * scale;
 		this.evolvioColor.translate((float) (-c.px * scaleIconUp), (float) (-c.py * scaleIconUp));
 		this.evolvioColor.translate(x, y);
-		c.drawSoftBody(scaleIconUp, 40.0f / scale, false);
+		c.drawSoftBody(scaleIconUp, 40.0f / scale, false, font);
 		this.evolvioColor.popMatrix();
 	}
 

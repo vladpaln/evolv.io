@@ -11,6 +11,7 @@ public class Configuration {
 	public static final float MAXIMUM_TEMPERATURE = 1.0f;
 	public static final int ROCKS_TO_ADD = 0;
 	public static final int CREATURE_MINIMUM = 60;
+	public static final String INITIAL_FILE_NAME = "PIC";
 
 	// Board
 	public static final float MINIMUM_CREATURE_ENERGY = 1.2f;

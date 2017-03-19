@@ -42,7 +42,7 @@ class Creature extends SoftBody {
 	// TODO can the size of these constructors be reduced?
 
 	public Creature(EvolvioColor evolvioColor, Board board) {
-		this(evolvioColor, evolvioColor.random(0, board.getBoardWidth()),
+		this(evolvioColor, evolvioColor.random(0, Configuration.BOARD_WIDTH),
 				evolvioColor.random(0, board.getBoardHeight()), 0, 0,
 				evolvioColor.random(Configuration.MINIMUM_CREATURE_ENERGY, Configuration.MAXIMUM_CREATURE_ENERGY), 1,
 				evolvioColor.random(0, 1), 1, 1, board, evolvioColor.random(0, 2 * EvolvioColor.PI), 0, "",
@@ -101,7 +101,7 @@ class Creature extends SoftBody {
 		}
 	}
 
-	public void drawSoftBody(float scaleUp, float camZoom, boolean showVision) {
+	public void drawSoftBody(float scaleUp, float camZoom, boolean showVision, PFont font) {
 		this.evolvioColor.ellipseMode(EvolvioColor.RADIUS);
 		double radius = getRadius();
 		if (showVision && camZoom > Configuration.MAX_DETAILED_ZOOM) {
@@ -126,7 +126,7 @@ class Creature extends SoftBody {
 			drawMouth(board, scaleUp, radius, rotation, camZoom, mouthHue);
 			if (showVision) {
 				this.evolvioColor.fill(0, 0, 1);
-				this.evolvioColor.textFont(this.evolvioColor.font, 0.2f * scaleUp);
+				this.evolvioColor.textFont(font, 0.2f * scaleUp);
 				this.evolvioColor.textAlign(EvolvioColor.CENTER);
 				this.evolvioColor.text(getCreatureName(), (float) (px * scaleUp),
 						(float) ((py - getRadius() * 1.4f - 0.07f) * scaleUp));
@@ -348,7 +348,7 @@ class Creature extends SoftBody {
 	}
 
 	public int getColorAt(double x, double y) {
-		if (x >= 0 && x < board.getBoardWidth() && y >= 0 && y < board.getBoardHeight()) {
+		if (x >= 0 && x < Configuration.BOARD_WIDTH && y >= 0 && y < board.getBoardHeight()) {
 			return board.getTile((int) (x), (int) (y)).getColor();
 		} else {
 			return board.getBackgroundColor();
@@ -360,7 +360,7 @@ class Creature extends SoftBody {
 	}
 
 	public void addPVOs(int x, int y, ArrayList<SoftBody> PVOs) {
-		if (x >= 0 && x < board.getBoardWidth() && y >= 0 && y < board.getBoardHeight()) {
+		if (x >= 0 && x < Configuration.BOARD_WIDTH && y >= 0 && y < board.getBoardHeight()) {
 			for (int i = 0; i < board.getSoftBodiesInPosition(x, y).size(); i++) {
 				SoftBody newCollider = board.getSoftBodiesInPosition(x, y).get(i);
 				if (!PVOs.contains(newCollider) && newCollider != this) {
