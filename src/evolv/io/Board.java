@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import processing.core.PFont;
 
 class Board {
-	/**
-	 * 
-	 */
 	private final EvolvioColor evolvioColor;
 	// Board
 	int boardWidth;
@@ -16,10 +13,10 @@ class Board {
 
 	// Creature
 	int creatureMinimum;
-	final float MIN_CREATURE_ENERGY = 1.2f;
-	final float MAX_CREATURE_ENERGY = 2.0f;
-	final float MINIMUM_SURVIVABLE_SIZE = 0.06f;
-	final float CREATURE_STROKE_WEIGHT = 0.6f;
+	final float MIN_CREATURE_ENERGY = Configuration.MINIMUM_CREATURE_ENERGY;
+	final float MAX_CREATURE_ENERGY = Configuration.MAXIMUM_CREATURE_ENERGY;
+	final float MINIMUM_SURVIVABLE_SIZE = Configuration.MINIMUM_SURVIVABLE_SIZE;
+	final float CREATURE_STROKE_WEIGHT = Configuration.CREATURE_STROKE_WEIGHT;
 	ArrayList[][] softBodiesInPositions;
 	ArrayList<Creature> creatures;
 	Creature selectedCreature = null;
@@ -27,31 +24,31 @@ class Board {
 	private int creatureRankMetric = 0;
 	final int LIST_SLOTS = 6;
 	Creature[] list = new Creature[LIST_SLOTS];
-	final int creatureMinimumIncrement = 5;
-	double MANUAL_BIRTH_SIZE = 1.2f;
+	final int creatureMinimumIncrement = Configuration.CREATURE_MINIMUM_INCREMENT;
+	double MANUAL_BIRTH_SIZE = Configuration.MANUAL_BIRTH_SIZE;
 	boolean wasPressingB = false;
 
 	// Time or History
 	double year = 0;
-	final float OBJECT_TIMESTEPS_PER_YEAR = 100;
+	final float OBJECT_TIMESTEPS_PER_YEAR = Configuration.TIMESTEPS_PER_YEAR;
 	double timeStep;
-	int POPULATION_HISTORY_LENGTH = 200;
+	int POPULATION_HISTORY_LENGTH = Configuration.POPULATION_HISTORY_LENGTH;
 	int[] populationHistory;
-	double recordPopulationEvery = 0.02f;
+	double recordPopulationEvery = Configuration.RECORD_POPULATION_EVERY;
 	int playSpeed = 1;
 
 	// Temperature
 	float MIN_TEMPERATURE;
 	float MAX_TEMPERATURE;
-	final float THERMOMETER_MIN = -2;
-	final float THERMOMETER_MAX = 2;
+	final float THERMOMETER_MIN = Configuration.THERMOMETER_MINIMUM;
+	final float THERMOMETER_MAX = Configuration.THERMOMETER_MAXIMUM;
 	double temperature;
 
 	// Rocks
 	final int ROCKS_TO_ADD;
-	final float MIN_ROCK_ENERGY_BASE = 0.8f;
-	final float MAX_ROCK_ENERGY_BASE = 1.6f;
-	final float ROCK_DENSITY = 5;
+	final float MIN_ROCK_ENERGY_BASE = Configuration.MINIMUM_ROCK_ENERGY_BASE;
+	final float MAX_ROCK_ENERGY_BASE = Configuration.MAXIMUM_ROCK_ENERGY_BASE;
+	final float ROCK_DENSITY = Configuration.ROCK_DENSITY;
 	final int ROCK_COLOR;
 	ArrayList<SoftBody> rocks;
 
@@ -63,8 +60,8 @@ class Board {
 
 	// Misc or Unsorted
 	final int BACKGROUND_COLOR;
-	final static double MAX_DETAILED_ZOOM = 3.5f; // Maximum zoom to draw
-													// details at
+	// Maximum zoom to draw details at
+	final static double MAX_DETAILED_ZOOM = Configuration.MAX_DETAILED_ZOOM;
 	int buttonColor;
 	String folder = "TEST";
 	final double FLASH_SPEED = 80;

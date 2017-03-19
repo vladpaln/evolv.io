@@ -7,29 +7,24 @@ import java.util.List;
 import processing.core.PFont;
 
 class Creature extends SoftBody {
-	/**
-	 * 
-	 */
 	private final EvolvioColor evolvioColor;
 	// Energy
-	double ACCELERATION_ENERGY = 0.18f;
-	double ACCELERATION_BACK_ENERGY = 0.24f;
-	double SWIM_ENERGY = 0.008f;
-	double TURN_ENERGY = 0.06f;
-	double EAT_ENERGY = 0.05f;
-	double EAT_SPEED = 0.5f; // 1 is instant, 0 is nonexistent, 0.001 is
-								// verrry slow.
-	double EAT_WHILE_MOVING_INEFFICIENCY_MULTIPLIER = 2.0f; // The bigger
-															// this number
-															// is, the less
-															// effiently
-															// creatures eat
-															// when they're
-															// moving.
-	double FIGHT_ENERGY = 0.06f;
-	double INJURED_ENERGY = 0.25f;
-	double METABOLISM_ENERGY = 0.004f;
-	double AGE_FACTOR = 1; // 0 no ageing
+	double ACCELERATION_ENERGY = Configuration.ACCELERATION_ENERGY;
+	double ACCELERATION_BACK_ENERGY = Configuration.ACCELERATION_BACKWARDS_ENERGY;
+	double SWIM_ENERGY = Configuration.SWIM_ENERGY;
+	double TURN_ENERGY = Configuration.TURN_ENERGY;
+	double EAT_ENERGY = Configuration.EAT_ENERGY;
+	// 1 is instant, 0 is nonexistent, 0.001 is verrry slow.
+	double EAT_SPEED = Configuration.EAT_SPEED;
+	/*
+	 * The bigger this number is, the less effiently creatures eat when they're
+	 * moving.
+	 */
+	double EAT_WHILE_MOVING_INEFFICIENCY_MULTIPLIER = Configuration.EAT_WHILE_MOVING_INEFFICIENCY_MULTIPLIER;
+	double FIGHT_ENERGY = Configuration.FIGHT_ENERGY;
+	double INJURED_ENERGY = Configuration.INJURED_ENERGY;
+	double METABOLISM_ENERGY = Configuration.METABOLISM_ENERGY;
+	double AGE_FACTOR = Configuration.AGE_FACTOR; // 0 no ageing
 	double currentEnergy;
 	final int ENERGY_HISTORY_LENGTH = 6;
 	double[] previousEnergy = new double[ENERGY_HISTORY_LENGTH];
@@ -41,8 +36,8 @@ class Creature extends SoftBody {
 	int id;
 
 	// Vision or View or Preference
-	double MAX_VISION_DISTANCE = 10;
-	final double FOOD_SENSITIVITY = 0.3f;
+	double MAX_VISION_DISTANCE = Configuration.MAX_VISION_DISTANCE;
+	final double FOOD_SENSITIVITY = Configuration.FOOD_SENSITIVITY;
 	double[] visionAngles = { 0, -0.4f, 0.4f };
 	double[] visionDistances = { 0, 0.7f, 0.7f };
 	// double visionAngle;
@@ -52,7 +47,7 @@ class Creature extends SoftBody {
 	double visionResults[] = new double[9];
 
 	Brain brain;
-	final float BRIGHTNESS_THRESHOLD = 0.7f;
+	final float BRIGHTNESS_THRESHOLD = Configuration.BRIGHTNESS_THRESHOLD;
 
 	// Misc or Unsorted
 	float preferredRank = 8;
@@ -60,8 +55,8 @@ class Creature extends SoftBody {
 	double mouthHue;
 	double vr = 0;
 	double rotation = 0;
-	final double SAFE_SIZE = 1.25f;
-	final double MATURE_AGE = 0.01f;
+	final double SAFE_SIZE = Configuration.SAFE_SIZE;
+	final double MATURE_AGE = Configuration.MATURE_AGE;
 
 	private static List<CreatureAction> CreatureActions = Arrays.asList(new CreatureAction.AdjustHue(),
 			new CreatureAction.Accelerate(), new CreatureAction.Rotate(), new CreatureAction.Eat(),

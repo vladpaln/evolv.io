@@ -3,9 +3,6 @@ package evolv.io;
 import java.util.ArrayList;
 
 class SoftBody {
-	/**
-	 * 
-	 */
 	private final EvolvioColor evolvioColor;
 	double px;
 	double py;
@@ -20,9 +17,9 @@ class SoftBody {
 	double brightness;
 	double birthTime;
 	boolean isCreature = false;
-	final float FRICTION = 0.004f;
-	final float COLLISION_FORCE = 0.01f;
-	final float FIGHT_RANGE = 2.0f;
+	final float FRICTION = Configuration.FRICTION;
+	final float COLLISION_FORCE = Configuration.COLLISION_FORCE;
+	final float FIGHT_RANGE = Configuration.FIGHT_RANGE;
 	double fightLevel = 0;
 
 	int prevSBIPMinX;

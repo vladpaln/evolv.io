@@ -1,19 +1,16 @@
 package evolv.io;
 
 class Tile {
-	/**
-	 * 
-	 */
 	private final EvolvioColor evolvioColor;
 	public final int barrenColor;
 	public final int fertileColor;
 	public final int blackColor;
 	public final int waterColor;
-	public final float FOOD_GROWTH_RATE = 1.0f;
+	public final float FOOD_GROWTH_RATE = Configuration.FOOD_GROWTH_RATE;
 
 	double fertility;
 	double foodLevel;
-	private final float maxGrowthLevel = 3.0f;
+	private final float maxGrowthLevel = Configuration.MAX_GROWTH_LEVEL;
 	private int posX;
 	private int posY;
 	private double lastUpdateTime = 0;

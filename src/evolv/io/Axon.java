@@ -1,8 +1,8 @@
 package evolv.io;
 
 class Axon {
-	final double MUTABILITY_MUTABILITY = 0.7f;
-	final int mutatePower = 9;
+	final double MUTABILITY_MUTABILITY = Configuration.MUTABILITY_MUTABILITY;
+	final int mutatePower = Configuration.MUTATE_POWER;
 	final double MUTATE_MULTI;
 
 	double weight;

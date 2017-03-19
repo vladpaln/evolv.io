@@ -1,24 +1,25 @@
 package evolv.io;
 
-import processing.core.*;
-import processing.event.*;
+import processing.core.PApplet;
+import processing.core.PFont;
+import processing.event.MouseEvent;
 
 public class EvolvioColor extends PApplet {
 
 	Board evoBoard;
 	final int SEED = parseInt(random(1000000));
-	final float NOISE_STEP_SIZE = 0.1f;
-	final int BOARD_WIDTH = 100;
-	final int BOARD_HEIGHT = 100;
+	final float NOISE_STEP_SIZE = Configuration.NOISE_STEP_SIZE;
+	final int BOARD_WIDTH = Configuration.BOARD_WIDTH;
+	final int BOARD_HEIGHT = Configuration.BOARD_HEIGHT;
 
-	final float SCALE_TO_FIX_BUG = 100;
+	final float SCALE_TO_FIX_BUG = Configuration.SCALE_TO_FIXBUG;
 
-	final double TIME_STEP = 0.001f;
-	final float MIN_TEMPERATURE = -0.5f;
-	final float MAX_TEMPERATURE = 1.0f;
+	final double TIME_STEP = Configuration.TIME_STEP;
+	final float MIN_TEMPERATURE = Configuration.MINIMUM_TEMPERATURE;
+	final float MAX_TEMPERATURE = Configuration.MAXIMUM_TEMPERATURE;
 
-	final int ROCKS_TO_ADD = 0;
-	final int CREATURE_MINIMUM = 60;
+	final int ROCKS_TO_ADD = Configuration.ROCKS_TO_ADD;
+	final int CREATURE_MINIMUM = Configuration.CREATURE_MINIMUM;
 
 	float scaleFactor;
 	int windowWidth;
@@ -63,8 +64,8 @@ public class EvolvioColor extends PApplet {
 		surface.setResizable(true);
 		colorMode(HSB, 1.0f);
 		font = loadFont("Jygquip1-48.vlw");
-		evoBoard = new Board(this, BOARD_WIDTH, BOARD_HEIGHT, NOISE_STEP_SIZE, MIN_TEMPERATURE, MAX_TEMPERATURE, ROCKS_TO_ADD,
-				CREATURE_MINIMUM, SEED, INITIAL_FILE_NAME, TIME_STEP);
+		evoBoard = new Board(this, BOARD_WIDTH, BOARD_HEIGHT, NOISE_STEP_SIZE, MIN_TEMPERATURE, MAX_TEMPERATURE,
+				ROCKS_TO_ADD, CREATURE_MINIMUM, SEED, INITIAL_FILE_NAME, TIME_STEP);
 		resetZoom();
 	}
 
