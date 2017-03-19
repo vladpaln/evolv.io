@@ -3,43 +3,42 @@ package evolv.io;
 import java.util.Random;
 
 class NameGenerator {
-	private static final int MIN_NAME_LENGTH = Configuration.MINIMUM_NAME_LENGTH;
-	private static final int MAX_NAME_LENGTH = Configuration.MAXIMUM_NAME_LENGTH;
+	private static final Random RANDOM = new Random();
 	private static final float[] LETTER_FREQUENCIES = { 8.167f, 1.492f, 2.782f, 4.253f, 12.702f, 2.228f, 2.015f, 6.094f,
 			6.966f, 0.153f, 0.772f, 4.025f, 2.406f, 6.749f, 7.507f, 1.929f, 0.095f, 5.987f, 6.327f, 9.056f, 2.758f,
 			0.978f, 2.361f, 0.150f, 1.974f, 0.074f };
-	private static final Random RANDOM = new Random();
 
 	public static String newName() {
-		int chosenLength = MIN_NAME_LENGTH + RANDOM.nextInt(MAX_NAME_LENGTH - MIN_NAME_LENGTH);
-		char[] nameChars = new char[chosenLength];
+		int chosenLength = Configuration.MINIMUM_NAME_LENGTH
+				+ RANDOM.nextInt(Configuration.MAXIMUM_NAME_LENGTH - Configuration.MINIMUM_NAME_LENGTH);
+		StringBuilder sb = new StringBuilder();
+		sb.ensureCapacity(chosenLength);
 		for (int i = 0; i < chosenLength; i++) {
-			nameChars[i] = getRandomChar();
+			sb.append(getRandomChar());
 		}
-		return sanitizeName(String.valueOf(nameChars));
+		return sanitizeName(sb);
 	}
 
 	public static String mutateName(String input) {
-		// TODO this can probably be optimised with a StringBuilder
-		if (input.length() >= 3) {
+		StringBuilder sb = new StringBuilder(input);
+		if (sb.length() >= 3) {
 			if (RANDOM.nextFloat() < 0.2f) {
-				int removeIndex = RANDOM.nextInt(input.length());
-				input = input.substring(0, removeIndex) + input.substring(removeIndex + 1, input.length());
+				int removeIndex = RANDOM.nextInt(sb.length());
+				sb.deleteCharAt(removeIndex);
 			}
 		}
-		if (input.length() <= 9) {
+		if (sb.length() <= 9) {
 			if (RANDOM.nextFloat() < 0.2f) {
-				int insertIndex = RANDOM.nextInt(input.length() + 1);
-				input = input.substring(0, insertIndex) + getRandomChar()
-						+ input.substring(insertIndex, input.length());
+				int insertIndex = RANDOM.nextInt(sb.length() + 1);
+				sb.insert(insertIndex, getRandomChar());
 			}
 		}
-		int changeIndex = RANDOM.nextInt(input.length());
-		input = input.substring(0, changeIndex) + getRandomChar() + input.substring(changeIndex + 1, input.length());
-		return input;
+		int changeIndex = RANDOM.nextInt(sb.length());
+		sb.setCharAt(changeIndex, getRandomChar());
+		return sanitizeName(sb);
 	}
 
-	public static String sanitizeName(String input) {
+	private static String sanitizeName(StringBuilder input) {
 		StringBuilder output = new StringBuilder();
 		int vowelsSoFar = 0;
 		int consonantsSoFar = 0;
@@ -57,9 +56,9 @@ class NameGenerator {
 				output.append(ch);
 			} else {
 				double chanceOfAddingChar = 0.5f;
-				if (input.length() <= MIN_NAME_LENGTH) {
+				if (input.length() <= Configuration.MINIMUM_NAME_LENGTH) {
 					chanceOfAddingChar = 1.0f;
-				} else if (input.length() >= MAX_NAME_LENGTH) {
+				} else if (input.length() >= Configuration.MAXIMUM_NAME_LENGTH) {
 					chanceOfAddingChar = 0.0f;
 				}
 				if (RANDOM.nextFloat() < chanceOfAddingChar) {
@@ -89,7 +88,7 @@ class NameGenerator {
 			letterChoice++;
 		}
 		// TODO make the link between 96 and 'a' more meaningful
-		return (char) (letterChoice + 96);
+		return (char) (letterChoice + 'a');
 	}
 
 	private static boolean isVowel(char a) {

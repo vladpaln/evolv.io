@@ -75,9 +75,9 @@ class Creature extends SoftBody {
 			return NameGenerator.newName();
 		}
 		if (mutateName) {
-			tname = NameGenerator.mutateName(tname);
+			return NameGenerator.mutateName(tname);
 		}
-		return NameGenerator.sanitizeName(tname);
+		return tname;
 	}
 
 	public void drawBrain(PFont font, float scaleUp, int mX, int mY) {
