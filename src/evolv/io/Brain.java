@@ -149,7 +149,7 @@ class Brain {
 			for (int y = 0; y < BRAIN_HEIGHT - 1; y++) {
 				double total = 0;
 				for (int input = 0; input < BRAIN_HEIGHT; input++) {
-					total += neurons[x - 1][input] * axons[x - 1][input][y].weight;
+					total += neurons[x - 1][input] * axons[x - 1][input][y].getWeight();
 				}
 				if (x == BRAIN_WIDTH - 1) {
 					neurons[x][y] = total;
@@ -170,7 +170,7 @@ class Brain {
 	}
 
 	private void drawAxon(int x1, int y1, int x2, int y2, float scaleUp) {
-		this.evolvioColor.stroke(neuronFillColor(axons[x1][y1][y2].weight * neurons[x1][y1]));
+		this.evolvioColor.stroke(neuronFillColor(axons[x1][y1][y2].getWeight() * neurons[x1][y1]));
 
 		this.evolvioColor.line(x1 * scaleUp, y1 * scaleUp, x2 * scaleUp, y2 * scaleUp);
 	}

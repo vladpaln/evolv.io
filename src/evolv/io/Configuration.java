@@ -36,6 +36,10 @@ public class Configuration {
 	 * Would like to add Brain Height. Will need to rework Brain to allow for
 	 * configuration
 	 */
+	/*
+	 * TODO can we consolidate the mutability, variability and mutate power into
+	 * fewer?
+	 */
 	public static final float AXON_START_MUTABILITY = 0.0005f;
 	public static final double STARTING_AXON_VARIABILITY = 1.0;
 
