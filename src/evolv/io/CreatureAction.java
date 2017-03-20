@@ -41,8 +41,6 @@ public interface CreatureAction {
 
 		@Override
 		public void doAction(Creature creature, double amount, double timeStep) {
-			timeStep *= 100; // Why??? I just copied this over during a
-								// refactor.
 			creature.fight(amount, timeStep);
 		}
 	}
