@@ -196,6 +196,10 @@ class Board {
 			this.evolvioColor.text("Sort by: " + SORT_METRIC_NAMES[sortMetric], 350, 123);
 
 			this.evolvioColor.textSize(19);
+			/*
+			 * TODO put these button texts in the same place as the board
+			 * actions
+			 */
 			String[] buttonTexts = { "Brain Control", "Maintain pop. at " + creatureMinimum, "Screenshot now",
 					"-   Image every " + EvolvioColor.nf((float) imageSaveInterval, 0, 2) + " years   +",
 					"Text file now",
@@ -204,6 +208,7 @@ class Board {
 			if (userControl) {
 				buttonTexts[0] = "Keyboard Control";
 			}
+
 			for (int i = 0; i < 8; i++) {
 				float x = (i % 2) * 230 + 10;
 				float y = EvolvioColor.floor(i / 2) * 50 + 570;

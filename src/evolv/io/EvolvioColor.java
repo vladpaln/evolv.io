@@ -1,10 +1,17 @@
 package evolv.io;
 
+import java.util.Arrays;
+import java.util.List;
+
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.event.MouseEvent;
 
 public class EvolvioColor extends PApplet {
+	private static final List<BoardAction> BOARD_ACTIONS = Arrays.asList(new BoardAction.ToggleUserControl(),
+			new BoardAction.ChangeCreatureMinimum(), new BoardAction.PrepareForFileSave(0),
+			new BoardAction.ChangeImageSaveInterval(), new BoardAction.PrepareForFileSave(2),
+			new BoardAction.ChangeTextSaveInterval(), new BoardAction.ChangePlaySpeed(), new BoardAction.None());
 
 	private final int seed = parseInt(random(1000000));
 	private Board evoBoard;
@@ -142,57 +149,7 @@ public class EvolvioColor extends PApplet {
 					int mX = (int) (x / 230);
 					int mY = (int) (y / 50);
 					int buttonNum = mX + mY * 2;
-
-					switch (buttonNum) {
-
-					case (0):
-						evoBoard.setUserControl(!evoBoard.isUserControl());
-						break;
-
-					case (1):
-						if (clickedOnLeft) {
-							evoBoard.decreaseCreatureMinimum();
-						} else {
-							evoBoard.increaseCreatureMinimum();
-						}
-						break;
-
-					case (2):
-						evoBoard.prepareForFileSave(0);
-						break;
-
-					case (3):
-						if (clickedOnLeft) {
-							evoBoard.decreaseImageSaveInterval();
-						} else {
-							evoBoard.increaseImageSaveInterval();
-						}
-						break;
-
-					case (4):
-						evoBoard.prepareForFileSave(2);
-						break;
-
-					case (5):
-						if (clickedOnLeft) {
-							evoBoard.decreaseTextSaveInterval();
-						} else {
-							evoBoard.increaseTextSaveInterval();
-						}
-						break;
-
-					case (6):
-						if (clickedOnLeft) {
-							evoBoard.decreasePlaySpeed();
-						} else {
-							evoBoard.increasePlaySpeed();
-						}
-						break;
-
-					case (7):
-						// Code for the eighth button
-						break;
-					}
+					BOARD_ACTIONS.get(buttonNum).doAction(evoBoard, clickedOnLeft);
 				}
 			} else if (mouseX >= height + 10 && mouseX < width - 50 && evoBoard.getSelectedCreature() == null) {
 				int listIndex = (mouseY - 150) / 70;
