@@ -16,8 +16,7 @@ class SoftBody {
 	 * Set so when a creature is of minimum size, it equals one.
 	 */
 	private final double density;
-	// TODO this should be final
-	private List<SoftBody> colliders;
+	private final List<SoftBody> colliders = new ArrayList<SoftBody>(0);
 
 	private double px;
 	private double py;
@@ -107,8 +106,7 @@ class SoftBody {
 	}
 
 	public void collide(double timeStep) {
-		// TODO this should be cleared instead of making a new list every time
-		colliders = new ArrayList<SoftBody>(0);
+		colliders.clear();
 		for (int x = SBIPMinX; x <= SBIPMaxX; x++) {
 			for (int y = SBIPMinY; y <= SBIPMaxY; y++) {
 				for (int i = 0; i < board.getSoftBodiesInPosition(x, y).size(); i++) {

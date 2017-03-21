@@ -386,9 +386,6 @@ class Creature extends SoftBody {
 	}
 
 	public void reproduce(double babySize, double timeStep) {
-		if (getColliders() == null) {
-			collide(timeStep);
-		}
 		int highestGen = 0;
 		if (babySize >= 0) {
 			ArrayList<Creature> parents = new ArrayList<Creature>(0);
