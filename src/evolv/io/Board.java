@@ -180,7 +180,7 @@ class Board {
 					}
 					this.evolvioColor.fill(0, 0, 1);
 					this.evolvioColor.text(list[i].getCreatureName() + " [" + list[i].getId() + "] ("
-							+ toAge(list[i].getBirthTime()) + ")", 90, y);
+							+ toAge(list[i].getAge()) + ")", 90, y);
 					this.evolvioColor.text("Energy: " + EvolvioColor.nf(100 * (float) (list[i].getEnergy()), 0, 2), 90,
 							y + 25);
 				}
@@ -257,7 +257,7 @@ class Board {
 			this.evolvioColor.text("Rotation: " + EvolvioColor.nf((float) selectedCreature.getRotation(), 0, 2), 10,
 					400);
 			this.evolvioColor.text("B-day: " + toDate(selectedCreature.getBirthTime()), 10, 425);
-			this.evolvioColor.text("(" + toAge(selectedCreature.getBirthTime()) + ")", 10, 450);
+			this.evolvioColor.text("(" + toAge(selectedCreature.getAge()) + ")", 10, 450);
 			this.evolvioColor.text("Generation: " + selectedCreature.getGen(), 10, 475);
 			this.evolvioColor.text("Parents: " + selectedCreature.getParents(), 10, 500, 210, 255);
 			this.evolvioColor.text("Hue: " + EvolvioColor.nf((float) (selectedCreature.getHue()), 0, 2), 10, 550, 210,
@@ -528,7 +528,7 @@ class Board {
 	}
 
 	private String toAge(double d) {
-		return EvolvioColor.nf((float) (year - d), 0, 2) + " yrs old";
+		return EvolvioColor.nf((float) d, 0, 2) + " yrs old";
 	}
 
 	public void increaseCreatureMinimum() {

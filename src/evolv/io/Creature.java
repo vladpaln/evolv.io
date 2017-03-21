@@ -184,8 +184,7 @@ class Creature extends SoftBody {
 		/*
 		 * the older the more work necessary
 		 */
-		double age = Configuration.AGE_FACTOR * (getBoard().getYear() - getBirthTime());
-		loseEnergy(getEnergy() * Configuration.METABOLISM_ENERGY * age * timeStep);
+		loseEnergy(getEnergy() * Configuration.METABOLISM_ENERGY * getAge() * timeStep);
 
 		if (getEnergy() < Configuration.SAFE_SIZE) {
 			returnToEarth();
@@ -251,7 +250,7 @@ class Creature extends SoftBody {
 	}
 
 	public void fight(double amount, double timeStep) {
-		if (amount > 0 && getBoard().getYear() - getBirthTime() >= Configuration.MATURE_AGE) {
+		if (amount > 0 && getAge() >= Configuration.MATURE_AGE) {
 			setFightLevel(amount);
 			loseEnergy(getFightLevel() * Configuration.FIGHT_ENERGY * getEnergy() * timeStep);
 			for (int i = 0; i < getColliders().size(); i++) {

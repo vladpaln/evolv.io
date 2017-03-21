@@ -62,7 +62,6 @@ public class Configuration {
 	public static final double FIGHT_ENERGY = 0.06;
 	public static final double INJURED_ENERGY = 0.25;
 	public static final double METABOLISM_ENERGY = 0.004;
-	public static final double AGE_FACTOR = 1;
 	public static final double MAX_VISION_DISTANCE = 10;
 	public static final double FOOD_SENSITIVITY = 0.3;
 	public static final float BRIGHTNESS_THRESHOLD = 0.7f;

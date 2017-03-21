@@ -211,6 +211,10 @@ class SoftBody {
 	public double getBirthTime() {
 		return birthTime;
 	}
+	
+	public double getAge() {
+		return getBoard().getYear() - getBirthTime();
+	}
 
 	public double getHue() {
 		return hue;
