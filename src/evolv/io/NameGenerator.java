@@ -77,6 +77,8 @@ class NameGenerator {
 				}
 			}
 		}
+		// capitalise
+		output.setCharAt(0, Character.toUpperCase(output.charAt(0)));
 		return output.toString();
 	}
 
@@ -87,8 +89,7 @@ class NameGenerator {
 			letterFactor -= LETTER_FREQUENCIES[letterChoice];
 			letterChoice++;
 		}
-		// TODO make the link between 96 and 'a' more meaningful
-		return (char) (letterChoice + 'a');
+		return (char) (letterChoice - 1 + 'a');
 	}
 
 	private static boolean isVowel(char a) {

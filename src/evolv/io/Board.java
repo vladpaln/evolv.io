@@ -179,7 +179,7 @@ class Board {
 								(float) (multi * (list[i].getEnergy() - 1) / maxEnergy), 25);
 					}
 					this.evolvioColor.fill(0, 0, 1);
-					this.evolvioColor.text(list[i].getCreatureName() + " [" + list[i].getId() + "] ("
+					this.evolvioColor.text(list[i].getName() + " [" + list[i].getId() + "] ("
 							+ toAge(list[i].getAge()) + ")", 90, y);
 					this.evolvioColor.text("Energy: " + EvolvioColor.nf(100 * (float) (list[i].getEnergy()), 0, 2), 90,
 							y + 25);
@@ -246,7 +246,7 @@ class Board {
 				this.evolvioColor.rect(185, 280 - h, 25, h);
 			}
 			this.evolvioColor.fill(0, 0, 1);
-			this.evolvioColor.text("Name: " + selectedCreature.getCreatureName(), 10, 225);
+			this.evolvioColor.text("Name: " + selectedCreature.getName(), 10, 225);
 			this.evolvioColor.text(
 					"Energy: " + EvolvioColor.nf(100 * (float) selectedCreature.getEnergy(), 0, 2) + " yums", 10, 250);
 			this.evolvioColor.text("E Change: " + EvolvioColor.nf(100 * energyUsage, 0, 2) + " yums/year", 10, 275);

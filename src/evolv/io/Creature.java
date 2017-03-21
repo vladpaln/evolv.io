@@ -126,7 +126,7 @@ class Creature extends SoftBody {
 				this.evolvioColor.fill(0, 0, 1);
 				this.evolvioColor.textSize(0.2f * scaleUp);
 				this.evolvioColor.textAlign(EvolvioColor.CENTER);
-				this.evolvioColor.text(getCreatureName(), (float) (getPx() * scaleUp),
+				this.evolvioColor.text(name, (float) (getPx() * scaleUp),
 						(float) ((getPy() - getRadius() * 1.4f - 0.07f) * scaleUp));
 			}
 		}
@@ -462,21 +462,13 @@ class Creature extends SoftBody {
 			if (i >= 1) {
 				result = result + " & ";
 			}
-			result = result + capitalize(s[i]);
+			result = result + s[i];
 		}
 		return result;
 	}
 
 	public String getName() {
 		return name;
-	}
-
-	public String getCreatureName() {
-		return capitalize(name);
-	}
-
-	public String capitalize(String n) {
-		return n.substring(0, 1).toUpperCase() + n.substring(1, n.length());
 	}
 
 	@Override
