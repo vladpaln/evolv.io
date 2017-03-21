@@ -1,11 +1,25 @@
 package evolv.io;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+import javax.swing.SortOrder;
 
 class Board {
 	private static final String[] SORT_METRIC_NAMES = { "Biggest", "Smallest", "Youngest", "Oldest", "A to Z", "Z to A",
 			"Highest Gen", "Lowest Gen" };
+	private static final Comparator<Creature>[] CREATURE_COMPARATORS = new Comparator[] {
+			new CreatureComparators.SizeComparator(SortOrder.DESCENDING),
+			new CreatureComparators.SizeComparator(SortOrder.ASCENDING),
+			new CreatureComparators.AgeComparator(SortOrder.DESCENDING),
+			new CreatureComparators.AgeComparator(SortOrder.ASCENDING),
+			new CreatureComparators.NameComparator(SortOrder.DESCENDING),
+			new CreatureComparators.NameComparator(SortOrder.ASCENDING),
+			new CreatureComparators.GenComparator(SortOrder.DESCENDING),
+			new CreatureComparators.GenComparator(SortOrder.ASCENDING), };
 
 	private final EvolvioColor evolvioColor;
 	private final int randomSeed;
@@ -136,31 +150,10 @@ class Board {
 		this.evolvioColor.text(seasons[(int) (getSeason() * 4)] + "\nSeed: " + randomSeed, seasonTextXCoor, 30);
 
 		if (selectedCreature == null) {
-			for (int i = 0; i < Configuration.LIST_SLOTS; i++) {
-				list[i] = null;
-			}
-			for (int i = 0; i < creatures.size(); i++) {
-				int lookingAt = 0;
-				boolean done = false;
-				while (lookingAt < Configuration.LIST_SLOTS && list[lookingAt] != null & !done) {
-					if (sortMetric == 4 && list[lookingAt].getName().compareTo(creatures.get(i).getName()) < 0) {
-						lookingAt++;
-					} else if (sortMetric == 5
-							&& list[lookingAt].getName().compareTo(creatures.get(i).getName()) >= 0) {
-						lookingAt++;
-					} else if (list[lookingAt].measure(sortMetric) > creatures.get(i).measure(sortMetric)) {
-						lookingAt++;
-					} else {
-						done = true;
-					}
-				}
-
-				if (lookingAt < Configuration.LIST_SLOTS) {
-					for (int j = Configuration.LIST_SLOTS - 1; j >= lookingAt + 1; j--) {
-						list[j] = list[j - 1];
-					}
-					list[lookingAt] = creatures.get(i);
-				}
+			Collections.sort(creatures, CREATURE_COMPARATORS[sortMetric]);
+			Arrays.fill(list, null);
+			for (int i = 0; i < Configuration.LIST_SLOTS && i < creatures.size(); i++) {
+				list[i] = creatures.get(i);
 			}
 			double maxEnergy = 0;
 			for (int i = 0; i < Configuration.LIST_SLOTS; i++) {

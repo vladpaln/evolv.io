@@ -517,18 +517,6 @@ class Creature extends SoftBody {
 		previousEnergy[0] = getEnergy();
 	}
 
-	public double measure(int choice) {
-		int sign = 1 - 2 * (choice % 2);
-		if (choice < 2) {
-			return sign * getEnergy();
-		} else if (choice < 4) {
-			return sign * getBirthTime();
-		} else if (choice == 6 || choice == 7) {
-			return sign * gen;
-		}
-		return 0;
-	}
-
 	public float getPreferredRank() {
 		return preferredRank;
 	}
