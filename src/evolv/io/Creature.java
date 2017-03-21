@@ -485,7 +485,7 @@ class Creature extends SoftBody {
 
 	@Override
 	public void applyMotions(double timeStep) {
-		if (getRandomCoveredTile().getFertility() > 1) {
+		if (getRandomCoveredTile().isWater()) {
 			loseEnergy(Configuration.SWIM_ENERGY * getEnergy());
 		}
 		super.applyMotions(timeStep);

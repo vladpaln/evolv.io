@@ -32,8 +32,8 @@ class Tile {
 		this.foodLevel = fertility;
 	}
 
-	public double getFertility() {
-		return fertility;
+	public boolean isWater() {
+		return fertility > 1;
 	}
 
 	public double getFoodLevel() {
@@ -79,7 +79,7 @@ class Tile {
 		double updateTime = board.getYear();
 		if (Math.abs(lastUpdateTime - updateTime) >= 0.00001f) {
 			double growthChange = board.getGrowthOverTimeRange(lastUpdateTime, updateTime);
-			if (fertility > 1) { // This means the tile is water.
+			if (isWater()) {
 				foodLevel = 0;
 			} else {
 				if (growthChange > 0) {
@@ -131,7 +131,7 @@ class Tile {
 		// TODO shouldn't be iterating in a getter
 		iterate();
 		int foodColor = this.evolvioColor.color((float) (foodType), 1, 1);
-		if (fertility > 1) {
+		if (isWater()) {
 			return waterColor;
 		} else if (foodLevel < Configuration.MAX_GROWTH_LEVEL) {
 			return interColorFixedHue(interColor(barrenColor, fertileColor, fertility), foodColor,
