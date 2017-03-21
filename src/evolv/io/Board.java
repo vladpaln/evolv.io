@@ -27,7 +27,7 @@ class Board {
 	private final Tile[][] tiles = new Tile[Configuration.BOARD_WIDTH][Configuration.BOARD_HEIGHT];
 
 	// Creature
-	private final List<SoftBody>[][] softBodiesInPositions;
+	private final List<SoftBody>[][] softBodiesInPositions = new List[Configuration.BOARD_WIDTH][Configuration.BOARD_HEIGHT];
 	private final List<Creature> creatures = new ArrayList<Creature>(Configuration.CREATURE_MINIMUM);
 	private final Creature[] list = new Creature[Configuration.LIST_SLOTS];
 	private int creatureMinimum = Configuration.CREATURE_MINIMUM;
@@ -85,7 +85,6 @@ class Board {
 			}
 		}
 
-		this.softBodiesInPositions = new ArrayList[Configuration.BOARD_WIDTH][Configuration.BOARD_HEIGHT];
 		for (int x = 0; x < Configuration.BOARD_WIDTH; x++) {
 			for (int y = 0; y < Configuration.BOARD_HEIGHT; y++) {
 				softBodiesInPositions[x][y] = new ArrayList<SoftBody>(0);

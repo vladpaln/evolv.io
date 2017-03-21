@@ -1,6 +1,6 @@
 package evolv.io;
 
-import java.util.ArrayList;
+import java.util.List;
 
 class Brain {
 	private static final int BRAIN_HEIGHT = 11 + Configuration.MEMORY_COUNT + 1;
@@ -82,7 +82,7 @@ class Brain {
 		}
 	}
 
-	public Brain evolve(ArrayList<Creature> parents) {
+	public Brain evolve(List<Creature> parents) {
 		int parentsTotal = parents.size();
 		Axon[][][] newBrain = new Axon[Configuration.BRAIN_WIDTH - 1][BRAIN_HEIGHT][BRAIN_HEIGHT - 1];
 		double[][] newNeurons = new double[Configuration.BRAIN_WIDTH][BRAIN_HEIGHT];

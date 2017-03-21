@@ -304,7 +304,7 @@ class Creature extends SoftBody {
 			int tileY = 0;
 			int prevTileX = -1;
 			int prevTileY = -1;
-			ArrayList<SoftBody> potentialVisionOccluders = new ArrayList<SoftBody>();
+			List<SoftBody> potentialVisionOccluders = new ArrayList<SoftBody>();
 			for (int DAvision = 0; DAvision < VISION_DISTANCES[k] + 1; DAvision++) {
 				tileX = (int) (visionStartX + Math.cos(visionTotalAngle) * DAvision);
 				tileY = (int) (visionStartY + Math.sin(visionTotalAngle) * DAvision);
@@ -359,7 +359,7 @@ class Creature extends SoftBody {
 		return (Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
 	}
 
-	public void addPVOs(int x, int y, ArrayList<SoftBody> PVOs) {
+	public void addPVOs(int x, int y, List<SoftBody> PVOs) {
 		if (x >= 0 && x < Configuration.BOARD_WIDTH && y >= 0 && y < getBoard().getBoardHeight()) {
 			for (int i = 0; i < getBoard().getSoftBodiesInPosition(x, y).size(); i++) {
 				SoftBody newCollider = getBoard().getSoftBodiesInPosition(x, y).get(i);
@@ -388,7 +388,7 @@ class Creature extends SoftBody {
 	public void reproduce(double babySize, double timeStep) {
 		int highestGen = 0;
 		if (babySize >= 0) {
-			ArrayList<Creature> parents = new ArrayList<Creature>(0);
+			List<Creature> parents = new ArrayList<Creature>(0);
 			parents.add(this);
 			double availableEnergy = getBabyEnergy();
 			for (int i = 0; i < getColliders().size(); i++) {
