@@ -60,7 +60,7 @@ public class Board {
 	// Misc or Unsorted
 	private final int backgroundColor;
 	private final int buttonColor;
-	private boolean userControl = true;
+	private boolean userControl;
 	private boolean render = true;
 
 	public Board(EvolvioColor evolvioColor, int randomSeed) {
