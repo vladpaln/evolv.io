@@ -82,7 +82,7 @@ public class EvolvioColor extends PApplet {
 				dragging = 2;
 			}
 		}
-		if (evoBoard.isUserControl() && evoBoard.getSelectedCreature() != null) {
+		if (evoBoard.getSelectedCreature() != null) {
 			cameraX = (float) evoBoard.getSelectedCreature().getPx();
 			cameraY = (float) evoBoard.getSelectedCreature().getPy();
 			cameraR = -PI / 2.0f - (float) evoBoard.getSelectedCreature().getRotation();
@@ -95,7 +95,7 @@ public class EvolvioColor extends PApplet {
 		translate(Configuration.BOARD_WIDTH * 0.5f * Configuration.SCALE_TO_FIXBUG,
 				Configuration.BOARD_HEIGHT * 0.5f * Configuration.SCALE_TO_FIXBUG);
 		scale(zoom);
-		if (evoBoard.isUserControl() && evoBoard.getSelectedCreature() != null) {
+		if (evoBoard.getSelectedCreature() != null) {
 			rotate(cameraR);
 		}
 		translate(-cameraX * Configuration.SCALE_TO_FIXBUG, -cameraY * Configuration.SCALE_TO_FIXBUG);
