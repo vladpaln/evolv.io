@@ -1,6 +1,6 @@
 package evolv.io;
 
-class Axon {
+public class Axon {
 	private static final double MUTATE_MULTI = Math.pow(0.5f, Configuration.MUTATE_POWER);
 
 	private final double weight;

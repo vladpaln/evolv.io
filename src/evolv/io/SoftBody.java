@@ -3,7 +3,7 @@ package evolv.io;
 import java.util.ArrayList;
 import java.util.List;
 
-class SoftBody {
+public class SoftBody {
 	private static final float ENERGY_DENSITY = 1.0f
 			/ (Configuration.MINIMUM_SURVIVABLE_SIZE * Configuration.MINIMUM_SURVIVABLE_SIZE * EvolvioColor.PI);
 
@@ -211,7 +211,7 @@ class SoftBody {
 	public double getBirthTime() {
 		return birthTime;
 	}
-	
+
 	public double getAge() {
 		return getBoard().getYear() - getBirthTime();
 	}

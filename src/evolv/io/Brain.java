@@ -2,7 +2,7 @@ package evolv.io;
 
 import java.util.List;
 
-class Brain {
+public class Brain {
 	private static final int BRAIN_HEIGHT = 11 + Configuration.MEMORY_COUNT + 1;
 	private static final String[] INPUT_LABELS = new String[BRAIN_HEIGHT];
 	private static final String[] OUTPUT_LABELS = new String[BRAIN_HEIGHT];

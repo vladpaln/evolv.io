@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.swing.SortOrder;
 
-class Board {
+public class Board {
 	private static final String[] SORT_METRIC_NAMES = { "Biggest", "Smallest", "Youngest", "Oldest", "A to Z", "Z to A",
 			"Highest Gen", "Lowest Gen" };
 	private static final Comparator<Creature>[] CREATURE_COMPARATORS = new Comparator[] {
@@ -183,8 +183,8 @@ class Board {
 								(float) (multi * (list[i].getEnergy() - 1) / maxEnergy), 25);
 					}
 					this.evolvioColor.fill(0, 0, 1);
-					this.evolvioColor.text(list[i].getName() + " [" + list[i].getId() + "] ("
-							+ toAge(list[i].getAge()) + ")", 90, y);
+					this.evolvioColor.text(
+							list[i].getName() + " [" + list[i].getId() + "] (" + toAge(list[i].getAge()) + ")", 90, y);
 					this.evolvioColor.text("Energy: " + EvolvioColor.nf(100 * (float) (list[i].getEnergy()), 0, 2), 90,
 							y + 25);
 				}
@@ -207,8 +207,7 @@ class Board {
 					"-   Image every " + EvolvioColor.nf((float) imageSaveInterval, 0, 2) + " years   +",
 					"Text file now",
 					"-    Text every " + EvolvioColor.nf((float) textSaveInterval, 0, 2) + " years    +",
-					"-    Play Speed (" + playSpeed + "x)    +",
-					"Toggle Rendering" };
+					"-    Play Speed (" + playSpeed + "x)    +", "Toggle Rendering" };
 			if (userControl) {
 				buttonTexts[0] = "Keyboard Control";
 			}
@@ -705,7 +704,7 @@ class Board {
 	public void setUserControl(boolean isUserControl) {
 		this.userControl = isUserControl;
 	}
-	
+
 	public boolean isRender() {
 		return render;
 	}

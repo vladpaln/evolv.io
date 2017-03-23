@@ -1,6 +1,6 @@
 package evolv.io;
 
-class Tile {
+public class Tile {
 	private final EvolvioColor evolvioColor;
 	private final Board board;
 	private final int barrenColor;

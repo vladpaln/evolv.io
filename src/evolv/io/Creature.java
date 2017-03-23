@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class Creature extends SoftBody {
+public class Creature extends SoftBody {
 	private static final float CROSS_SIZE = 0.022f;
 	private static final double[] VISION_ANGLES = { 0, -0.4f, 0.4f };
 	private static final double[] VISION_DISTANCES = { 0, 0.7f, 0.7f };
