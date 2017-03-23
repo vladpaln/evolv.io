@@ -61,6 +61,7 @@ class Board {
 	private final int backgroundColor;
 	private final int buttonColor;
 	private boolean userControl = true;
+	private boolean render = true;
 
 	public Board(EvolvioColor evolvioColor, int randomSeed) {
 		this.rockColor = evolvioColor.color(0, 0, 0.5f);
@@ -109,6 +110,9 @@ class Board {
 	}
 
 	public void drawBoard(float scaleUp, float camZoom, int mX, int mY) {
+		if (!render) {
+			return;
+		}
 		for (int x = 0; x < Configuration.BOARD_WIDTH; x++) {
 			for (int y = 0; y < Configuration.BOARD_HEIGHT; y++) {
 				tiles[x][y].drawTile(scaleUp, camZoom, (mX == x && mY == y));
@@ -203,7 +207,8 @@ class Board {
 					"-   Image every " + EvolvioColor.nf((float) imageSaveInterval, 0, 2) + " years   +",
 					"Text file now",
 					"-    Text every " + EvolvioColor.nf((float) textSaveInterval, 0, 2) + " years    +",
-					"-    Play Speed (" + playSpeed + "x)    +", "This button does nothing" };
+					"-    Play Speed (" + playSpeed + "x)    +",
+					"Toggle Rendering" };
 			if (userControl) {
 				buttonTexts[0] = "Keyboard Control";
 			}
@@ -699,5 +704,13 @@ class Board {
 
 	public void setUserControl(boolean isUserControl) {
 		this.userControl = isUserControl;
+	}
+	
+	public boolean isRender() {
+		return render;
+	}
+
+	public void setRender(boolean isRender) {
+		this.render = isRender;
 	}
 }
