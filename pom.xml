@@ -17,10 +17,15 @@
     </plugins>
   </build>
   <dependencies>
-  	<dependency>
-  		<groupId>org.processing</groupId>
-  		<artifactId>core</artifactId>
-  		<version>3.2.3</version>
-  	</dependency>
+    <dependency>
+      <groupId>org.processing</groupId>
+      <artifactId>core</artifactId>
+      <version>3.2.3</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+    </dependency>
   </dependencies>
 </project>
