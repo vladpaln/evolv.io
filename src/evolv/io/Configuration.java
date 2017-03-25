@@ -10,7 +10,7 @@ public class Configuration {
 	public static final float MINIMUM_TEMPERATURE = -0.5f;
 	public static final float MAXIMUM_TEMPERATURE = 1.0f;
 	public static final int ROCKS_TO_ADD = 0;
-	public static final int CREATURE_MINIMUM = 60;
+	public static final float SPAWN_CHANCE = .1f;
 	public static final String INITIAL_FILE_NAME = "PIC";
 
 	// Board
@@ -18,7 +18,7 @@ public class Configuration {
 	public static final float MAXIMUM_CREATURE_ENERGY = 2.0f;
 	public static final float MINIMUM_SURVIVABLE_SIZE = 0.06f;
 	public static final float CREATURE_STROKE_WEIGHT = 0.6f;
-	public static final int CREATURE_MINIMUM_INCREMENT = 5;
+	public static final float SPAWN_CHANCE_INCREMENT = .01f;
 	public static final double MANUAL_BIRTH_SIZE = 1.2;
 	public static final int TIMESTEPS_PER_YEAR = 100;
 	public static final int POPULATION_HISTORY_LENGTH = 200;

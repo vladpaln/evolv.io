@@ -9,7 +9,7 @@ import processing.event.MouseEvent;
 
 public class EvolvioColor extends PApplet {
 	private static final List<BoardAction> BOARD_ACTIONS = Arrays.asList(new BoardAction.ToggleUserControl(),
-			new BoardAction.ChangeCreatureMinimum(), new BoardAction.PrepareForFileSave(0),
+			new BoardAction.ChangeSpawnChance(), new BoardAction.PrepareForFileSave(0),
 			new BoardAction.ChangeImageSaveInterval(), new BoardAction.PrepareForFileSave(2),
 			new BoardAction.ChangeTextSaveInterval(), new BoardAction.ChangePlaySpeed(), new BoardAction.ToggleRender());
 

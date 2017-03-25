@@ -28,9 +28,9 @@ public class Board {
 
 	// Creature
 	private final List<SoftBody>[][] softBodiesInPositions = new List[Configuration.BOARD_WIDTH][Configuration.BOARD_HEIGHT];
-	private final List<Creature> creatures = new ArrayList<Creature>(Configuration.CREATURE_MINIMUM);
+	private final List<Creature> creatures = new ArrayList<Creature>();
 	private final Creature[] list = new Creature[Configuration.LIST_SLOTS];
-	private int creatureMinimum = Configuration.CREATURE_MINIMUM;
+	private float spawnChance = Configuration.SPAWN_CHANCE;
 	private Creature selectedCreature;
 	private int creatureIDUpTo;
 	private int sortMetric;
@@ -99,7 +99,6 @@ public class Board {
 					this.evolvioColor.saturation(rockColor), this.evolvioColor.brightness(rockColor), false));
 		}
 
-		maintainCreatureMinimum(false);
 		this.fileSaveCounts = new int[4];
 		this.fileSaveTimes = new double[4];
 		for (int i = 0; i < 4; i++) {
@@ -203,7 +202,9 @@ public class Board {
 			 * TODO put these button texts in the same place as the board
 			 * actions
 			 */
-			String[] buttonTexts = { "Brain Control", "Maintain pop. at " + creatureMinimum, "Screenshot now",
+			String[] buttonTexts = { "Brain Control",
+					"Spawn Chance " + EvolvioColor.nf((float) spawnChance, 0, 2) + "%",
+					"Screenshot now",
 					"-   Image every " + EvolvioColor.nf((float) imageSaveInterval, 0, 2) + " years   +",
 					"Text file now",
 					"-    Text every " + EvolvioColor.nf((float) textSaveInterval, 0, 2) + " years    +",
@@ -227,8 +228,8 @@ public class Board {
 				this.evolvioColor.text(buttonTexts[i], x + 110, y + 17);
 				if (i == 0) {
 				} else if (i == 1) {
-					this.evolvioColor.text("-" + Configuration.CREATURE_MINIMUM_INCREMENT + "                    +"
-							+ Configuration.CREATURE_MINIMUM_INCREMENT, x + 110, y + 37);
+					this.evolvioColor.text("-" + EvolvioColor.nf(Configuration.SPAWN_CHANCE_INCREMENT, 0, 2) + "                    +"
+							+ EvolvioColor.nf(Configuration.SPAWN_CHANCE_INCREMENT, 0, 2), x + 110, y + 37);
 				} else if (i <= 5) {
 					this.evolvioColor.text(getNextFileName(i - 2), x + 110, y + 37);
 				}
@@ -362,7 +363,7 @@ public class Board {
 		 * for(int i = 0; i < rocks.size(); i++) {
 		 * rocks.get(i).collide(timeStep*OBJECT_TIMESTEPS_PER_YEAR); }
 		 */
-		maintainCreatureMinimum(false);
+		randomSpawnCreature(false);
 		for (int i = 0; i < creatures.size(); i++) {
 			Creature me = creatures.get(i);
 			me.collide(timeStep);
@@ -535,16 +536,17 @@ public class Board {
 		return EvolvioColor.nf((float) d, 0, 2) + " yrs old";
 	}
 
-	public void increaseCreatureMinimum() {
-		this.creatureMinimum += Configuration.CREATURE_MINIMUM_INCREMENT;
+	public void increaseSpawnChance() {
+		this.spawnChance = Math.min(1, this.spawnChance + Configuration.SPAWN_CHANCE_INCREMENT); 
 	}
 
-	public void decreaseCreatureMinimum() {
-		this.creatureMinimum -= Configuration.CREATURE_MINIMUM_INCREMENT;
+	public void decreaseSpawnChance() {
+		this.spawnChance = Math.max(0, this.spawnChance - Configuration.SPAWN_CHANCE_INCREMENT); 
+		
 	}
 
-	private void maintainCreatureMinimum(boolean choosePreexisting) {
-		while (creatures.size() < creatureMinimum) {
+	private void randomSpawnCreature(boolean choosePreexisting) {
+		if (this.evolvioColor.random(0, 1) < spawnChance) {
 			if (choosePreexisting) {
 				Creature c = getRandomCreature();
 				c.addEnergy(Configuration.SAFE_SIZE);
