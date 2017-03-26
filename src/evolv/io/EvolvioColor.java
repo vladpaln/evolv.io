@@ -3,6 +3,8 @@ package evolv.io;
 import java.util.Arrays;
 import java.util.List;
 
+import evolv.io.renderers.BlankBoardRenderer;
+import evolv.io.renderers.Renderer;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.event.MouseEvent;
@@ -11,9 +13,12 @@ public class EvolvioColor extends PApplet {
 	private static final List<BoardAction> BOARD_ACTIONS = Arrays.asList(new BoardAction.ToggleUserControl(),
 			new BoardAction.ChangeSpawnChance(), new BoardAction.PrepareForFileSave(0),
 			new BoardAction.ChangeImageSaveInterval(), new BoardAction.PrepareForFileSave(2),
-			new BoardAction.ChangeTextSaveInterval(), new BoardAction.ChangePlaySpeed(), new BoardAction.ToggleRender());
+			new BoardAction.ChangeTextSaveInterval(), new BoardAction.ChangePlaySpeed(),
+			new BoardAction.ToggleRender());
 
 	private final int seed = parseInt(random(1000000));
+	private final Renderer<Board> blankBoardRenderer = new BlankBoardRenderer();
+
 	private Board evoBoard;
 	private float scaleFactor;
 	private int windowWidth;
@@ -103,7 +108,7 @@ public class EvolvioColor extends PApplet {
 	private void render(){
 		pushMatrix();
 		scale(scaleFactor);
-		evoBoard.drawBlankBoard(Configuration.SCALE_TO_FIXBUG);
+		blankBoardRenderer.render(this, evoBoard);
 		translate(Configuration.BOARD_WIDTH * 0.5f * Configuration.SCALE_TO_FIXBUG,
 				Configuration.BOARD_HEIGHT * 0.5f * Configuration.SCALE_TO_FIXBUG);
 		scale(zoom);

@@ -125,11 +125,6 @@ public class Board {
 		}
 	}
 
-	public void drawBlankBoard(float scaleUp) {
-		this.evolvioColor.fill(backgroundColor);
-		this.evolvioColor.rect(0, 0, scaleUp * Configuration.BOARD_WIDTH, scaleUp * Configuration.BOARD_HEIGHT);
-	}
-
 	public void drawUI(float scaleUp, float camZoom, double timeStep, int x1, int y1, int x2, int y2) {
 		this.evolvioColor.fill(0, 0, 0);
 		this.evolvioColor.noStroke();
