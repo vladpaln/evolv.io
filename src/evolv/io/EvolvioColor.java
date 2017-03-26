@@ -64,9 +64,18 @@ public class EvolvioColor extends PApplet {
 
 	@Override
 	public void draw() {
+	   update();
+	   respondToUser();
+	   render();
+	}
+
+	private void update(){
 		for (int iteration = 0; iteration < evoBoard.getPlaySpeed(); iteration++) {
 			evoBoard.iterate(Configuration.TIME_STEP);
 		}
+	}
+
+	private void respondToUser(){
 		if (dist(prevMouseX, prevMouseY, mouseX, mouseY) > 5) {
 			draggedFar = true;
 		}
@@ -89,6 +98,9 @@ public class EvolvioColor extends PApplet {
 		} else {
 			cameraR = 0;
 		}
+	}
+
+	private void render(){
 		pushMatrix();
 		scale(scaleFactor);
 		evoBoard.drawBlankBoard(Configuration.SCALE_TO_FIXBUG);
