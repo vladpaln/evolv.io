@@ -52,13 +52,17 @@ public class Tile {
 		foodLevel = f;
 	}
 
-	public void drawTile(float scaleUp, float camZoom, boolean showEnergy) {
+	public void drawTile(float scaleUp, float camZoom) {
 		this.evolvioColor.stroke(0, 0, 0, 1);
 		this.evolvioColor.strokeWeight(2);
 		int landColor = getColor();
 		this.evolvioColor.fill(landColor);
 		this.evolvioColor.rect(posX * scaleUp, posY * scaleUp, scaleUp, scaleUp);
-		if (showEnergy && camZoom > Configuration.MAX_DETAILED_ZOOM) {
+	}
+
+	public void drawEnergy(float scaleUp, float camZoom) {
+		if (camZoom > Configuration.MAX_DETAILED_ZOOM) {
+			int landColor = getColor();
 			if (this.evolvioColor.brightness(landColor) >= 0.7f) {
 				this.evolvioColor.fill(0, 0, 0, 1);
 			} else {
