@@ -652,6 +652,9 @@ public class Board {
 	}
 
 	public Creature getCreatureInList(int slotIndex) {
+		if (slotIndex < 0 || slotIndex >= list.length) {
+			return null;
+		}
 		return list[slotIndex];
 	}
 

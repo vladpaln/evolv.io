@@ -170,7 +170,7 @@ public class EvolvioColor extends PApplet {
 				}
 			} else if (mouseX >= height + 10 && mouseX < width - 50 && evoBoard.getSelectedCreature() == null) {
 				int listIndex = (mouseY - 150) / 70;
-				if (listIndex >= 0 && listIndex < Configuration.LIST_SLOTS) {
+				if (evoBoard.getCreatureInList(listIndex) != null) {
 					evoBoard.setSelectedCreature(evoBoard.getCreatureInList(listIndex));
 					cameraX = (float) evoBoard.getSelectedCreature().getPx();
 					cameraY = (float) evoBoard.getSelectedCreature().getPy();
