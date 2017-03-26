@@ -112,7 +112,7 @@ public class EvolvioColor extends PApplet {
 		translate(Configuration.BOARD_WIDTH * 0.5f * Configuration.SCALE_TO_FIXBUG,
 				Configuration.BOARD_HEIGHT * 0.5f * Configuration.SCALE_TO_FIXBUG);
 		scale(zoom);
-		if (evoBoard.getSelectedCreature() != null) {
+		if (evoBoard.isUserControl() && evoBoard.getSelectedCreature() != null) {
 			rotate(cameraR);
 		}
 		translate(-cameraX * Configuration.SCALE_TO_FIXBUG, -cameraY * Configuration.SCALE_TO_FIXBUG);
