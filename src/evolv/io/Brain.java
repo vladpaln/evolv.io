@@ -6,6 +6,9 @@ public class Brain {
 	private static final int BRAIN_HEIGHT = 11 + Configuration.MEMORY_COUNT + 1;
 	private static final String[] INPUT_LABELS = new String[BRAIN_HEIGHT];
 	private static final String[] OUTPUT_LABELS = new String[BRAIN_HEIGHT];
+	static final float NEURON_SPACING = 1.1f;
+	static final int NEURON_OFFSET_X = -85;
+	static final int NEURON_OFFSET_Y = 20;
 
 	private final EvolvioColor evolvioColor;
 	// Brain
@@ -14,43 +17,43 @@ public class Brain {
 
 	static {
 		// input
-		INPUT_LABELS[0] = "0Hue";
-		INPUT_LABELS[1] = "0Sat";
-		INPUT_LABELS[2] = "0Bri";
-		INPUT_LABELS[3] = "1Hue";
-		INPUT_LABELS[4] = "1Sat";
-		INPUT_LABELS[5] = "1Bri";
-		INPUT_LABELS[6] = "2Hue";
-		INPUT_LABELS[7] = "2Sat";
-		INPUT_LABELS[8] = "2Bri";
+		INPUT_LABELS[0] = "Hue 0";
+		INPUT_LABELS[1] = "Sat 0";
+		INPUT_LABELS[2] = "Bri 0";
+		INPUT_LABELS[3] = "Hue 1";
+		INPUT_LABELS[4] = "Sat 1";
+		INPUT_LABELS[5] = "Bri 1";
+		INPUT_LABELS[6] = "Hue 2";
+		INPUT_LABELS[7] = "Sat 2";
+		INPUT_LABELS[8] = "Bri 2";
 		INPUT_LABELS[9] = "Size";
-		INPUT_LABELS[10] = "MHue";
+		INPUT_LABELS[10] = "M Hue";
 
 		// output
-		OUTPUT_LABELS[0] = "BHue";
-		OUTPUT_LABELS[1] = "Accel.";
+		OUTPUT_LABELS[0] = "Body Hue";
+		OUTPUT_LABELS[1] = "Accelerate";
 		OUTPUT_LABELS[2] = "Turn";
 		OUTPUT_LABELS[3] = "Eat";
 		OUTPUT_LABELS[4] = "Fight";
-		OUTPUT_LABELS[5] = "Birth";
-		OUTPUT_LABELS[6] = "How funny?";
-		OUTPUT_LABELS[7] = "How popular?";
-		OUTPUT_LABELS[8] = "How generous?";
-		OUTPUT_LABELS[9] = "How smart?";
-		OUTPUT_LABELS[10] = "MHue";
+		OUTPUT_LABELS[5] = "Procreate";
+		OUTPUT_LABELS[6] = "Funniness";
+		OUTPUT_LABELS[7] = "Popularity";
+		OUTPUT_LABELS[8] = "Generosity";
+		OUTPUT_LABELS[9] = "Brilliance";
+		OUTPUT_LABELS[10] = "Mouth Hue";
 
 		// TODO do we need a memory and const output?
 
 		// memory
 		for (int i = 0; i < Configuration.MEMORY_COUNT; i++) {
-			INPUT_LABELS[i + 11] = "Memory";
+			INPUT_LABELS[i + 11] = "Mem.";
 			OUTPUT_LABELS[i + 11] = "Memory";
 		}
 
 		// TODO is this the bias?
 		// const
 		INPUT_LABELS[BRAIN_HEIGHT - 1] = "Const.";
-		OUTPUT_LABELS[BRAIN_HEIGHT - 1] = "Const.";
+		OUTPUT_LABELS[BRAIN_HEIGHT - 1] = "Constant";
 	}
 
 	public Brain(EvolvioColor evolvioColor, Axon[][][] tbrain, double[][] tneurons) {
@@ -114,8 +117,8 @@ public class Brain {
 		final float neuronSize = 0.4f;
 		this.evolvioColor.noStroke();
 		this.evolvioColor.fill(0, 0, 0.4f);
-		this.evolvioColor.rect((-1.7f - neuronSize) * scaleUp, -neuronSize * scaleUp,
-				(2.4f + Configuration.BRAIN_WIDTH + neuronSize * 2) * scaleUp,
+		this.evolvioColor.rect((-3.2f - neuronSize) * scaleUp, -neuronSize * scaleUp,
+				(3.8f + Configuration.BRAIN_WIDTH + neuronSize * 2) * scaleUp,
 				(BRAIN_HEIGHT + neuronSize * 2) * scaleUp);
 
 		this.evolvioColor.ellipseMode(EvolvioColor.RADIUS);
@@ -124,11 +127,12 @@ public class Brain {
 		this.evolvioColor.fill(0, 0, 1);
 		for (int y = 0; y < BRAIN_HEIGHT; y++) {
 			this.evolvioColor.textAlign(EvolvioColor.RIGHT);
-			this.evolvioColor.text(INPUT_LABELS[y], (-neuronSize - 0.1f) * scaleUp,
-					(y + (neuronSize * 0.6f)) * scaleUp);
+			this.evolvioColor.text(INPUT_LABELS[y], (-neuronSize - 0.1f) * scaleUp + NEURON_OFFSET_X,
+					(y + (neuronSize * 0.6f)) * scaleUp + NEURON_OFFSET_Y);
 			this.evolvioColor.textAlign(EvolvioColor.LEFT);
-			this.evolvioColor.text(OUTPUT_LABELS[y], (Configuration.BRAIN_WIDTH - 1 + neuronSize + 0.1f) * scaleUp,
-					(y + (neuronSize * 0.6f)) * scaleUp);
+			this.evolvioColor.text(OUTPUT_LABELS[y],
+					(Configuration.BRAIN_WIDTH - 1 + neuronSize + 0.5f) * scaleUp * NEURON_SPACING + NEURON_OFFSET_X,
+					(y + (neuronSize * 0.6f)) * scaleUp + NEURON_OFFSET_Y);
 		}
 		this.evolvioColor.textAlign(EvolvioColor.CENTER);
 		for (int x = 0; x < Configuration.BRAIN_WIDTH; x++) {
@@ -136,12 +140,15 @@ public class Brain {
 				this.evolvioColor.noStroke();
 				double val = neurons[x][y];
 				this.evolvioColor.fill(neuronFillColor(val));
-				this.evolvioColor.ellipse(x * scaleUp, y * scaleUp, neuronSize * scaleUp, neuronSize * scaleUp);
+				this.evolvioColor.ellipse(x * scaleUp * NEURON_SPACING + NEURON_OFFSET_X + 15,
+						y * scaleUp + NEURON_OFFSET_Y, neuronSize * scaleUp, neuronSize * scaleUp);
 				this.evolvioColor.fill(neuronTextColor(val));
-				this.evolvioColor.text(EvolvioColor.nf((float) val, 0, 1), x * scaleUp,
-						(y + (neuronSize * 0.6f)) * scaleUp);
+				this.evolvioColor.text(EvolvioColor.nf((float) val, 0, 1),
+						x * scaleUp * NEURON_SPACING + NEURON_OFFSET_X + 15,
+						(y + (neuronSize * 0.6f)) * scaleUp + NEURON_OFFSET_Y);
 			}
 		}
+		
 		if (mX >= 0 && mX < Configuration.BRAIN_WIDTH && mY >= 0 && mY < BRAIN_HEIGHT) {
 			for (int y = 0; y < BRAIN_HEIGHT; y++) {
 				if (mX >= 1 && mY < BRAIN_HEIGHT - 1) {
@@ -189,7 +196,8 @@ public class Brain {
 
 	private void drawAxon(int x1, int y1, int x2, int y2, float scaleUp) {
 		this.evolvioColor.stroke(neuronFillColor(axons[x1][y1][y2].getWeight() * neurons[x1][y1]));
-		this.evolvioColor.line(x1 * scaleUp, y1 * scaleUp, x2 * scaleUp, y2 * scaleUp);
+		this.evolvioColor.line(x1 * scaleUp * NEURON_SPACING + NEURON_OFFSET_X, y1 * scaleUp + NEURON_OFFSET_Y,
+				x2 * scaleUp * NEURON_SPACING + NEURON_OFFSET_X, y2 * scaleUp + NEURON_OFFSET_Y);
 	}
 
 	private double sigmoid(double input) {
