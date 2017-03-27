@@ -206,7 +206,7 @@ public class EvolvioColor extends PApplet {
 				if (x >= 0 && x < Configuration.BOARD_WIDTH && y >= 0 && y < Configuration.BOARD_HEIGHT) {
 					for (int i = 0; i < evoBoard.getSoftBodiesInPosition(x, y).size(); i++) {
 						SoftBody body = evoBoard.getSoftBodiesInPosition(x, y).get(i);
-						if (body.isCreature()) {
+						if (body instanceof Creature) {
 							float distance = dist(mX, mY, (float) body.getPx(), (float) body.getPy());
 							if (distance <= body.getRadius()) {
 								evoBoard.setSelectedCreature((Creature) body);

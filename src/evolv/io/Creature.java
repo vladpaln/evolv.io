@@ -50,7 +50,7 @@ public class Creature extends SoftBody {
 	public Creature(EvolvioColor evolvioColor, Board board, double tpx, double tpy, double tvx, double tvy,
 			double tenergy, double tdensity, double thue, double tsaturation, double tbrightness, double rot,
 			double tvr, String tname, String tparents, boolean mutateName, Brain brain, int tgen, double tmouthHue) {
-		super(evolvioColor, board, tpx, tpy, tvx, tvy, tenergy, tdensity, thue, tsaturation, tbrightness, true);
+		super(evolvioColor, board, tpx, tpy, tvx, tvy, tenergy, tdensity, thue, tsaturation, tbrightness);
 		this.evolvioColor = evolvioColor;
 
 		if (brain == null) {
@@ -255,7 +255,7 @@ public class Creature extends SoftBody {
 			loseEnergy(getFightLevel() * Configuration.FIGHT_ENERGY * getEnergy() * timeStep);
 			for (int i = 0; i < getColliders().size(); i++) {
 				SoftBody collider = getColliders().get(i);
-				if (collider.isCreature()) {
+				if (collider instanceof Creature) {
 					float distance = EvolvioColor.dist((float) getPx(), (float) getPy(), (float) collider.getPx(),
 							(float) collider.getPy());
 					double combinedRadius = getRadius() * Configuration.FIGHT_RANGE + collider.getRadius();
@@ -395,7 +395,7 @@ public class Creature extends SoftBody {
 				/*
 				 * Must be a WILLING creature to also give birth.
 				 */
-				if (possibleParent.isCreature() && ((Creature) possibleParent).brain.outputs()[9] > -1) {
+				if (possibleParent instanceof Creature && ((Creature) possibleParent).brain.outputs()[9] > -1) {
 					float distance = EvolvioColor.dist((float) getPx(), (float) getPy(), (float) possibleParent.getPx(),
 							(float) possibleParent.getPy());
 					double combinedRadius = getRadius() * Configuration.FIGHT_RANGE + possibleParent.getRadius();

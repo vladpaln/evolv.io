@@ -96,7 +96,7 @@ public class Board {
 			rocks.add(new SoftBody(this.evolvioColor, this, this.evolvioColor.random(0, Configuration.BOARD_WIDTH),
 					this.evolvioColor.random(0, Configuration.BOARD_HEIGHT), 0, 0, getRandomSize(),
 					Configuration.ROCK_DENSITY, this.evolvioColor.hue(rockColor),
-					this.evolvioColor.saturation(rockColor), this.evolvioColor.brightness(rockColor), false));
+					this.evolvioColor.saturation(rockColor), this.evolvioColor.brightness(rockColor)));
 		}
 
 		this.fileSaveCounts = new int[4];

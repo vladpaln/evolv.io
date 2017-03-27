@@ -9,8 +9,6 @@ public class SoftBody {
 
 	private final EvolvioColor evolvioColor;
 	private final Board board;
-	// TODO remove, this should use polymorphism
-	private final boolean isCreature;
 	private final double birthTime;
 	/*
 	 * Set so when a creature is of minimum size, it equals one.
@@ -38,7 +36,7 @@ public class SoftBody {
 	private int SBIPMaxY;
 
 	public SoftBody(EvolvioColor evolvioColor, Board tb, double tpx, double tpy, double tvx, double tvy, double tenergy,
-			double tdensity, double thue, double tsaturation, double tbrightness, boolean isCreature) {
+			double tdensity, double thue, double tsaturation, double tbrightness) {
 		this.evolvioColor = evolvioColor;
 		px = tpx;
 		py = tpy;
@@ -53,7 +51,6 @@ public class SoftBody {
 		setSBIP(false);
 		setSBIP(false); // Just to set previous SBIPs as well.
 		birthTime = tb.getYear();
-		this.isCreature = isCreature;
 	}
 
 	public void setSBIP(boolean shouldRemove) {
@@ -150,10 +147,6 @@ public class SoftBody {
 
 	public Board getBoard() {
 		return board;
-	}
-
-	public boolean isCreature() {
-		return isCreature;
 	}
 
 	public double getRadius() {
