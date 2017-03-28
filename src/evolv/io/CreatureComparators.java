@@ -42,7 +42,7 @@ public class CreatureComparators {
 
 		@Override
 		public int getComparison(Creature creature1, Creature creature2) {
-			return (int) Math.signum(creature1.getEnergy() - creature2.getEnergy());
+			return Double.compare(creature1.getEnergy(), creature2.getEnergy());
 		}
 	}
 
