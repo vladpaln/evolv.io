@@ -3,10 +3,14 @@ package evolv.io;
 import java.util.Arrays;
 import java.util.List;
 
+import evolv.io.peripherals.MouseAction;
+import evolv.io.peripherals.MouseButton;
+import evolv.io.peripherals.Peripherals;
 import evolv.io.renderers.BlankBoardRenderer;
 import evolv.io.renderers.Renderer;
 import processing.core.PApplet;
 import processing.core.PFont;
+import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
 public class EvolvioColor extends PApplet {
@@ -17,6 +21,7 @@ public class EvolvioColor extends PApplet {
 			new BoardAction.ToggleRender());
 
 	private final int seed = parseInt(random(1000000));
+	private final Peripherals peripherals = new Peripherals();
 	private final Renderer<Board> blankBoardRenderer = new BlankBoardRenderer();
 
 	private Board evoBoard;
@@ -65,6 +70,9 @@ public class EvolvioColor extends PApplet {
 		textFont(font);
 		this.evoBoard = new Board(this, seed);
 		resetZoom();
+		peripherals.onMouse(MouseButton.NONE, MouseAction.WHEEL, this::zoom);
+		peripherals.onMouse(MouseButton.LEFT, MouseAction.PRESS, this::mouseDown);
+		peripherals.onMouse(MouseButton.LEFT, MouseAction.RELEASE, this::mouseUp);
 	}
 
 	@Override
@@ -128,7 +136,18 @@ public class EvolvioColor extends PApplet {
 	}
 
 	@Override
-	public void mouseWheel(MouseEvent event) {
+	protected void handleMouseEvent(MouseEvent mouseEvent) {
+		super.handleMouseEvent(mouseEvent);
+		peripherals.handleMouseEvent(mouseEvent);
+	}
+
+	@Override
+	protected void handleKeyEvent(KeyEvent keyEvent) {
+		super.handleKeyEvent(keyEvent);
+		peripherals.handleKeyEvent(keyEvent);
+	}
+
+	private void zoom(MouseEvent event) {
 		float delta = event.getCount();
 		if (delta >= 0.5f) {
 			setZoom(zoom * 0.90909f, mouseX, mouseY);
@@ -137,8 +156,7 @@ public class EvolvioColor extends PApplet {
 		}
 	}
 
-	@Override
-	public void mousePressed() {
+	private void mouseDown(MouseEvent event) {
 		if (mouseX < windowHeight) {
 			dragging = 1;
 		} else {
@@ -191,8 +209,7 @@ public class EvolvioColor extends PApplet {
 		draggedFar = false;
 	}
 
-	@Override
-	public void mouseReleased() {
+	private void mouseUp(MouseEvent event) {
 		if (!draggedFar) {
 			if (mouseX < windowHeight) {
 				// DO NOT LOOK AT THIS CODE EITHER it is bad
