@@ -5,9 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Creature extends SoftBody {
-	private static final float CROSS_SIZE = 0.022f;
-	private static final double[] VISION_ANGLES = { 0, -0.4f, 0.4f };
-	private static final double[] VISION_DISTANCES = { 0, 0.7f, 0.7f };
 	private static final List<CreatureAction> CREATURE_ACTIONS = Arrays.asList(new CreatureAction.AdjustHue(),
 			new CreatureAction.Accelerate(), new CreatureAction.Rotate(), new CreatureAction.Eat(),
 			new CreatureAction.Fight(), new CreatureAction.Reproduce(), new CreatureAction.None(),
@@ -25,8 +22,7 @@ public class Creature extends SoftBody {
 	private final int id;
 
 	// Vision or View or Preference
-	private final double[] visionOccludedX = new double[VISION_ANGLES.length];
-	private final double[] visionOccludedY = new double[VISION_ANGLES.length];
+	private final List<Eye> eyes = new ArrayList<>();
 	private final double visionResults[] = new double[9];
 
 	private final Brain brain;
@@ -65,6 +61,10 @@ public class Creature extends SoftBody {
 		board.incrementCreatureIdUpTo();
 		this.gen = tgen;
 		this.mouthHue = tmouthHue;
+		
+		eyes.add(new Eye(evolvioColor, this, 0, 0));
+		eyes.add(new Eye(evolvioColor, this, -0.4, 0.7));
+		eyes.add(new Eye(evolvioColor, this, 0.4, 0.7));
 	}
 
 	private String createName(String tname, boolean mutateName) {
@@ -102,7 +102,9 @@ public class Creature extends SoftBody {
 		this.evolvioColor.ellipseMode(EvolvioColor.RADIUS);
 		double radius = getRadius();
 		if (showVision && camZoom > Configuration.MAX_DETAILED_ZOOM) {
-			drawVisionAngles(getBoard(), scaleUp);
+			for (Eye eye : eyes) {
+				eye.drawVisionAngle(scaleUp);
+			}
 		}
 		this.evolvioColor.noStroke();
 		if (getFightLevel() > 0) {
@@ -129,36 +131,6 @@ public class Creature extends SoftBody {
 				this.evolvioColor.text(name, (float) (getPx() * scaleUp),
 						(float) ((getPy() - getRadius() * 1.4f - 0.07f) * scaleUp));
 			}
-		}
-	}
-
-	public void drawVisionAngles(Board board, float scaleUp) {
-		for (int i = 0; i < VISION_ANGLES.length; i++) {
-			int visionUIcolor = this.evolvioColor.color(0, 0, 1);
-			if (visionResults[i * 3 + 2] > Configuration.BRIGHTNESS_THRESHOLD) {
-				visionUIcolor = this.evolvioColor.color(0, 0, 0);
-			}
-			this.evolvioColor.stroke(visionUIcolor);
-			this.evolvioColor.strokeWeight(Configuration.CREATURE_STROKE_WEIGHT);
-			float endX = (float) getVisionEndX(i);
-			float endY = (float) getVisionEndY(i);
-			this.evolvioColor.line((float) (getPx() * scaleUp), (float) (getPy() * scaleUp), endX * scaleUp,
-					endY * scaleUp);
-			this.evolvioColor.noStroke();
-			this.evolvioColor.fill(visionUIcolor);
-			this.evolvioColor.ellipse((float) (visionOccludedX[i] * scaleUp), (float) (visionOccludedY[i] * scaleUp),
-					2 * CROSS_SIZE * scaleUp, 2 * CROSS_SIZE * scaleUp);
-			this.evolvioColor.stroke((float) (visionResults[i * 3]), (float) (visionResults[i * 3 + 1]),
-					(float) (visionResults[i * 3 + 2]));
-			this.evolvioColor.strokeWeight(Configuration.CREATURE_STROKE_WEIGHT);
-			this.evolvioColor.line((float) ((visionOccludedX[i] - CROSS_SIZE) * scaleUp),
-					(float) ((visionOccludedY[i] - CROSS_SIZE) * scaleUp),
-					(float) ((visionOccludedX[i] + CROSS_SIZE) * scaleUp),
-					(float) ((visionOccludedY[i] + CROSS_SIZE) * scaleUp));
-			this.evolvioColor.line((float) ((visionOccludedX[i] - CROSS_SIZE) * scaleUp),
-					(float) ((visionOccludedY[i] + CROSS_SIZE) * scaleUp),
-					(float) ((visionOccludedX[i] + CROSS_SIZE) * scaleUp),
-					(float) ((visionOccludedY[i] - CROSS_SIZE) * scaleUp));
 		}
 	}
 
@@ -283,74 +255,12 @@ public class Creature extends SoftBody {
 		}
 	}
 
-	public void see(double timeStep) {
-		for (int k = 0; k < VISION_ANGLES.length; k++) {
-			double visionStartX = getPx();
-			double visionStartY = getPy();
-			double visionTotalAngle = rotation + VISION_ANGLES[k];
-
-			double endX = getVisionEndX(k);
-			double endY = getVisionEndY(k);
-
-			visionOccludedX[k] = endX;
-			visionOccludedY[k] = endY;
-			int c = getColorAt(endX, endY);
-			visionResults[k * 3] = this.evolvioColor.hue(c);
-			visionResults[k * 3 + 1] = this.evolvioColor.saturation(c);
-			visionResults[k * 3 + 2] = this.evolvioColor.brightness(c);
-
-			int tileX = 0;
-			int tileY = 0;
-			int prevTileX = -1;
-			int prevTileY = -1;
-			List<SoftBody> potentialVisionOccluders = new ArrayList<SoftBody>();
-			for (int DAvision = 0; DAvision < VISION_DISTANCES[k] + 1; DAvision++) {
-				tileX = (int) (visionStartX + Math.cos(visionTotalAngle) * DAvision);
-				tileY = (int) (visionStartY + Math.sin(visionTotalAngle) * DAvision);
-				if (tileX != prevTileX || tileY != prevTileY) {
-					addPVOs(tileX, tileY, potentialVisionOccluders);
-					if (prevTileX >= 0 && tileX != prevTileX && tileY != prevTileY) {
-						addPVOs(prevTileX, tileY, potentialVisionOccluders);
-						addPVOs(tileX, prevTileY, potentialVisionOccluders);
-					}
-				}
-				prevTileX = tileX;
-				prevTileY = tileY;
-			}
-			double[][] rotationMatrix = new double[2][2];
-			rotationMatrix[1][1] = rotationMatrix[0][0] = Math.cos(-visionTotalAngle);
-			rotationMatrix[0][1] = Math.sin(-visionTotalAngle);
-			rotationMatrix[1][0] = -rotationMatrix[0][1];
-			double visionLineLength = VISION_DISTANCES[k];
-			for (int i = 0; i < potentialVisionOccluders.size(); i++) {
-				SoftBody body = potentialVisionOccluders.get(i);
-				double x = body.getPx() - getPx();
-				double y = body.getPy() - getPy();
-				double r = body.getRadius();
-				double translatedX = rotationMatrix[0][0] * x + rotationMatrix[1][0] * y;
-				double translatedY = rotationMatrix[0][1] * x + rotationMatrix[1][1] * y;
-				if (Math.abs(translatedY) <= r) {
-					if ((translatedX >= 0 && translatedX < visionLineLength && translatedY < visionLineLength)
-							|| distance(0, 0, translatedX, translatedY) < r
-							|| distance(visionLineLength, 0, translatedX, translatedY) < r) {
-						// YES! There is an occlussion.
-						visionLineLength = translatedX - Math.sqrt(r * r - translatedY * translatedY);
-						visionOccludedX[k] = visionStartX + visionLineLength * Math.cos(visionTotalAngle);
-						visionOccludedY[k] = visionStartY + visionLineLength * Math.sin(visionTotalAngle);
-						visionResults[k * 3] = body.getHue();
-						visionResults[k * 3 + 1] = body.getSaturation();
-						visionResults[k * 3 + 2] = body.getBrightness();
-					}
-				}
-			}
-		}
-	}
-
-	public int getColorAt(double x, double y) {
-		if (x >= 0 && x < Configuration.BOARD_WIDTH && y >= 0 && y < getBoard().getBoardHeight()) {
-			return getBoard().getTile((int) (x), (int) (y)).getColor();
-		} else {
-			return getBoard().getBackgroundColor();
+	public void see() {
+		for (int k = 0; k < eyes.size(); k++) {
+			eyes.get(k).see();;
+			visionResults[k * 3] = eyes.get(k).getEyeResult().hue;
+			visionResults[k * 3 + 1] = eyes.get(k).getEyeResult().saturation;
+			visionResults[k * 3 + 2] = eyes.get(k).getEyeResult().brightness;
 		}
 	}
 
@@ -535,15 +445,5 @@ public class Creature extends SoftBody {
 
 	public void setMouthHue(double set) {
 		mouthHue = Math.min(Math.max(set, 0), 1);
-	}
-
-	public double getVisionEndX(int i) {
-		double visionTotalAngle = rotation + VISION_ANGLES[i];
-		return getPx() + VISION_DISTANCES[i] * Math.cos(visionTotalAngle);
-	}
-
-	public double getVisionEndY(int i) {
-		double visionTotalAngle = rotation + VISION_ANGLES[i];
-		return getPy() + VISION_DISTANCES[i] * Math.sin(visionTotalAngle);
 	}
 }

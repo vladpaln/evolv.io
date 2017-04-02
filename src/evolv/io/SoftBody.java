@@ -1,5 +1,6 @@
 package evolv.io;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -175,6 +176,10 @@ public class SoftBody {
 
 	public double getPy() {
 		return py;
+	}
+	
+	public Point2D getPoint2D() {
+		return new Point2D.Double(px, py);
 	}
 
 	public double getVx() {

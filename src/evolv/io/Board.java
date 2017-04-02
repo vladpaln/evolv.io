@@ -421,7 +421,7 @@ public class Board {
 		}
 		for (int i = 0; i < creatures.size(); i++) {
 			creatures.get(i).applyMotions(timeStep * Configuration.TIMESTEPS_PER_YEAR);
-			creatures.get(i).see(timeStep * Configuration.TIMESTEPS_PER_YEAR);
+			creatures.get(i).see();
 		}
 		if (Math.floor(fileSaveTimes[1] / imageSaveInterval) != Math.floor(year / imageSaveInterval)) {
 			prepareForFileSave(1);
@@ -660,6 +660,14 @@ public class Board {
 			return null;
 		}
 		return list[slotIndex];
+	}
+	
+	public int getColorAt(double x, double y) {
+		if (x >= 0 && x < Configuration.BOARD_WIDTH && y >= 0 && y < getBoardHeight()) {
+			return getTile((int) (x), (int) (y)).getColor();
+		} else {
+			return getBackgroundColor();
+		}
 	}
 
 	public void increaseTextSaveInterval() {
