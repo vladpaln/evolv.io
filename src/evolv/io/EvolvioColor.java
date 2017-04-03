@@ -14,6 +14,12 @@ import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
 public class EvolvioColor extends PApplet {
+	private enum DragMode{
+		NONE,
+		SCREEN,
+		MIN_TEMPERATURE,
+		MAX_TEMPERATURE,
+	}
 	private static final List<BoardAction> BOARD_ACTIONS = Arrays.asList(new BoardAction.ToggleUserControl(),
 			new BoardAction.ChangeSpawnChance(), new BoardAction.PrepareForFileSave(0),
 			new BoardAction.ChangeImageSaveInterval(), new BoardAction.PrepareForFileSave(2),
@@ -33,8 +39,7 @@ public class EvolvioColor extends PApplet {
 	private float cameraR;
 	private float zoom = 1;
 
-	// 0 = no drag, 1 = drag screen, 2 and 3 are dragging temp extremes.
-	private int dragging;
+	private DragMode dragMode;
 	private float prevMouseX;
 	private float prevMouseY;
 	private boolean draggedFar = false;
@@ -92,16 +97,16 @@ public class EvolvioColor extends PApplet {
 		if (dist(prevMouseX, prevMouseY, mouseX, mouseY) > 5) {
 			draggedFar = true;
 		}
-		if (dragging == 1) {
+		if (dragMode == DragMode.SCREEN) {
 			cameraX -= toWorldXCoordinate(mouseX, mouseY) - toWorldXCoordinate(prevMouseX, prevMouseY);
 			cameraY -= toWorldYCoordinate(mouseX, mouseY) - toWorldYCoordinate(prevMouseX, prevMouseY);
-		} else if (dragging == 2) { // UGLY UGLY CODE. Do not look at this
+		} else if (dragMode == DragMode.MIN_TEMPERATURE) { // UGLY UGLY CODE. Do not look at this
 			if (evoBoard.setMinTemperature(1.0f - (mouseY - 30) / 660.0f)) {
-				dragging = 3;
+				dragMode = DragMode.MAX_TEMPERATURE;
 			}
-		} else if (dragging == 3) {
+		} else if (dragMode == DragMode.MAX_TEMPERATURE) {
 			if (evoBoard.setMaxTemperature(1.0f - (mouseY - 30) / 660.0f)) {
-				dragging = 2;
+				dragMode = DragMode.MIN_TEMPERATURE;
 			}
 		}
 		if (evoBoard.getSelectedCreature() != null) {
@@ -158,7 +163,7 @@ public class EvolvioColor extends PApplet {
 
 	private void mouseDown(MouseEvent event) {
 		if (mouseX < windowHeight) {
-			dragging = 1;
+			dragMode = DragMode.SCREEN;
 		} else {
 			if (abs(mouseX - (windowHeight + 65)) <= 60 && abs(mouseY - 147) <= 60
 					&& evoBoard.getSelectedCreature() != null) {
@@ -200,9 +205,9 @@ public class EvolvioColor extends PApplet {
 				float lowTemp = 1.0f - evoBoard.getLowTempProportion();
 				float highTemp = 1.0f - evoBoard.getHighTempProportion();
 				if (abs(toClickTemp - lowTemp) < abs(toClickTemp - highTemp)) {
-					dragging = 2;
+					dragMode = DragMode.MIN_TEMPERATURE;
 				} else {
-					dragging = 3;
+					dragMode = DragMode.MAX_TEMPERATURE;
 				}
 			}
 		}
@@ -213,7 +218,7 @@ public class EvolvioColor extends PApplet {
 		if (!draggedFar) {
 			if (mouseX < windowHeight) {
 				// DO NOT LOOK AT THIS CODE EITHER it is bad
-				dragging = 1;
+				dragMode = DragMode.SCREEN;
 				float mX = toWorldXCoordinate(mouseX, mouseY);
 				float mY = toWorldYCoordinate(mouseX, mouseY);
 				int x = floor(mX);
@@ -234,7 +239,7 @@ public class EvolvioColor extends PApplet {
 				}
 			}
 		}
-		dragging = 0;
+		dragMode = DragMode.NONE;
 	}
 
 	public void resetZoom() {
