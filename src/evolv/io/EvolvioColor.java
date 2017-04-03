@@ -112,7 +112,7 @@ public class EvolvioColor extends PApplet {
 		if (evoBoard.getSelectedCreature() != null) {
 			cameraX = (float) evoBoard.getSelectedCreature().getPx();
 			cameraY = (float) evoBoard.getSelectedCreature().getPy();
-			cameraR = -PI / 2.0f - (float) evoBoard.getSelectedCreature().getRotation();
+			if (evoBoard.isUserControl()) cameraR = -PI / 2.0f - (float) evoBoard.getSelectedCreature().getRotation();
 		} else {
 			cameraR = 0;
 		}
