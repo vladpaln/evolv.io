@@ -38,7 +38,7 @@ public class Board {
 
 	// Time or History
 	private final double timeStep;
-	private final int[] populationHistory;
+	private final int[] populationHistory = new int[Configuration.POPULATION_HISTORY_LENGTH];
 	private double year;
 	private int playSpeed = 1;
 
@@ -105,26 +105,25 @@ public class Board {
 			fileSaveTimes[i] = -999;
 		}
 		this.timeStep = Configuration.TIME_STEP;
-		this.populationHistory = new int[Configuration.POPULATION_HISTORY_LENGTH];
 	}
 
-	public void drawBoard(float scaleUp, float camZoom, int mX, int mY) {
+	public void drawBoard(float scaleUp, float camZoom, int mouseX, int mouseY) {
 		if (!render) {
 			return;
 		}
-		for (int x = 0; x < Configuration.BOARD_WIDTH; x++) {
-			for (int y = 0; y < Configuration.BOARD_HEIGHT; y++) {
-				tiles[x][y].drawTile(scaleUp, camZoom);
+		for (Tile[] tileArray : tiles) {
+			for (Tile tile : tileArray) {
+				tile.drawTile(scaleUp, camZoom);
 			}
 		}
-		if (mX >= 0 && mX < Configuration.BOARD_WIDTH && mY >= 0 && mY < Configuration.BOARD_HEIGHT) {
-			tiles[mX][mY].drawEnergy(scaleUp, camZoom);
+		if (mouseX >= 0 && mouseX < Configuration.BOARD_WIDTH && mouseY >= 0 && mouseY < Configuration.BOARD_HEIGHT) {
+			tiles[mouseX][mouseY].drawEnergy(scaleUp, camZoom);
 		}
-		for (int i = 0; i < rocks.size(); i++) {
-			rocks.get(i).drawSoftBody(scaleUp);
+		for (SoftBody rock : rocks) {
+			rock.drawSoftBody(scaleUp);
 		}
-		for (int i = 0; i < creatures.size(); i++) {
-			creatures.get(i).drawSoftBody(scaleUp, camZoom, true);
+		for (Creature creature : creatures) {
+			creature.drawSoftBody(scaleUp, camZoom, true);
 		}
 	}
 
@@ -312,9 +311,9 @@ public class Board {
 		this.evolvioColor.noStroke();
 		this.evolvioColor.fill(0.33333f, 1, 0.6f);
 		int maxPopulation = 0;
-		for (int i = 0; i < Configuration.POPULATION_HISTORY_LENGTH; i++) {
-			if (populationHistory[i] > maxPopulation) {
-				maxPopulation = populationHistory[i];
+		for (int population : populationHistory) {
+			if (population > maxPopulation) {
+				maxPopulation = population;
 			}
 		}
 		for (int i = 0; i < Configuration.POPULATION_HISTORY_LENGTH; i++) {
@@ -348,9 +347,9 @@ public class Board {
 		double tempChangeOutOfThisFrame = getGrowthRate(getSeason() + timeStep) - temperature;
 		if (tempChangeIntoThisFrame * tempChangeOutOfThisFrame <= 0) {
 			// Temperature change flipped direction.
-			for (int x = 0; x < Configuration.BOARD_WIDTH; x++) {
-				for (int y = 0; y < Configuration.BOARD_HEIGHT; y++) {
-					tiles[x][y].iterate();
+			for (Tile[] tileArray : tiles) {
+				for (Tile tile : tileArray) {
+					tile.iterate();
 				}
 			}
 		}
