@@ -48,6 +48,11 @@ public class NameGenerator {
 
 	public static String mutateName(String input) {
 		StringBuilder sb = new StringBuilder(input);
+		for (int i = 0; i < sb.length(); i++) {
+			char letter = sb.charAt(i);
+			char lowerCase = Character.toLowerCase(letter);
+			sb.setCharAt(i, lowerCase);
+		}
 		if (sb.length() >= 3) {
 			if (RANDOM.nextFloat() < 0.2f) {
 				int removeIndex = RANDOM.nextInt(sb.length());
