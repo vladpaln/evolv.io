@@ -7,9 +7,7 @@ import java.util.List;
 public class Creature extends SoftBody {
 	private static final List<CreatureAction> CREATURE_ACTIONS = Arrays.asList(new CreatureAction.AdjustHue(),
 			new CreatureAction.Accelerate(), new CreatureAction.Rotate(), new CreatureAction.Eat(),
-			new CreatureAction.Fight(), new CreatureAction.Reproduce(), new CreatureAction.None(),
-			new CreatureAction.None(), new CreatureAction.None(), new CreatureAction.None(),
-			new CreatureAction.AdjustMouthHue());
+			new CreatureAction.Fight(), new CreatureAction.Reproduce(), new CreatureAction.AdjustMouthHue());
 
 	private final EvolvioColor evolvioColor;
 
@@ -20,10 +18,10 @@ public class Creature extends SoftBody {
 	private final String parents;
 	private final int gen;
 	private final int id;
-
+	
 	// Vision or View or Preference
 	private final List<Eye> eyes = new ArrayList<>();
-	private final double visionResults[] = new double[9];
+	private final double visionResults[] = new double[Configuration.NUM_EYES * 3];
 
 	private final Brain brain;
 
@@ -40,12 +38,11 @@ public class Creature extends SoftBody {
 				evolvioColor.random(0, board.getBoardHeight()), 0, 0,
 				evolvioColor.random(Configuration.MINIMUM_CREATURE_ENERGY, Configuration.MAXIMUM_CREATURE_ENERGY), 1,
 				evolvioColor.random(0, 1), 1, 1, evolvioColor.random(0, 2 * EvolvioColor.PI), 0, "", "[PRIMORDIAL]",
-				true, null, 1, evolvioColor.random(0, 1));
+				true, null, 1, evolvioColor.random(0, 1), new double[Configuration.NUM_EYES], new double[Configuration.NUM_EYES]);
 	}
-
 	public Creature(EvolvioColor evolvioColor, Board board, double tpx, double tpy, double tvx, double tvy,
 			double tenergy, double tdensity, double thue, double tsaturation, double tbrightness, double rot,
-			double tvr, String tname, String tparents, boolean mutateName, Brain brain, int tgen, double tmouthHue) {
+			double tvr, String tname, String tparents, boolean mutateName, Brain brain, int tgen, double tmouthHue, double[] teyeDistances, double[] teyeAngles) {
 		super(evolvioColor, board, tpx, tpy, tvx, tvy, tenergy, tdensity, thue, tsaturation, tbrightness);
 		this.evolvioColor = evolvioColor;
 
@@ -62,9 +59,13 @@ public class Creature extends SoftBody {
 		this.gen = tgen;
 		this.mouthHue = tmouthHue;
 		
-		eyes.add(new Eye(evolvioColor, this, 0, 0));
-		eyes.add(new Eye(evolvioColor, this, -0.4, 0.7));
-		eyes.add(new Eye(evolvioColor, this, 0.4, 0.7));
+		for (int i = 0; i < Configuration.NUM_EYES; i++) { 
+			if (teyeDistances[i] == 0.0f) {
+				eyes.add(new Eye(evolvioColor, this, evolvioColor.random(-3.6f, 3.6f), evolvioColor.random(0, 2)));
+			} else {
+				eyes.add(new Eye(evolvioColor, this, teyeAngles[i], teyeDistances[i]));
+			}
+		}
 	}
 
 	private String createName(String tname, boolean mutateName) {
@@ -82,17 +83,17 @@ public class Creature extends SoftBody {
 	}
 
 	public void useBrain(double timeStep, boolean useOutput) {
-		double inputs[] = new double[11];
-		for (int i = 0; i < 9; i++) {
+		double inputs[] = new double[Configuration.NUM_EYES * 3 + 2];
+		for (int i = 0; i < Configuration.NUM_EYES * 3; i++) {
 			inputs[i] = visionResults[i];
 		}
-		inputs[9] = getEnergy();
-		inputs[10] = mouthHue;
+		inputs[Configuration.NUM_EYES * 3] = getEnergy();
+		inputs[Configuration.NUM_EYES * 3 + 1] = mouthHue;
 		brain.input(inputs);
 
 		if (useOutput) {
 			double[] output = brain.outputs();
-			for (int i = 0; i < output.length; i++) {
+			for (int i = 0; i < CREATURE_ACTIONS.size(); i++) {
 				CREATURE_ACTIONS.get(i).doAction(this, output[i], timeStep);
 			}
 		}
@@ -256,7 +257,7 @@ public class Creature extends SoftBody {
 	}
 
 	public void see() {
-		for (int k = 0; k < eyes.size(); k++) {
+		for (int k = 0; k < Configuration.NUM_EYES; k++) {
 			eyes.get(k).see();;
 			visionResults[k * 3] = eyes.get(k).getEyeResult().hue;
 			visionResults[k * 3 + 1] = eyes.get(k).getEyeResult().saturation;
@@ -305,7 +306,7 @@ public class Creature extends SoftBody {
 				/*
 				 * Must be a WILLING creature to also give birth.
 				 */
-				if (possibleParent instanceof Creature && ((Creature) possibleParent).brain.outputs()[9] > -1) {
+				if (possibleParent instanceof Creature && ((Creature) possibleParent).brain.outputs()[5] > -1) {
 					float distance = EvolvioColor.dist((float) getPx(), (float) getPy(), (float) possibleParent.getPx(),
 							(float) possibleParent.getPy());
 					double combinedRadius = getRadius() * Configuration.FIGHT_RANGE + possibleParent.getRadius();
@@ -326,6 +327,8 @@ public class Creature extends SoftBody {
 				double newSaturation = 0;
 				double newBrightness = 0;
 				double newMouthHue = 0;
+				double newEyeAngles[] = new double[Configuration.NUM_EYES];
+				double newEyeDistances[] = new double[Configuration.NUM_EYES];
 				int parentsTotal = parents.size();
 				String[] parentNames = new String[parentsTotal];
 				Brain newBrain = brain.evolve(parents);
@@ -340,6 +343,10 @@ public class Creature extends SoftBody {
 					newSaturation += parent.getSaturation() / parentsTotal;
 					newBrightness += parent.getBrightness() / parentsTotal;
 					newMouthHue += parent.mouthHue / parentsTotal;
+					for (int j = 0; j < Configuration.NUM_EYES; j++) {
+						newEyeAngles[j] += parent.eyes.get(j).angle / parentsTotal;
+						newEyeDistances[j] += parent.eyes.get(j).distance / parentsTotal;
+					}
 					parentNames[i] = parent.name;
 					if (parent.gen > highestGen) {
 						highestGen = parent.gen;
@@ -350,7 +357,7 @@ public class Creature extends SoftBody {
 				getBoard().addCreature(new Creature(this.evolvioColor, getBoard(), newPX, newPY, 0, 0, babySize,
 						getDensity(), newHue, newSaturation, newBrightness,
 						this.evolvioColor.random(0, 2 * EvolvioColor.PI), 0, stitchName(parentNames),
-						andifyParents(parentNames), true, newBrain, highestGen + 1, newMouthHue));
+						andifyParents(parentNames), true, newBrain, highestGen + 1, newMouthHue, newEyeAngles, newEyeDistances));
 			}
 		}
 	}

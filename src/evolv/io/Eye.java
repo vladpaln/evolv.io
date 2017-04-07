@@ -10,8 +10,8 @@ public class Eye {
 
 	private final Creature creature;
 	private final EvolvioColor evolvioColor;
-	private final double angle;
-	private final double distance;
+	final double angle;
+	final double distance;
 
 	private final List<SoftBody> potentialVisionOccluders = new ArrayList<SoftBody>();
 	private double visionOccludedX;
