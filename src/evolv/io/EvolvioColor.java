@@ -71,7 +71,7 @@ public class EvolvioColor extends PApplet {
 	public void setup() {
 		surface.setResizable(true);
 		colorMode(HSB, 1.0f);
-		PFont font = loadFont("Jygquip1-48.vlw");
+		PFont font = createDefaultFont(12);
 		textFont(font);
 		this.evoBoard = new Board(this, seed);
 		resetZoom();

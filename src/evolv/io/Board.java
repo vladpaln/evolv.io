@@ -143,7 +143,7 @@ public class Board {
 		String yearText = "Year " + EvolvioColor.nf((float) year, 0, 2);
 		this.evolvioColor.text(yearText, 10, 48);
 		float seasonTextXCoor = this.evolvioColor.textWidth(yearText) + 50;
-		this.evolvioColor.textSize(24);
+		this.evolvioColor.textSize(20);
 		this.evolvioColor.text("Population: " + creatures.size(), 10, 80);
 		String[] seasons = { "Winter", "Spring", "Summer", "Autumn" };
 		this.evolvioColor.text(seasons[(int) (getSeason() * 4)] + "\nSeed: " + randomSeed, seasonTextXCoor, 30);
@@ -194,7 +194,7 @@ public class Board {
 			this.evolvioColor.text("Reset zoom", 120, 123);
 			this.evolvioColor.text("Sort by: " + SORT_METRIC_NAMES[sortMetric], 350, 123);
 
-			this.evolvioColor.textSize(19);
+			this.evolvioColor.textSize(15);
 			/*
 			 * TODO put these button texts in the same place as the board
 			 * actions

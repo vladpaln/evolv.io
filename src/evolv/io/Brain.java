@@ -114,7 +114,7 @@ public class Brain {
 
 		this.evolvioColor.ellipseMode(EvolvioColor.RADIUS);
 		this.evolvioColor.strokeWeight(2);
-		this.evolvioColor.textSize(0.58f * scaleUp);
+		this.evolvioColor.textSize(0.5f * scaleUp);
 		this.evolvioColor.fill(0, 0, 1);
 		for (int y = 0; y < INPUT_LABELS.length; y++) {
 			this.evolvioColor.textAlign(EvolvioColor.RIGHT);
