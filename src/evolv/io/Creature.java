@@ -364,25 +364,25 @@ public class Creature extends SoftBody {
 	}
 
 	public String stitchName(String[] s) {
-		String result = "";
+		StringBuilder build = new StringBuilder();
 		for (int i = 0; i < s.length; i++) {
 			float portion = ((float) s[i].length()) / s.length;
 			int start = Math.min(Math.max(Math.round(portion * i), 0), s[i].length());
 			int end = Math.min(Math.max(Math.round(portion * (i + 1)), 0), s[i].length());
-			result = result + s[i].substring(start, end);
+			build.append(s[i].substring(start, end));
 		}
-		return result;
+		return build.toString();
 	}
 
 	public String andifyParents(String[] s) {
-		String result = "";
+		StringBuilder build = new StringBuilder();
 		for (int i = 0; i < s.length; i++) {
 			if (i >= 1) {
-				result = result + " & ";
+				build.append(" & ");
 			}
-			result = result + s[i];
+			build.append(s[i]);
 		}
-		return result;
+		return build.toString();
 	}
 
 	public String getName() {
