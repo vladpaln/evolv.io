@@ -369,7 +369,7 @@ public class Creature extends SoftBody {
 			float portion = ((float) s[i].length()) / s.length;
 			int start = Math.min(Math.max(Math.round(portion * i), 0), s[i].length());
 			int end = Math.min(Math.max(Math.round(portion * (i + 1)), 0), s[i].length());
-			builder.append(s[i].substring(start, end));
+			builder.append(s[i],start, end);
 		}
 		return builder.toString();
 	}
